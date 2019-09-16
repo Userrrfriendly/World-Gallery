@@ -9,17 +9,18 @@ export const getPhotosByTitle = searchParams => {
   url.append("api_key", "f6536bb373bca1fcd14d4da1281f2839");
   // url.append('tags', marker.title); //text produces broader results than tags
   if (searchParams.search) url.append("text", searchParams.search);
-  if (searchParams.bounds) {
-    const { south, west, north, east } = searchParams.bounds.toJSON();
+  if (searchParams.type === "boundingBox") {
+    // const { south, west, north, east } = searchParams.bounds.toJSON();
+    const { south, west, north, east } = searchParams;
     url.append("bbox", `${west},${south},${east},${north}`);
   }
+  console.log(searchParams);
+  if (searchParams.type === "marker") {
+    url.append("lat", searchParams.lat);
+    url.append("lon", searchParams.lng);
+  }
   url.append("has_geo", "1");
-  //google maps markers method to get lat/lng from markers?
-  // url.append("lat", marker.position.lat());
-  // url.append("lon", marker.position.lng());
-  url.append("lat", searchParams.position.lat);
-  url.append("lon", searchParams.position.lng);
-  url.append("radius", "31");
+  url.append("radius", "1"); //1 to 31 km?
   url.append("radius_units", "km");
   url.append("per_page", "25");
   url.append("format", "json");

@@ -27,7 +27,17 @@ export default function ImgMediaCard(props) {
   const classes = useStyles();
 
   const handlePinOnMapClick = id => {
-    getPhotoGeoLocation(id).then(res => console.log(res));
+    getPhotoGeoLocation(id).then(res => {
+      // console.log(props.src);
+      const result = {
+        position: res,
+        thumbnail: props.src,
+        title: props.imgTitle,
+        id: props.photoId
+      };
+      console.log(result);
+      return props.pinPhotoOnMap(result);
+    });
   };
 
   const handleImageClick = () => {
@@ -48,7 +58,7 @@ export default function ImgMediaCard(props) {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            Lizard
+            {props.imgTitle ? props.imgTitle : "untitled image"}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
             Lizards are a widespread group of squamate reptiles, with over 6,000
