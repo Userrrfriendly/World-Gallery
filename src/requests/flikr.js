@@ -22,16 +22,70 @@ export const getPhotosByTitle = searchParams => {
   url.append("has_geo", "1");
   url.append("radius", "1"); //1 to 31 km?
   url.append("radius_units", "km");
-  url.append("per_page", "25");
+  url.append("per_page", "150");
   url.append("format", "json");
   url.append("nojsoncallback", "1");
+  url.append("extras", "url_m,url_c,url_l,url_h,url_o");
 
   let arrayOfPhotos = fetch("https://api.flickr.com/services/rest/?" + url)
     .then(res => {
       console.log(url);
       return res.json().then(json => {
         console.log(json);
-        return json.photos.photo;
+        const test = json.photos.photo.map(img => {
+          return {
+            ...img,
+            width_c: parseInt(img.width_c),
+            width_h: parseInt(img.width_h),
+            width_l: parseInt(img.width_l),
+            width_m: parseInt(img.width_m),
+            height_c: parseInt(img.height_c),
+            height_h: parseInt(img.height_h),
+            height_l: parseInt(img.height_l),
+            height_m: parseInt(img.height_m),
+            src: img.url_m, //flickr doesn't guarantee all sizes but medium will always be there
+            height: parseInt(img.height_m),
+            width: parseInt(img.width_m),
+            title: img.title,
+            alt: img.title,
+            key: img.id,
+            srcSet: [
+              `${img.url_m} ${img.width_m}w`,
+              `${img.url_c} ${img.width_c}w`,
+              `${img.url_l} ${img.width_l}w`,
+              `${img.url_h} ${img.width_h}w`
+            ],
+            sizes: "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
+          };
+        });
+        console.log(test);
+        return json.photos.photo.map(img => {
+          return {
+            // ...img,
+            photoId: img.id,
+            width_c: img.width_c ? parseInt(img.width_c) : "",
+            width_h: img.width_h ? parseInt(img.width_h) : "",
+            width_l: img.width_l ? parseInt(img.width_l) : "",
+            width_m: img.width_m ? parseInt(img.width_m) : "",
+            height_c: img.height_c ? parseInt(img.height_c) : "",
+            height_h: img.height_h ? parseInt(img.height_h) : "",
+            height_l: img.height_l ? parseInt(img.height_l) : "",
+            height_m: img.height_m ? parseInt(img.height_m) : "",
+            height: img.height_m ? parseInt(img.height_m) : "",
+            width: img.width_m ? parseInt(img.width_m) : "",
+            src: img.url_l ? img.url_l : img.url_m,
+            title: img.title,
+            alt: img.title,
+            key: img.id,
+            srcSet: [
+              img.url_m ? `${img.url_m} ${img.width_m}w` : "",
+              img.url_c ? `${img.url_c} ${img.width_c}w` : "",
+              img.url_l ? `${img.url_l} ${img.width_l}w` : "",
+              img.url_h ? `${img.url_h} ${img.width_h}w` : ""
+            ],
+            sizes: "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
+          };
+        });
       });
     })
     .catch(err => {

@@ -1,17 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import "./App.css";
 import * as FlikrApi from "./requests/flikr";
-import Card from "./components/card/card";
-// import MapWrapper from "./components/map/MapWrapper";
 import MapWrapper from "./components/map/mapContainer";
 import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
 import { SET_BOUNDING_BOX, SET_SELECTION_MARKER } from "./context/rootReducer";
 
-// const marker = {
-//   title: "Patmos",
-//   position: { lat: 37.308679, lng: 26.546345 }
-// };
+import Appbar from "./components/appBar/appBar";
+import ExampleBasic from "./components/imageGrid/imageGrid";
 
 function App() {
   const state = useContext(StateContext);
@@ -19,7 +14,7 @@ function App() {
 
   const [mapVisible, setMapVisible] = useState(false);
   const [resData, setResData] = useState(false);
-  const [urls, setUrls] = useState(false);
+  // const [urls, setUrls] = useState(false);
 
   /**MOVE TO REDUCER? */
   const [addMarker, setAddMarker] = useState(false);
@@ -51,7 +46,7 @@ function App() {
     } else {
       //should handle error
       //default to search by text for now
-      searchParams = { ...state.selectionMarker, search: "Amsterdam" };
+      searchParams = { ...state.selectionMarker, search: "Troll" };
     }
     FlikrApi.getPhotosByTitle(searchParams).then(res => {
       setResData(res);
@@ -62,12 +57,12 @@ function App() {
     // .then(() => console.log(urls));
   };
 
-  useEffect(() => {
-    if (resData) {
-      setUrls(FlikrApi.flickrUrlConstructor(resData));
-      // window.URLS = urls;
-    }
-  }, [resData]);
+  // useEffect(() => {
+  //   if (resData) {
+  //     setUrls(FlikrApi.flickrUrlConstructor(resData));
+  //     // window.URLS = urls;
+  //   }
+  // }, [resData]);
 
   useEffect(() => {
     console.log(state);
@@ -89,21 +84,21 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <button onClick={toggleMap}> Toggle Map</button>
-        <button onClick={searchFlikr}>Search Flikr</button>
-        <button onClick={setBounds}>Set Bounds</button>
-      </header>
-      {mapVisible && (
-        <MapWrapper
-          setBounds={setBounds}
-          setSelectionMarker={setSelectionMarker}
-          addMarker={addMarker}
-          disableAddMarker={disableAddMarker}
-        />
-      )}
-      {/* {resData && resData.map()} */}
-      {urls &&
+      <Appbar toggleMap={toggleMap} searchFlikr={searchFlikr}>
+        {/* <button onClick={searchFlikr}>FLIKR</button> */}
+        {/* <header className="App-header"> */}
+        {/* <button onClick={toggleMap}> Toggle Map</button> */}
+        {/* <button onClick={searchFlikr}>Search Flikr</button> */}
+        {/* </header> */}
+        {mapVisible && (
+          <MapWrapper
+            setBounds={setBounds}
+            setSelectionMarker={setSelectionMarker}
+            addMarker={addMarker}
+            disableAddMarker={disableAddMarker}
+          />
+        )}
+        {/* {urls &&
         urls.default.map(url => (
           <Card
             src={url[0]}
@@ -113,7 +108,18 @@ function App() {
             user={url[3]}
             pinPhotoOnMap={pinPhotoOnMap}
           />
-        ))}
+        ))} */}
+
+        {resData && (
+          <ExampleBasic
+            photos={resData}
+            title="Results"
+            pinPhotoOnMap={pinPhotoOnMap}
+            direction={"column"}
+            columns={2}
+          />
+        )}
+      </Appbar>
     </div>
   );
 }
