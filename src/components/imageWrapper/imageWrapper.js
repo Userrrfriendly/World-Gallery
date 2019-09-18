@@ -45,7 +45,8 @@ const ImageWrapper = ({
   top,
   left,
   selected,
-  pinPhotoOnMap
+  pinPhotoOnMap,
+  openLightbox
 }) => {
   const classes = useStyles();
 
@@ -96,7 +97,12 @@ const ImageWrapper = ({
       }}
       className={classes.container}
     >
-      <img {...photo} alt={photo.alt} className={classes.image} />
+      <img
+        {...photo}
+        alt={photo.alt}
+        className={classes.image}
+        onClick={event => openLightbox.call(this, event, { index, photo })}
+      />
 
       {/* <Fab
         size="small"

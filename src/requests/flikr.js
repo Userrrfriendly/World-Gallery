@@ -22,7 +22,7 @@ export const getPhotosByTitle = searchParams => {
   url.append("has_geo", "1");
   url.append("radius", "1"); //1 to 31 km?
   url.append("radius_units", "km");
-  url.append("per_page", "150");
+  url.append("per_page", "50");
   url.append("format", "json");
   url.append("nojsoncallback", "1");
   url.append("extras", "url_m,url_c,url_l,url_h,url_o");
