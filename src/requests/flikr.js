@@ -4,11 +4,31 @@ export const getPhotosByTitle = searchParams => {
     the photos returned will be within a 31km radius from the markers position
     the func returns an array of photos details (id,farm,server etc)
   */
+
+  const boringSearch = [
+    "cat",
+    "eagle",
+    "pancakes",
+    "cats",
+    "parrot",
+    "crusade",
+    "WW2",
+    "tank",
+    "Tal",
+    "nun",
+    "rose",
+    "nike",
+    "java",
+    "javaScript" //indoors screenshots
+  ];
+  const rngSearch =
+    boringSearch[Math.floor(Math.random() * boringSearch.length)];
+  //later replace boringSearch with searchParams.search
   let url = new URLSearchParams();
   url.append("method", "flickr.photos.search");
   url.append("api_key", "f6536bb373bca1fcd14d4da1281f2839");
   // url.append('tags', marker.title); //text produces broader results than tags
-  if (searchParams.search) url.append("text", searchParams.search);
+  if (searchParams.search) url.append("text", rngSearch);
   if (searchParams.type === "boundingBox") {
     // const { south, west, north, east } = searchParams.bounds.toJSON();
     const { south, west, north, east } = searchParams;

@@ -6,7 +6,7 @@ import DispatchContext from "./context/dispatchContext";
 import { SET_BOUNDING_BOX, SET_SELECTION_MARKER } from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
-import ExampleBasic from "./components/imageGrid/imageGrid";
+import ImageGrid from "./components/imageGrid/imageGrid";
 
 function App() {
   const state = useContext(StateContext);
@@ -15,6 +15,9 @@ function App() {
   const [mapVisible, setMapVisible] = useState(false);
   const [resData, setResData] = useState(false);
   // const [urls, setUrls] = useState(false);
+
+  //explicitly hide appbar if the lightbox is open
+  const [appBarHide, setAppBarHide] = useState(false);
 
   /**MOVE TO REDUCER? */
   const [addMarker, setAddMarker] = useState(false);
@@ -46,7 +49,10 @@ function App() {
     } else {
       //should handle error
       //default to search by text for now
-      searchParams = { ...state.selectionMarker, search: "Troll" };
+      searchParams = {
+        ...state.selectionMarker,
+        search: "Search String goes here"
+      };
     }
     FlikrApi.getPhotosByTitle(searchParams).then(res => {
       setResData(res);
@@ -84,11 +90,16 @@ function App() {
 
   return (
     <div className="App">
-      <Appbar toggleMap={toggleMap} searchFlikr={searchFlikr}>
+      <Appbar
+        toggleMap={toggleMap}
+        searchFlikr={searchFlikr}
+        appBarHide={appBarHide}
+      >
         {/* <button onClick={searchFlikr}>FLIKR</button> */}
         {/* <header className="App-header"> */}
         {/* <button onClick={toggleMap}> Toggle Map</button> */}
         {/* <button onClick={searchFlikr}>Search Flikr</button> */}
+        {/* <button onClick={setAppBarHide}>TOGGLE APPBAR</button> */}
         {/* </header> */}
         {mapVisible && (
           <MapWrapper
@@ -111,12 +122,13 @@ function App() {
         ))} */}
 
         {resData && (
-          <ExampleBasic
+          <ImageGrid
             photos={resData}
             title="Results"
             pinPhotoOnMap={pinPhotoOnMap}
             direction={"column"}
             columns={2}
+            setAppBarHide={setAppBarHide}
           />
         )}
       </Appbar>

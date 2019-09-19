@@ -17,12 +17,7 @@ const useStyles = makeStyles(theme => ({
     bottom: theme.spacing(2),
     right: theme.spacing(2)
   },
-  // menuButton: {
-  //   // marginRight: theme.spacing(2)
-  // },
-  title: {
-    // flexGrow: 1,
-  },
+
   grow: {
     flexGrow: 1,
     color: "red",
@@ -34,13 +29,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function HideOnScroll(props) {
-  const { children } = props;
-
   const trigger = useScrollTrigger();
-
+  console.log(trigger);
   return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
+    <Slide
+      appear={false}
+      direction="down"
+      //if appBarHide is true hide the appbar otherwise leave useScrollTrigger to deal with it
+      in={props.appBarHide ? false : !trigger}
+    >
+      {props.children}
     </Slide>
   );
 }
@@ -79,12 +77,10 @@ export default function HideAppBar(props) {
   return (
     <React.Fragment>
       <CssBaseline />
-      <HideOnScroll {...props}>
+      <HideOnScroll appBarHide={props.appBarHide} {...props}>
         <AppBar>
           <Toolbar>
-            <Typography variant="h6" className={classes.title}>
-              Flickr GeoExplorer
-            </Typography>
+            <Typography variant="h6">Flickr GeoExplorer</Typography>
             <div className={classes.grow} />
             <div className={classes.icons_container}>
               <Tooltip title="Search Photos" aria-label="Search Photos">
@@ -112,13 +108,11 @@ export default function HideAppBar(props) {
         </AppBar>
       </HideOnScroll>
       <Toolbar id="back-to-top-anchor" />
-      {/* <Container> */}
       <Box
         style={matches ? { margin: "5px 25px 2px" } : { margin: "5px 0 2px" }}
       >
         {props.children}
       </Box>
-      {/* </Container> */}
       <ScrollTop {...props}>
         <Fab color="secondary" size="small" aria-label="scroll back to top">
           <KeyboardArrowUp />
