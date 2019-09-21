@@ -1,6 +1,4 @@
 import React from "react";
-// import * as FlickrAPI from "../../requests/flikr";
-// import "./css/map.css";
 import PhotoMarker_20 from "../../assets/PhotoMarker_20.svg";
 
 /*When the Map component mounts the following happen:
@@ -18,11 +16,10 @@ const mapStyle = {
   maxWidth: "100%",
   boxSizing: "border-box"
 };
-
 class Map extends React.Component {
   state = {
     // activeMarker: null,
-    polygon: null,
+    boundingBox: null,
     selectionMarker: null,
     pinndedPhotos: []
   };
@@ -30,14 +27,56 @@ class Map extends React.Component {
   componentDidMount() {
     window.initMap = this.initMap;
     this.handleGoogleMapsError();
-    this.createGoogleApiScript();
+    this.createGoogleApiScript(this.state.userLocation);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     console.log("map updated");
-    if (this.props.addMarker) {
-      this.pinPhotoMarkerOnMap(this.props.addMarker);
-      this.props.disableAddMarker();
+    //when the user location changes pan the map to it
+    //(either when the response comes from geoip-db or if the user sets it explicitly)
+
+    if (prevProps.userLocation !== this.props.userLocation) {
+      /**  even though the component has mounted and is currently in re-render(update) phase
+       * window.map can be undefined (especially on first load where google.maps api is not cached and is not fully initialized)
+       * so there is a slim chance that window.map.panTo will run before google.maps is fully loaded thus trowing an error
+       * The following ugly code checks if google.maps is loaded before trying to zoom/add marker to the users location
+       * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
+       * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
+       */
+      let waitingThreshold = 3000; //max number of milliseconds to wait for google.maps to initialize
+      const mapReady = () => {
+        if (waitingThreshold <= 0) {
+          stopTimer();
+        }
+        if (window.map) {
+          window.map.panTo(this.props.userLocation);
+          this.addRadiusMarker(this.props.userLocation);
+          stopTimer();
+        } else {
+          waitingThreshold -= 10;
+        }
+      };
+      const timer = setInterval(mapReady, 10);
+      const stopTimer = () => clearInterval(timer);
+    }
+
+    //this is for photos
+    // if (this.props.setRadiusMarker) {
+    //   this.pinPhotoMarkerOnMap(this.props.setRadiusMarker);
+    //   this.props.disableAddMarker();
+    // }
+    // if (this.props.setRadiusMarker) {
+    //   this.addRadiusMarker();
+    //   this.props.disableAddMarker(this.props.setRadiusMarker);
+    // }
+
+    if (this.props.triggerPlotRadiusMarkerOnMap) {
+      this.addRadiusMarker();
+      this.props.disableRadiusTrigger();
+    }
+    if (this.props.triggerBoundingBox) {
+      this.addPolygon();
+      this.props.disableBoundingBoxTrigger();
     }
   }
 
@@ -53,7 +92,7 @@ class Map extends React.Component {
     };
   };
 
-  createGoogleApiScript = () => {
+  createGoogleApiScript = userLocation => {
     let body = window.document.querySelector("body");
     let script = window.document.createElement("script");
     script.src =
@@ -71,7 +110,7 @@ class Map extends React.Component {
     window.map = new window.google.maps.Map(
       document.getElementById("map-container"),
       {
-        center: { lat: 36.436178, lng: 27.74009 },
+        center: { lat: 48.80582620218145, lng: 2.1164958494489383 }, //paris, versailles
         zoom: 8,
         gestureHandling: "cooperative",
         mapTypeId: window.google.maps.MapTypeId.TERRAIN
@@ -101,34 +140,38 @@ class Map extends React.Component {
     // };
 
     /** dyniamic based on zoom level roughly 25% of map width/height  **/
-    const zoomBounds = window.map.getBounds().toJSON();
-    const northSouth = (zoomBounds.north - zoomBounds.south) / 5;
-    const eastWest = (zoomBounds.east - zoomBounds.west) / 5;
-
-    const boundsDynamic = {
-      north: centerXY.lat + northSouth,
-      south: centerXY.lat - northSouth,
-      east: centerXY.lng + eastWest,
-      west: centerXY.lng - eastWest
-    };
-
-    //if there is a polygon /or a marker on the screen remove it
-    this.removePolygon();
-    this.removeMarker();
-    // Define a rectangle and set its editable property to true.
-    this.rectangle = new window.google.maps.Rectangle({
-      bounds: boundsDynamic,
-      editable: true,
-      draggable: true
-    });
-    this.rectangle.setMap(window.map);
-    this.props.setSelectionMarker(null);
-    this.props.setBounds(boundsDynamic);
-    this.rectangle.addListener("bounds_changed", () =>
-      this.props.setBounds(this.rectangle.bounds.toJSON())
-    );
-    this.setState({ polygon: this.rectangle });
-    window.polygon = this.rectangle;
+    if (this.state.boundingBox) {
+      this.removePolygon();
+      this.props.setBounds(null);
+      // this.setState({ polygon: null });
+    } else {
+      const zoomBounds = window.map.getBounds().toJSON();
+      const northSouth = (zoomBounds.north - zoomBounds.south) / 5;
+      const eastWest = (zoomBounds.east - zoomBounds.west) / 5;
+      const boundsDynamic = {
+        north: centerXY.lat + northSouth,
+        south: centerXY.lat - northSouth,
+        east: centerXY.lng + eastWest,
+        west: centerXY.lng - eastWest
+      };
+      //if there is a polygon /or a marker on the screen remove it
+      this.removePolygon();
+      this.removeMarker();
+      // Define a rectangle and set its editable property to true.
+      this.rectangle = new window.google.maps.Rectangle({
+        bounds: boundsDynamic,
+        editable: true,
+        draggable: true
+      });
+      this.rectangle.setMap(window.map);
+      this.props.getRadiusMarkerCoordinates(null);
+      this.props.setBounds(boundsDynamic);
+      this.rectangle.addListener("bounds_changed", () =>
+        this.props.setBounds(this.rectangle.bounds.toJSON())
+      );
+      this.setState({ boundingBox: this.rectangle });
+      window.polygon = this.rectangle;
+    }
   };
 
   removeMarker = () => {
@@ -139,29 +182,35 @@ class Map extends React.Component {
   };
 
   removePolygon = () => {
-    if (this.state.polygon) {
-      this.state.polygon.setMap(null);
-      this.setState({ polygon: null });
+    if (this.state.boundingBox) {
+      this.state.boundingBox.setMap(null);
+      this.setState({ boundingBox: null });
     }
   };
 
-  addMarker = () => {
-    const centerXY = window.map.center.toJSON();
-    //if marker/polygon already exists remove it
-    this.removeMarker();
-    this.removePolygon();
+  addRadiusMarker = location => {
+    if (this.state.selectionMarker) {
+      this.removeMarker();
+      this.props.getRadiusMarkerCoordinates(null);
+    } else {
+      //if a specific location is passed as arg, place the marker at that coords. If no args are passed use center of map
+      const centerXY = location ? location : window.map.center.toJSON();
+      //if marker/polygon already exists remove it
+      this.removeMarker();
+      this.removePolygon();
 
-    let marker = new window.google.maps.Marker({
-      position: centerXY,
-      map: window.map,
-      title: "Test",
-      draggable: true,
-      animation: window.google.maps.Animation.DROP
-    });
-    this.setState({ selectionMarker: marker });
-    this.props.setBounds(null);
-    this.props.setSelectionMarker(marker.getPosition().toJSON());
-    window.marker = marker;
+      let marker = new window.google.maps.Marker({
+        position: centerXY,
+        map: window.map,
+        title: "Test",
+        draggable: true,
+        animation: window.google.maps.Animation.DROP
+      });
+      this.setState({ selectionMarker: marker });
+      this.props.setBounds(null);
+      this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON());
+      window.marker = marker;
+    }
   };
 
   pinPhotoMarkerOnMap = pin => {
@@ -203,18 +252,13 @@ class Map extends React.Component {
 
   render() {
     return (
-      <>
-        <button onClick={this.addPolygon}>ADD POLYGON</button>
-        <button onClick={this.addMarker}>ADD Marker</button>
-
-        <div
-          title="map"
-          role="application"
-          aria-label="Map with Landmarks and GeoTagged photos"
-          id="map-container"
-          style={mapStyle}
-        ></div>
-      </>
+      <div
+        title="map"
+        role="application"
+        aria-label="Map with Landmarks and GeoTagged photos"
+        id="map-container"
+        style={mapStyle}
+      ></div>
     );
   }
 }

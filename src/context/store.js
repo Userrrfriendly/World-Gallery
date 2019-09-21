@@ -7,7 +7,7 @@ import DispatchContext from "./dispatchContext";
 export default function Store(props) {
   const initialState = {
     boundingBox: null,
-    selectionMarker: null
+    radiusMarker: null
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

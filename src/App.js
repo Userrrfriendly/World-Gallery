@@ -3,26 +3,27 @@ import * as FlikrApi from "./requests/flikr";
 import MapWrapper from "./components/map/mapContainer";
 import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
-import { SET_BOUNDING_BOX, SET_SELECTION_MARKER } from "./context/rootReducer";
+import { SET_BOUNDING_BOX, SET_RADIUS_MARKER } from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
 import ImageGrid from "./components/imageGrid/imageGrid";
+import AppControls from "./components/controls/controls";
 
 function App() {
   const state = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
-  const [mapVisible, setMapVisible] = useState(false);
+  //user location that will be fetched on page load with geoip-db, used only when the map loads to add initial radius marker
+  const [userLocation, setUserLocation] = useState(null);
+  const [mapVisible, setMapVisible] = useState(true);
   const [resData, setResData] = useState(false);
-  // const [urls, setUrls] = useState(false);
 
   //explicitly hide appbar if the lightbox is open
   const [appBarHide, setAppBarHide] = useState(false);
 
-  /**MOVE TO REDUCER? */
+  /**make this about photos */
   const [addMarker, setAddMarker] = useState(false);
   const disableAddMarker = () => setAddMarker(false);
-
   const pinPhotoOnMap = pin => {
     const { position, thumbnail, title, id } = pin;
     setAddMarker({
@@ -32,6 +33,21 @@ function App() {
       id
     });
   };
+  /**
+   * triggerPlotRadiusMarkerOnMap allows calling methods from anywhere inside mapContainer
+   */
+  const [
+    triggerPlotRadiusMarkerOnMap,
+    setTtriggerPlotRadiusMarkerOnMap
+  ] = useState(false);
+  const pinRadiusMarkerOnMap = () => {
+    setTtriggerPlotRadiusMarkerOnMap(true);
+  };
+  const disableRadiusTrigger = () => setTtriggerPlotRadiusMarkerOnMap(false);
+  /**Bounds */
+  const [triggerBoundingBox, setTriggerBoundingBox] = useState(false);
+  const pinBoundingBoxOnMap = () => setTriggerBoundingBox(true);
+  const disableBoundingBoxTrigger = () => setTriggerBoundingBox(false);
 
   const toggleMap = () => {
     const prevState = mapVisible;
@@ -41,38 +57,51 @@ function App() {
   const searchFlikr = () => {
     console.log("fetching...");
     let searchParams;
-    //= state.boundingBox ? state.boundingBox : state.selectionMarker;
     if (state.boundingBox) {
       searchParams = { ...state.boundingBox, type: "boundingBox" };
-    } else if (state.selectionMarker) {
-      searchParams = { ...state.selectionMarker, type: "marker" };
+    } else if (state.radiusMarker) {
+      searchParams = { ...state.radiusMarker, type: "marker" };
     } else {
-      //should handle error
-      //default to search by text for now
       searchParams = {
-        ...state.selectionMarker,
+        ...state.radiusMarker,
         search: "Search String goes here"
       };
     }
+    console.log(searchParams);
     FlikrApi.getPhotosByTitle(searchParams).then(res => {
       setResData(res);
     });
-    // .then(() => {
-    //   window.URLS = FlikrApi.flickrUrlConstructor(resData);
-    // })
-    // .then(() => console.log(urls));
   };
 
-  // useEffect(() => {
-  //   if (resData) {
-  //     setUrls(FlikrApi.flickrUrlConstructor(resData));
-  //     // window.URLS = urls;
-  //   }
-  // }, [resData]);
-
   useEffect(() => {
+    //debugging only
     console.log(state);
   }, [state]);
+
+  useEffect(() => {
+    //fetch user location when app mounts
+    fetch("https://geoip-db.com/json/42e6a770-b3ac-11e9-80ca-c95181800da7")
+      .then(res => res.json())
+      .then(position => {
+        console.log({ lat: position.latitude, lng: position.longitude });
+        setUserLocation({ lat: position.latitude, lng: position.longitude });
+      })
+      .catch(err => {
+        //if geoip-db call fails or if it is blocked by an add-blocker use native geolocation API for user position
+        console.log(err);
+        const success = position => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        };
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(success, err =>
+            console.log(err)
+          );
+        }
+      });
+  }, []);
 
   const setBounds = bounds => {
     dispatch({
@@ -81,10 +110,10 @@ function App() {
     });
   };
 
-  const setSelectionMarker = marker => {
+  const getRadiusMarkerCoordinates = marker => {
     dispatch({
-      type: SET_SELECTION_MARKER,
-      selectionMarker: marker
+      type: SET_RADIUS_MARKER,
+      radiusMarker: marker
     });
   };
 
@@ -95,31 +124,27 @@ function App() {
         searchFlikr={searchFlikr}
         appBarHide={appBarHide}
       >
-        {/* <button onClick={searchFlikr}>FLIKR</button> */}
-        {/* <header className="App-header"> */}
-        {/* <button onClick={toggleMap}> Toggle Map</button> */}
-        {/* <button onClick={searchFlikr}>Search Flikr</button> */}
-        {/* <button onClick={setAppBarHide}>TOGGLE APPBAR</button> */}
-        {/* </header> */}
+        <AppControls
+          pinRadiusMarkerOnMap={pinRadiusMarkerOnMap}
+          pinBoundingBoxOnMap={pinBoundingBoxOnMap}
+          searchFlikr={searchFlikr}
+        />
         {mapVisible && (
           <MapWrapper
+            state={state}
+            userLocation={userLocation}
             setBounds={setBounds}
-            setSelectionMarker={setSelectionMarker}
+            getRadiusMarkerCoordinates={getRadiusMarkerCoordinates}
             addMarker={addMarker}
             disableAddMarker={disableAddMarker}
+            // radius marker
+            triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
+            disableRadiusTrigger={disableRadiusTrigger}
+            //boundingBox Trigger
+            triggerBoundingBox={triggerBoundingBox}
+            disableBoundingBoxTrigger={disableBoundingBoxTrigger}
           />
         )}
-        {/* {urls &&
-        urls.default.map(url => (
-          <Card
-            src={url[0]}
-            key={url[1]}
-            photoId={url[1]}
-            imgTitle={url[2]}
-            user={url[3]}
-            pinPhotoOnMap={pinPhotoOnMap}
-          />
-        ))} */}
 
         {resData && (
           <ImageGrid

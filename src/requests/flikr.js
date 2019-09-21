@@ -40,13 +40,14 @@ export const getPhotosByTitle = searchParams => {
     url.append("lon", searchParams.lng);
   }
   url.append("has_geo", "1");
-  url.append("radius", "1"); //1 to 31 km?
+  url.append("radius", "3"); //1 to 31 km?
   url.append("radius_units", "km");
   url.append("per_page", "50");
   url.append("format", "json");
   url.append("nojsoncallback", "1");
   url.append("extras", "url_m,url_c,url_l,url_h,url_o");
-
+  // url.append("content_type", "6"); //6 returns 'photos' and 'other' (filters out screenshots) not worth it
+  // url.append("geo_context", "2"); in theory returns photos that are taken outdoors in practice doesnt do anything
   let arrayOfPhotos = fetch("https://api.flickr.com/services/rest/?" + url)
     .then(res => {
       console.log(url);

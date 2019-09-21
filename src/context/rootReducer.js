@@ -1,12 +1,12 @@
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
-export const SET_SELECTION_MARKER = "SET_SELECTION_MARKER";
+export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 
 const setBoundingBox = (action, state) => {
   return { ...state, boundingBox: action.boundingBox };
 };
 
-const selectionMarker = (action, state) => {
-  return { ...state, selectionMarker: action.selectionMarker };
+const setRadiusMarker = (action, state) => {
+  return { ...state, radiusMarker: action.radiusMarker };
 };
 
 export const rootReducer = (state, action) => {
@@ -14,9 +14,9 @@ export const rootReducer = (state, action) => {
     case SET_BOUNDING_BOX:
       console.log(action.type);
       return setBoundingBox(action, state);
-    case SET_SELECTION_MARKER:
+    case SET_RADIUS_MARKER:
       console.log(action.type);
-      return selectionMarker(action, state);
+      return setRadiusMarker(action, state);
 
     default:
       return state;

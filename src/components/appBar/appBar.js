@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
 
 function HideOnScroll(props) {
   const trigger = useScrollTrigger();
-  console.log(trigger);
   return (
     <Slide
       appear={false}
@@ -85,7 +84,6 @@ export default function HideAppBar(props) {
             <div className={classes.icons_container}>
               <Tooltip title="Search Photos" aria-label="Search Photos">
                 <IconButton
-                  edge="end"
                   color="inherit"
                   aria-label="search photos"
                   onClick={props.searchFlikr}
@@ -95,7 +93,6 @@ export default function HideAppBar(props) {
               </Tooltip>
               <Tooltip title="Toggle Map" aria-label="Toggle Map">
                 <IconButton
-                  edge="end"
                   color="inherit"
                   aria-label="toggle map"
                   onClick={props.toggleMap}
