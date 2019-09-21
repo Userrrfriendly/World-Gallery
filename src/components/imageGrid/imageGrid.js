@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import Gallery from "react-photo-gallery";
 import ImageWrapper from "../imageWrapper/imageWrapper";
 import Carousel, { Modal, ModalGateway } from "react-images";
-import { makeStyles, IconButton } from "@material-ui/core";
+import { makeStyles, IconButton, Typography } from "@material-ui/core";
 import {
   Close,
   Fullscreen,
@@ -52,7 +52,6 @@ const navButtonStyles = base => ({
 
 const CustomHeader = props => {
   //most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery
-  // console.log(props);
   const classes = useStyles();
   const handlePinOnMapClick = id => {
     getPhotoGeoLocation(id).then(res => {
@@ -108,14 +107,14 @@ const CustomHeader = props => {
 
 const ImageGrid = ({
   photos,
-  title,
+  // title,
+  responseDetails,
   direction,
   pinPhotoOnMap,
   setAppBarHide
 }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
-
   const openLightbox = useCallback(
     (event, { photo, index }) => {
       setAppBarHide(true);
@@ -156,16 +155,30 @@ const ImageGrid = ({
 
   return (
     <div>
-      <h2>{title}</h2>
-      <Gallery
-        photos={photos}
-        direction={direction}
-        renderImage={imageRenderer}
-        onClick={openLightbox}
-        //the above onClick is an optional react-photo-gallery prop
-        //It receives the arguments -> event and an object containing the index,
-        //Photos obj originally sent and the next and previous photos in the gallery if they exist
-      />
+      <Typography variant="h3" style={{ marginTop: "1rem" }}>
+        Results:
+      </Typography>
+      <Typography variant="subtitle1" component="h2" gutterBottom>
+        {photos.length === 0
+          ? `Sorry could not find any photos in that particular area`
+          : `Displaying ${photos.length} of ${responseDetails.totalPhotos} the photos found...`}
+      </Typography>
+      {/* <h3>
+        {photos.length === 0
+          ? "Sorry could not find any photos in flikr"
+          : `Displaying ${responseDetails.perPage} of ${responseDetails.totalPhotos} the photos found...`}
+      </h3> */}
+      {photos.length > 0 && (
+        <Gallery
+          photos={photos}
+          direction={direction}
+          renderImage={imageRenderer}
+          onClick={openLightbox}
+          //the above onClick is an optional react-photo-gallery prop
+          //It receives the arguments -> event and an object containing the index,
+          //Photos obj originally sent and the next and previous photos in the gallery if they exist
+        />
+      )}
       <ModalGateway>
         {viewerIsOpen ? (
           <Modal onClose={closeLightbox}>

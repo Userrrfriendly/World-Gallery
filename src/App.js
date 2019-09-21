@@ -16,23 +16,25 @@ function App() {
   //user location that will be fetched on page load with geoip-db, used only when the map loads to add initial radius marker
   const [userLocation, setUserLocation] = useState(null);
   const [mapVisible, setMapVisible] = useState(true);
-  const [resData, setResData] = useState(false);
+  const [photos, setPhotos] = useState(false);
+  const [responseDetails, setResponseDetails] = useState(null);
 
   //explicitly hide appbar if the lightbox is open
   const [appBarHide, setAppBarHide] = useState(false);
 
-  /**make this about photos */
-  const [addMarker, setAddMarker] = useState(false);
-  const disableAddMarker = () => setAddMarker(false);
+  /** Triggers plot photo on map  */
+  const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
+  const disableTriggerPhotoMarker = () => setTriggerPhotoMarker(false);
   const pinPhotoOnMap = pin => {
     const { position, thumbnail, title, id } = pin;
-    setAddMarker({
+    setTriggerPhotoMarker({
       position: position,
       thumbnail: thumbnail,
       title: title,
       id
     });
   };
+
   /**
    * triggerPlotRadiusMarkerOnMap allows calling methods from anywhere inside mapContainer
    */
@@ -68,8 +70,14 @@ function App() {
       };
     }
     console.log(searchParams);
-    FlikrApi.getPhotosByTitle(searchParams).then(res => {
-      setResData(res);
+    FlikrApi.getPhotosByTitle(searchParams).then(data => {
+      setResponseDetails({
+        currentPage: data.currentPage,
+        totalPages: data.totalPages,
+        totalPhotos: data.totalPhotos,
+        perPage: data.perPage
+      });
+      setPhotos(data.photos);
     });
   };
 
@@ -135,8 +143,9 @@ function App() {
             userLocation={userLocation}
             setBounds={setBounds}
             getRadiusMarkerCoordinates={getRadiusMarkerCoordinates}
-            addMarker={addMarker}
-            disableAddMarker={disableAddMarker}
+            //photoMarker
+            triggerPhotoMarker={triggerPhotoMarker}
+            disableTriggerPhotoMarker={disableTriggerPhotoMarker}
             // radius marker
             triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
             disableRadiusTrigger={disableRadiusTrigger}
@@ -146,10 +155,11 @@ function App() {
           />
         )}
 
-        {resData && (
+        {photos && (
           <ImageGrid
-            photos={resData}
-            title="Results"
+            photos={photos}
+            // title="Results"
+            responseDetails={responseDetails}
             pinPhotoOnMap={pinPhotoOnMap}
             direction={"column"}
             columns={2}

@@ -60,15 +60,10 @@ class Map extends React.Component {
       const stopTimer = () => clearInterval(timer);
     }
 
-    //this is for photos
-    // if (this.props.setRadiusMarker) {
-    //   this.pinPhotoMarkerOnMap(this.props.setRadiusMarker);
-    //   this.props.disableAddMarker();
-    // }
-    // if (this.props.setRadiusMarker) {
-    //   this.addRadiusMarker();
-    //   this.props.disableAddMarker(this.props.setRadiusMarker);
-    // }
+    if (this.props.triggerPhotoMarker) {
+      this.pinPhotoMarkerOnMap(this.props.triggerPhotoMarker);
+      this.props.disableTriggerPhotoMarker();
+    }
 
     if (this.props.triggerPlotRadiusMarkerOnMap) {
       this.addRadiusMarker();
@@ -206,6 +201,9 @@ class Map extends React.Component {
         draggable: true,
         animation: window.google.maps.Animation.DROP
       });
+      marker.addListener("dragend", () =>
+        this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON())
+      );
       this.setState({ selectionMarker: marker });
       this.props.setBounds(null);
       this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON());
