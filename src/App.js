@@ -52,6 +52,10 @@ function App() {
   const [photos, setPhotos] = useState(false);
   const [responseDetails, setResponseDetails] = useState(null);
 
+  const [gridDirection, setGridDirection] = useState("row");
+  const toggleGridDirection = () => {
+    setGridDirection(gridDirection === "row" ? "column" : "row");
+  };
   /**explicitly hide appbar if the lightbox is open */
   const [appBarHide, setAppBarHide] = useState(false);
 
@@ -207,6 +211,8 @@ function App() {
           pinRadiusMarkerOnMap={pinRadiusMarkerOnMap}
           pinBoundingBoxOnMap={pinBoundingBoxOnMap}
           searchFlikr={searchFlikr}
+          gridDirection={gridDirection}
+          toggleGridDirection={toggleGridDirection}
         />
         {mapVisible && (
           <MapWrapper
@@ -232,7 +238,7 @@ function App() {
             // title="Results"
             responseDetails={responseDetails}
             pinPhotoOnMap={pinPhotoOnMap}
-            direction={"column"}
+            direction={gridDirection}
             columns={2}
             setAppBarHide={setAppBarHide}
           />

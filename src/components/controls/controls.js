@@ -1,7 +1,11 @@
 import React from "react";
 
 import { Button, useMediaQuery, makeStyles } from "@material-ui/core";
-import { ImageSearchRounded } from "@material-ui/icons";
+import {
+  ImageSearchRounded,
+  ViewStream as Rows,
+  ViewWeek as Columns
+} from "@material-ui/icons";
 import SplitButton from "./SplitBtn";
 
 const useStyles = makeStyles(theme => ({
@@ -44,6 +48,26 @@ const AppControls = props => {
       >
         <ImageSearchRounded className={classes.control_icon} />
         Search Photos
+      </Button>
+
+      <Button
+        variant="contained"
+        color="primary"
+        size={!smallScreen ? "small" : "medium"}
+        onClick={props.toggleGridDirection}
+        className={smallScreen ? classes.controls_mobile : classes.controls}
+      >
+        {props.gridDirection === "column" ? (
+          <>
+            <Rows className={classes.control_icon} />
+            Switch layout to Rows
+          </>
+        ) : (
+          <>
+            <Columns className={classes.control_icon} />
+            Switch layout to Columns
+          </>
+        )}
       </Button>
     </div>
   );
