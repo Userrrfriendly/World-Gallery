@@ -163,11 +163,7 @@ const ImageGrid = ({
           ? `Sorry could not find any photos in that particular area`
           : `Displaying ${photos.length} of ${responseDetails.totalPhotos} the photos found...`}
       </Typography>
-      {/* <h3>
-        {photos.length === 0
-          ? "Sorry could not find any photos in flikr"
-          : `Displaying ${responseDetails.perPage} of ${responseDetails.totalPhotos} the photos found...`}
-      </h3> */}
+
       {photos.length > 0 && (
         <Gallery
           photos={photos}

@@ -4,6 +4,9 @@ export const getPhotosByTitle = searchParams => {
     the photos returned will be within a 31km radius from the markers position
     the func returns an array of photos details (id,farm,server etc)
   */
+  console.log(searchParams);
+  //will be appended to response
+  let query;
 
   const boringSearch = [
     "cat",
@@ -24,71 +27,77 @@ export const getPhotosByTitle = searchParams => {
   const rngSearch =
     boringSearch[Math.floor(Math.random() * boringSearch.length)];
   //later replace boringSearch with searchParams.search
+
   let url = new URLSearchParams();
   url.append("method", "flickr.photos.search");
   url.append("api_key", "f6536bb373bca1fcd14d4da1281f2839");
-  // url.append('tags', marker.title); //text produces broader results than tags
+  // url.append('tags', marker.title); //text produces broader results than tags leave it for now may implement later
   if (searchParams.search) url.append("text", rngSearch);
   if (searchParams.type === "boundingBox") {
-    // const { south, west, north, east } = searchParams.bounds.toJSON();
     const { south, west, north, east } = searchParams;
+    query = { type: "boundingBox", south, west, north, east };
     url.append("bbox", `${west},${south},${east},${north}`);
   }
-  console.log(searchParams);
-  if (searchParams.type === "marker") {
+  if (searchParams.type === "radiusMarker") {
+    query = {
+      type: "radiusMarker",
+      lat: searchParams.lat,
+      lng: searchParams.lng
+    };
     url.append("lat", searchParams.lat);
     url.append("lon", searchParams.lng);
   }
   url.append("has_geo", "1");
-  url.append("radius", "3"); //1 to 31 km?
+  url.append("radius", "3"); //1 to 31 km
   url.append("radius_units", "km");
-  url.append("per_page", "50");
+  url.append("per_page", "250");
   url.append("format", "json");
   url.append("nojsoncallback", "1");
   url.append("extras", "url_m,url_c,url_l,url_h,url_o");
-  // url.append("content_type", "6"); //6 returns 'photos' and 'other' (filters out screenshots) not worth it
-  // url.append("geo_context", "2"); in theory returns photos that are taken outdoors in practice doesnt do anything
+  if (searchParams.page) url.append("page", searchParams.page);
+
   let arrayOfPhotos = fetch("https://api.flickr.com/services/rest/?" + url)
     .then(res => {
       console.log(url);
       return res.json().then(json => {
         console.log(json);
-        const test = {
-          ...json.photos,
-          photo: json.photos.photo.map(img => {
-            return {
-              ...img,
-              width_c: parseInt(img.width_c),
-              width_h: parseInt(img.width_h),
-              width_l: parseInt(img.width_l),
-              width_m: parseInt(img.width_m),
-              height_c: parseInt(img.height_c),
-              height_h: parseInt(img.height_h),
-              height_l: parseInt(img.height_l),
-              height_m: parseInt(img.height_m),
-              src: img.url_m, //flickr doesn't guarantee all sizes but medium will always be there
-              height: parseInt(img.height_m),
-              width: parseInt(img.width_m),
-              title: img.title,
-              alt: img.title,
-              key: img.id,
-              srcSet: [
-                `${img.url_m} ${img.width_m}w`,
-                `${img.url_c} ${img.width_c}w`,
-                `${img.url_l} ${img.width_l}w`,
-                `${img.url_h} ${img.width_h}w`
-              ],
-              sizes:
-                "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
-            };
-          })
-        };
-        console.log(test);
+        // const test = {
+        //   ...json.photos,
+        //   photo: json.photos.photo.map(img => {
+        //     return {
+        //       ...img,
+        //       width_c: parseInt(img.width_c),
+        //       width_h: parseInt(img.width_h),
+        //       width_l: parseInt(img.width_l),
+        //       width_m: parseInt(img.width_m),
+        //       height_c: parseInt(img.height_c),
+        //       height_h: parseInt(img.height_h),
+        //       height_l: parseInt(img.height_l),
+        //       height_m: parseInt(img.height_m),
+        //       src: img.url_m, //flickr doesn't guarantee all sizes but medium will always be there
+        //       height: parseInt(img.height_m),
+        //       width: parseInt(img.width_m),
+        //       title: img.title,
+        //       alt: img.title,
+        //       key: img.id,
+        //       srcSet: [
+        //         `${img.url_m} ${img.width_m}w`,
+        //         `${img.url_c} ${img.width_c}w`,
+        //         `${img.url_l} ${img.width_l}w`,
+        //         `${img.url_h} ${img.width_h}w`
+        //       ],
+        //       sizes:
+        //         "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
+        //     };
+        //   })
+        // };
+        // console.log(test);
         return {
           currentPage: json.photos.page,
           totalPages: json.photos.pages,
           totalPhotos: json.photos.total,
           perPage: json.photos.perpage,
+          query,
           photos: json.photos.photo.map(img => {
             return {
               // ...img,
@@ -97,13 +106,26 @@ export const getPhotosByTitle = searchParams => {
               width_h: img.width_h ? parseInt(img.width_h) : "",
               width_l: img.width_l ? parseInt(img.width_l) : "",
               width_m: img.width_m ? parseInt(img.width_m) : "",
+              width_o: img.width_o ? parseInt(img.width_o) : "",
               height_c: img.height_c ? parseInt(img.height_c) : "",
               height_h: img.height_h ? parseInt(img.height_h) : "",
               height_l: img.height_l ? parseInt(img.height_l) : "",
               height_m: img.height_m ? parseInt(img.height_m) : "",
-              height: img.height_m ? parseInt(img.height_m) : "",
-              width: img.width_m ? parseInt(img.width_m) : "",
-              src: img.url_l ? img.url_l : img.url_m,
+              height_o: img.height_o ? parseInt(img.height_o) : "",
+              /* since you cant predict in what size will the photo be availiable:
+              if medium size is availiable use it if not get the original size
+              as fallback give the image 100px width and height */
+              height: img.height_m
+                ? parseInt(img.height_m)
+                : img.height_o
+                ? parseInt(img.height_o)
+                : 100,
+              width: img.width_m
+                ? parseInt(img.width_m)
+                : img.width_o
+                ? parseInt(img.width_o)
+                : 100,
+              src: img.url_l ? img.url_l : img.url_m ? img.url_m : img.url_o,
               title: img.title,
               alt: img.title,
               key: img.id,
@@ -111,7 +133,8 @@ export const getPhotosByTitle = searchParams => {
                 img.url_m ? `${img.url_m} ${img.width_m}w` : "",
                 img.url_c ? `${img.url_c} ${img.width_c}w` : "",
                 img.url_l ? `${img.url_l} ${img.width_l}w` : "",
-                img.url_h ? `${img.url_h} ${img.width_h}w` : ""
+                img.url_h ? `${img.url_h} ${img.width_h}w` : "",
+                img.url_o ? `${img.url_o} ${img.width_o}w` : ""
               ],
               sizes:
                 "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
@@ -129,7 +152,8 @@ export const getPhotosByTitle = searchParams => {
 };
 
 export const flickrUrlConstructor = array => {
-  /*This takes the array of photo information from the getPhotosByTitle() and transforms each photo to a straightforward url*/
+  /* This takes the array of photo information from the getPhotosByTitle() 
+  and transforms each photo to a straightforward url*/
 
   let urlArr = {
     default: [],

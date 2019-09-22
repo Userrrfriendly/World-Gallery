@@ -1,15 +1,21 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
-import Box from "@material-ui/core/Box";
-import Slide from "@material-ui/core/Slide";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { Zoom, Fab, IconButton, Tooltip } from "@material-ui/core";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  CssBaseline,
+  useScrollTrigger,
+  Box,
+  Slide,
+  useMediaQuery,
+  Zoom,
+  Fab,
+  IconButton,
+  Tooltip,
+  makeStyles
+} from "@material-ui/core/";
 import { KeyboardArrowUp, Map, ImageSearchRounded } from "@material-ui/icons/";
-import { makeStyles } from "@material-ui/core/styles";
+import Logo from "../../assets/logo";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,7 +40,7 @@ function HideOnScroll(props) {
     <Slide
       appear={false}
       direction="down"
-      //if appBarHide is true hide the appbar otherwise leave useScrollTrigger to deal with it
+      /* if appBarHide is true hide the appbar otherwise leave useScrollTrigger to deal with it */
       in={props.appBarHide ? false : !trigger}
     >
       {props.children}
@@ -79,7 +85,14 @@ export default function HideAppBar(props) {
       <HideOnScroll appBarHide={props.appBarHide} {...props}>
         <AppBar>
           <Toolbar>
-            <Typography variant="h6">Flickr GeoExplorer</Typography>
+            <Logo
+              style={{ width: "40px", marginRight: "0.75rem", fill: "white" }}
+              aria-label="Flickr"
+            />
+            <Typography variant="h6">
+              <span style={{ color: "#dedee6" }}>Geo</span>
+              <span style={{ color: "#ffc1d5" }}>Explorer</span>
+            </Typography>
             <div className={classes.grow} />
             <div className={classes.icons_container}>
               <Tooltip title="Search Photos" aria-label="Search Photos">

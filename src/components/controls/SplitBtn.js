@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const options = ["Bounding Box", "Radius"];
+const options = ["Radius", "Bounding Box"];
 
 export default function SplitBtn(props) {
   const state = useContext(StateContext);
@@ -77,31 +77,31 @@ export default function SplitBtn(props) {
           variant="contained"
           size={!smallScreen ? "small" : "medium"}
           onClick={
-            selectedIndex === 0
+            selectedIndex === 1
               ? props.pinBoundingBoxOnMap
               : props.pinRadiusMarkerOnMap
           }
         >
-          {selectedIndex === 0 && state.boundingBox && (
+          {selectedIndex === 1 && state.boundingBox && (
             <>
               <CancelPresentation className={classes.btn_icons} />
               {"Remove BoundingBox"}
             </>
           )}
-          {selectedIndex === 0 && !state.boundingBox && (
+          {selectedIndex === 1 && !state.boundingBox && (
             <>
               <Crop54 className={classes.btn_icons} />
               {"Add " + options[selectedIndex]}
             </>
           )}
 
-          {selectedIndex === 1 && state.radiusMarker && (
+          {selectedIndex === 0 && state.radiusMarker && (
             <>
               <LocationDisabled className={classes.btn_icons} />
               {"Remove Radius"}
             </>
           )}
-          {selectedIndex === 1 && !state.radiusMarker && (
+          {selectedIndex === 0 && !state.radiusMarker && (
             <>
               <LocationSearching className={classes.btn_icons} />
               {"Add " + options[selectedIndex]}
