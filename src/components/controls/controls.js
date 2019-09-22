@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Button, useMediaQuery, makeStyles } from "@material-ui/core";
+import { Button, useMediaQuery, makeStyles, Paper } from "@material-ui/core";
 import {
   ImageSearchRounded,
   ViewStream as Rows,
@@ -10,11 +10,10 @@ import SplitButton from "./SplitBtn";
 
 const useStyles = makeStyles(theme => ({
   controls_panel: {
-    border: "1px solid #999",
-    padding: "5px",
     textAlign: "center",
-    lineHeight: "30px",
-    backgroundColor: "#fff"
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
   controls: {
     color: "#fff",
@@ -33,7 +32,7 @@ const AppControls = props => {
   const classes = useStyles();
 
   return (
-    <div className={classes.controls_panel}>
+    <Paper className={classes.controls_panel}>
       <SplitButton
         pinBoundingBoxOnMap={props.pinBoundingBoxOnMap}
         pinRadiusMarkerOnMap={props.pinRadiusMarkerOnMap}
@@ -69,7 +68,7 @@ const AppControls = props => {
           </>
         )}
       </Button>
-    </div>
+    </Paper>
   );
 };
 
