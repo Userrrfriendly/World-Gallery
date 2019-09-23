@@ -48,7 +48,7 @@ export const getPhotosByTitle = searchParams => {
     url.append("lon", searchParams.lng);
   }
   url.append("has_geo", "1");
-  url.append("radius", "3"); //1 to 31 km
+  url.append("radius", "5"); //1 to 31 km
   url.append("radius_units", "km");
   url.append("per_page", "100"); //250max for photos with geolocation
   url.append("format", "json");

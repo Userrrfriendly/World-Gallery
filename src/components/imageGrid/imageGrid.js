@@ -115,6 +115,7 @@ const ImageGrid = ({
 }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
+
   const openLightbox = useCallback(
     (event, { photo, index }) => {
       setAppBarHide(true);
@@ -155,7 +156,7 @@ const ImageGrid = ({
 
   return (
     <div>
-      <Typography variant="h3" style={{ marginTop: "1rem" }}>
+      <Typography variant="h3" component="h1" style={{ marginTop: "1rem" }}>
         Results:
       </Typography>
       <Typography variant="subtitle1" component="h2" gutterBottom>
@@ -163,7 +164,6 @@ const ImageGrid = ({
           ? `Sorry could not find any photos in that particular area`
           : `Displaying ${photos.length} of ${responseDetails.totalPhotos} the photos found...`}
       </Typography>
-
       {photos.length > 0 && (
         <Gallery
           photos={photos}

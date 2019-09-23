@@ -43,6 +43,8 @@ function App() {
   const state = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
+  const resultsRef = React.useRef(null);
+
   const [loadingPhotos, setLoadingPhotos] = useState(false);
 
   // const classes = useStyles(); //pagination
@@ -120,6 +122,17 @@ function App() {
           query: data.query
         });
         setPhotos(data.photos);
+
+        /* in this case scrollIntoView is not working correcty in crhome/safari so the following workaround was used:
+         *  When the response is loaded wait 30ms for the body to resize (while image gallery loads),
+         * then scroll to the results (an empty div right above the results was used in order to avoid forwardingrefs)         *
+         */
+        window.setTimeout(() => {
+          resultsRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }, 30);
       })
       .catch(error => {
         console.log(error);
@@ -250,6 +263,7 @@ function App() {
           />
         )}
 
+        <div ref={resultsRef}></div>
         {photos && (
           <ImageGrid
             photos={photos}
