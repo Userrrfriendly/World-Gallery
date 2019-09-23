@@ -7,13 +7,14 @@ import {
   ViewWeek as Columns
 } from "@material-ui/icons";
 import SplitButton from "./SplitBtn";
+import LoadingBar from "../LoadingBar/loadingBar";
 
 const useStyles = makeStyles(theme => ({
   controls_panel: {
-    textAlign: "center",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
+    textAlign: "center"
+    // display: "flex",
+    // alignItems: "center",
+    // justifyContent: "center"
   },
   controls: {
     color: "#fff",
@@ -32,43 +33,46 @@ const AppControls = props => {
   const classes = useStyles();
 
   return (
-    <Paper className={classes.controls_panel}>
-      <SplitButton
-        pinBoundingBoxOnMap={props.pinBoundingBoxOnMap}
-        pinRadiusMarkerOnMap={props.pinRadiusMarkerOnMap}
-      ></SplitButton>
+    <>
+      <Paper className={classes.controls_panel}>
+        <SplitButton
+          pinBoundingBoxOnMap={props.pinBoundingBoxOnMap}
+          pinRadiusMarkerOnMap={props.pinRadiusMarkerOnMap}
+        ></SplitButton>
 
-      <Button
-        variant="contained"
-        color="primary"
-        size={!smallScreen ? "small" : "medium"}
-        onClick={props.searchFlikr}
-        className={smallScreen ? classes.controls_mobile : classes.controls}
-      >
-        <ImageSearchRounded className={classes.control_icon} />
-        Search Photos
-      </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          size={!smallScreen ? "small" : "medium"}
+          onClick={props.searchFlikr}
+          className={smallScreen ? classes.controls_mobile : classes.controls}
+        >
+          <ImageSearchRounded className={classes.control_icon} />
+          Search Photos
+        </Button>
 
-      <Button
-        variant="contained"
-        color="primary"
-        size={!smallScreen ? "small" : "medium"}
-        onClick={props.toggleGridDirection}
-        className={smallScreen ? classes.controls_mobile : classes.controls}
-      >
-        {props.gridDirection === "column" ? (
-          <>
-            <Rows className={classes.control_icon} />
-            Switch layout to Rows
-          </>
-        ) : (
-          <>
-            <Columns className={classes.control_icon} />
-            Switch layout to Columns
-          </>
-        )}
-      </Button>
-    </Paper>
+        <Button
+          variant="contained"
+          color="primary"
+          size={!smallScreen ? "small" : "medium"}
+          onClick={props.toggleGridDirection}
+          className={smallScreen ? classes.controls_mobile : classes.controls}
+        >
+          {props.gridDirection === "column" ? (
+            <>
+              <Rows className={classes.control_icon} />
+              Switch layout to Rows
+            </>
+          ) : (
+            <>
+              <Columns className={classes.control_icon} />
+              Switch layout to Columns
+            </>
+          )}
+        </Button>
+      </Paper>
+      {props.loadingPhotos && <LoadingBar />}
+    </>
   );
 };
 

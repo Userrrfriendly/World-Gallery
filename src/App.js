@@ -12,6 +12,7 @@ import AppControls from "./components/controls/controls";
 // import { makeStyles } from "@material-ui/core"; //pagination
 
 import LoadMoreButton from "./components/controls/loadMoreBtn";
+import LoadingBar from "./components/LoadingBar/loadingBar";
 
 //pagination
 // const useStyles = makeStyles(theme => ({
@@ -41,6 +42,8 @@ import LoadMoreButton from "./components/controls/loadMoreBtn";
 function App() {
   const state = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+
+  const [loadingPhotos, setLoadingPhotos] = useState(false);
 
   // const classes = useStyles(); //pagination
   // const [offset, setOffset] = useState(0); //pagination
@@ -105,16 +108,23 @@ function App() {
       };
     }
 
-    FlikrApi.getPhotosByTitle(searchParams).then(data => {
-      setResponseDetails({
-        currentPage: data.currentPage,
-        totalPages: data.totalPages,
-        totalPhotos: data.totalPhotos,
-        perPage: data.perPage,
-        query: data.query
+    setLoadingPhotos(true);
+    FlikrApi.getPhotosByTitle(searchParams)
+      .then(data => {
+        setLoadingPhotos(false);
+        setResponseDetails({
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          totalPhotos: data.totalPhotos,
+          perPage: data.perPage,
+          query: data.query
+        });
+        setPhotos(data.photos);
+      })
+      .catch(error => {
+        console.log(error);
+        setLoadingPhotos(false);
       });
-      setPhotos(data.photos);
-    });
   };
 
   const fetchNextPage = () => {
@@ -130,18 +140,25 @@ function App() {
       searchParams.page = responseDetails.currentPage + 1;
     }
 
-    FlikrApi.getPhotosByTitle(searchParams).then(data => {
-      setResponseDetails({
-        currentPage: data.currentPage,
-        totalPages: data.totalPages,
-        totalPhotos: data.totalPhotos,
-        perPage: data.perPage,
-        query: data.query
+    setLoadingPhotos(true);
+
+    FlikrApi.getPhotosByTitle(searchParams)
+      .then(data => {
+        setLoadingPhotos(false);
+        setResponseDetails({
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          totalPhotos: data.totalPhotos,
+          perPage: data.perPage,
+          query: data.query
+        });
+        const updatedPhotos = photos.concat(data.photos);
+        console.log(updatedPhotos);
+        setPhotos(updatedPhotos);
+      })
+      .catch(error => {
+        setLoadingPhotos(false);
       });
-      const updatedPhotos = photos.concat(data.photos);
-      console.log(updatedPhotos);
-      setPhotos(updatedPhotos);
-    });
   };
 
   useEffect(() => {
@@ -213,6 +230,7 @@ function App() {
           searchFlikr={searchFlikr}
           gridDirection={gridDirection}
           toggleGridDirection={toggleGridDirection}
+          loadingPhotos={loadingPhotos}
         />
         {mapVisible && (
           <MapWrapper
@@ -256,7 +274,10 @@ function App() {
         /> */}
         {responseDetails &&
           responseDetails.currentPage < responseDetails.totalPages && (
-            <LoadMoreButton onClick={fetchNextPage} />
+            <>
+              {loadingPhotos && <LoadingBar />}
+              <LoadMoreButton onClick={fetchNextPage} />
+            </>
           )}
       </Appbar>
     </div>
