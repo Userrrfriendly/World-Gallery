@@ -63,12 +63,15 @@ function App() {
 
   const pinPhotoOnMap = React.useCallback(pin => {
     console.log("pinPhotoOnMAp");
-    const { position, thumbnail, title, id } = pin;
+    const { position, thumbnail, title, id, owner, thumbWidth } = pin;
     setTriggerPhotoMarker({
       position: position,
       thumbnail: thumbnail,
       title: title,
-      id
+      id,
+      owner,
+      thumbWidth
+      //src-screenset
     });
   }, []);
 

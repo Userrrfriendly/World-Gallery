@@ -59,12 +59,14 @@ const ImageWrapper = ({
 
   const handlePinOnMapClick = id => {
     getPhotoGeoLocation(id).then(res => {
-      // console.log(props.src);
+      // console.log(photo);
       const result = {
         position: res,
-        thumbnail: photo.src,
+        thumbnail: photo.thumb,
         title: photo.title,
-        id: photo.photoId
+        id: photo.photoId,
+        owner: photo.owner,
+        thumbWidth: photo.width_t
       };
       // console.log(result);
       // console.log(pinPhotoOnMap);

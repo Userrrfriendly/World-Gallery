@@ -55,11 +55,13 @@ const CustomHeader = props => {
   const classes = useStyles();
   const handlePinOnMapClick = id => {
     getPhotoGeoLocation(id).then(res => {
+      // console.log(props.data);
       const result = {
         position: res,
         thumbnail: props.data.src,
         title: props.data.title,
-        id: props.data.photoId
+        id: props.data.photoId,
+        thumbWidth: props.data.width_t
       };
       return props.carouselProps.pinPhotoOnMap(result);
     });

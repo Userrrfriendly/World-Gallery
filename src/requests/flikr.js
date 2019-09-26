@@ -35,7 +35,7 @@ export const getPhotosByTitle = searchParams => {
   url.append("per_page", "100"); //250max for photos with geolocation
   url.append("format", "json");
   url.append("nojsoncallback", "1");
-  url.append("extras", "url_m,url_c,url_l,url_h,url_o");
+  url.append("extras", "url_t,url_m,url_c,url_l,url_h,url_o");
   if (searchParams.page) url.append("page", searchParams.page);
 
   let arrayOfPhotos = fetch("https://api.flickr.com/services/rest/?" + url)
@@ -84,6 +84,7 @@ export const getPhotosByTitle = searchParams => {
             return {
               // ...img,
               photoId: img.id,
+              width_t: img.width_t ? parseInt(img.width_t) : "",
               width_c: img.width_c ? parseInt(img.width_c) : "",
               width_h: img.width_h ? parseInt(img.width_h) : "",
               width_l: img.width_l ? parseInt(img.width_l) : "",
@@ -111,6 +112,8 @@ export const getPhotosByTitle = searchParams => {
               title: img.title,
               alt: img.title,
               key: img.id,
+              owner: img.owner,
+              thumb: img.url_t,
               srcSet: [
                 img.url_m ? `${img.url_m} ${img.width_m}w` : "",
                 img.url_c ? `${img.url_c} ${img.width_c}w` : "",

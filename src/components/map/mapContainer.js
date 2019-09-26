@@ -1,6 +1,33 @@
 import React from "react";
 import PhotoMarker_20 from "../../assets/PhotoMarker_20.svg";
 
+const infoWindowContents = data => {
+  return `
+  <h1 style="font-size:1rem;text-align:center;"> ${
+    data.title ? data.title : "untitled photo"
+  } </h1>
+  <img title="${
+    data.title ? data.title : "untitled photo"
+  }" style="margin: 0 auto;display: block;cursor:pointer;" 
+    src=${data.thumbnail} alt="${data.title}">
+  <a 
+    title="open photo in flickr"
+    style="background-color: #3f51b5;
+    width: ${data.thumbWidth}px;
+    color: white;
+    padding: 4px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    margin: 0 auto 0.5rem ;
+    display: block;" 
+    href=https://www.flickr.com/photos/${data.owner}/${data.id}
+    target="_blank">View in flickr
+  </a>
+  `;
+};
+
 /*When the Map component mounts the following happen:
  * the google maps callback is 'tied' to the window obj (componentDidMount())
  * a script with the google maps api is created and inserted at the bottom of the body (createGoogleApiScript)
@@ -232,6 +259,7 @@ class Map extends React.Component {
   };
 
   pinPhotoMarkerOnMap = pin => {
+    console.log(pin);
     const customMarker = {
       url: PhotoMarker_20,
       scale: 0.1
@@ -255,7 +283,9 @@ class Map extends React.Component {
 
     marker.addListener("click", function() {
       window.map.panTo(this.getPosition());
-      window.largeInfowindow.setContent("test");
+      // window.largeInfowindow.setContent("test");
+      window.largeInfowindow.setContent(infoWindowContents(pin));
+
       // window.map.setZoom(14);
       // window.map.openInfoWindow(marker, window.largeInfowindow);
       window.largeInfowindow.open(window.map, marker);
@@ -327,9 +357,8 @@ class Map extends React.Component {
   render() {
     return (
       <div
-        title="map"
         role="application"
-        aria-label="Map with Landmarks and GeoTagged photos"
+        aria-label="Map"
         id="map-container"
         style={mapStyle}
       ></div>
