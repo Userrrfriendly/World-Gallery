@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
     bottom: theme.spacing(2),
     right: theme.spacing(2)
   },
-
   grow: {
     flexGrow: 1,
     color: "red",
@@ -31,6 +30,11 @@ const useStyles = makeStyles(theme => ({
   },
   icons_container: {
     display: "flex"
+  },
+  logo_container: {
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center"
   }
 }));
 
@@ -79,20 +83,31 @@ export default function HideAppBar(props) {
   const matches = useMediaQuery("(min-width:1200px)");
   const classes = useStyles();
 
+  const scrollToTop = event => {
+    const anchor = (event.target.ownerDocument || document).querySelector(
+      "#back-to-top-anchor"
+    );
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
   return (
     <React.Fragment>
       <CssBaseline />
       <HideOnScroll appBarHide={props.appBarHide} {...props}>
         <AppBar>
           <Toolbar>
-            <Logo
-              style={{ width: "40px", marginRight: "0.75rem", fill: "white" }}
-              aria-label="Flickr"
-            />
-            <Typography variant="h6">
-              <span style={{ color: "#dedee6" }}>Geo</span>
-              <span style={{ color: "#ffc1d5" }}>Explorer</span>
-            </Typography>
+            <div className={classes.logo_container} onClick={scrollToTop}>
+              <Logo
+                style={{ width: "40px", marginRight: "0.75rem", fill: "white" }}
+                aria-label="Flickr"
+              />
+              <Typography variant="h6">
+                <span style={{ color: "#dedee6" }}>Geo</span>
+                <span style={{ color: "#ffc1d5" }}>Explorer</span>
+              </Typography>
+            </div>
             <div className={classes.grow} />
             <div className={classes.icons_container}>
               <Tooltip title="Search Photos" aria-label="Search Photos">

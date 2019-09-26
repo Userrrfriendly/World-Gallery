@@ -18,7 +18,6 @@ const mapStyle = {
 };
 class Map extends React.Component {
   state = {
-    // activeMarker: null,
     boundingBox: null,
     selectionMarker: null,
     pinndedPhotos: []
@@ -31,15 +30,19 @@ class Map extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    /**SET RADIUS IF IT CHANGED */
+    if (prevProps.searchRadius !== this.props.searchRadius) {
+      this.searchCircle.setRadius(this.props.searchRadius * 1000);
+    }
     console.log("map updated");
-    //when the user location changes pan the map to it
-    //(either when the response comes from geoip-db or if the user sets it explicitly)
 
+    /*when the user location changes pan the map to it
+    (either when the response comes from geoip-db or if the user sets it explicitly)*/
     if (prevProps.userLocation !== this.props.userLocation) {
       /**  even though the component has mounted and is currently in re-render(update) phase
        * window.map can be undefined (especially on first load where google.maps api is not cached and is not fully initialized)
        * so there is a slim chance that window.map.panTo will run before google.maps is fully loaded thus trowing an error
-       * The following ugly code checks if google.maps is loaded before trying to zoom/add marker to the users location
+       * The following ugly code checks if google.maps is loaded before trying to zoom/add SearchCircle to the users location
        * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
        * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
        */
@@ -50,7 +53,8 @@ class Map extends React.Component {
         }
         if (window.map) {
           window.map.panTo(this.props.userLocation);
-          this.addRadiusMarker(this.props.userLocation);
+          this.addSearchCircle(this.props.userLocation);
+          window.map.setZoom(12);
           stopTimer();
         } else {
           waitingThreshold -= 10;
@@ -65,19 +69,29 @@ class Map extends React.Component {
       this.props.disableTriggerPhotoMarker();
     }
 
-    if (this.props.triggerPlotRadiusMarkerOnMap) {
-      this.addRadiusMarker();
-      this.props.disableRadiusTrigger();
+    if (this.props.triggerCenter) {
+      this.searchCircle.setCenter(window.map.getCenter().toJSON());
+      this.props.disableCenter();
     }
-    if (this.props.triggerBoundingBox) {
-      this.addPolygon();
-      this.props.disableBoundingBoxTrigger();
+
+    if (this.props.triggerZoom) {
+      this.zoomToBounds();
+      this.props.disableZoom();
     }
+
+    // if (this.props.triggerPlotRadiusMarkerOnMap) {
+    //   this.addRadiusMarker();
+    //   this.props.disableRadiusTrigger();
+    // }
+    // if (this.props.triggerBoundingBox) {
+    //   this.addPolygon();
+    //   this.props.disableBoundingBoxTrigger();
+    // }
   }
 
   handleGoogleMapsError = () => {
-    // google maps method for handling authentication errors
-    // more on: https://developers.google.com/maps/documentation/javascript/events#auth-errors
+    /* google maps method for handling authentication errors
+     * more on: https://developers.google.com/maps/documentation/javascript/events#auth-errors*/
     window.gm_authFailure = () => {
       this.props.handleGoogleMapsError();
       document.querySelector(".gm-err-title").innerHTML =
@@ -102,11 +116,15 @@ class Map extends React.Component {
 
   initMap = () => {
     console.log("Google Maps API Loaded...");
+    const rome = {
+      lat: 41.890384586382844,
+      lng: 12.492241690388028
+    }; //Rome, colosseo
     window.map = new window.google.maps.Map(
       document.getElementById("map-container"),
       {
-        center: { lat: 48.80582620218145, lng: 2.1164958494489383 }, //paris, versailles
-        zoom: 8,
+        center: rome, //Rome, colosseo
+        zoom: 10,
         gestureHandling: "cooperative",
         mapTypeId: window.google.maps.MapTypeId.TERRAIN
       }
@@ -114,6 +132,8 @@ class Map extends React.Component {
     window.largeInfowindow = new window.google.maps.InfoWindow({
       maxWidth: 200
     });
+
+    this.addSearchCircle(rome);
 
     window.google.maps.event.addListenerOnce(window.map, "idle", () => {
       document.getElementsByTagName("iframe")[0].title = "Google Maps";
@@ -246,6 +266,62 @@ class Map extends React.Component {
     // marker.addListener('click', function() {
     //   infowindow.open(map, marker);
     // });
+  };
+
+  addSearchCircle = center => {
+    this.searchCircle = new window.google.maps.Circle({
+      strokeColor: "#0e2a99",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#64b1e8",
+      fillOpacity: 0.35,
+      map: window.map,
+      center: center ? center : { lat: 48.8, lng: 2.29 },
+      radius: this.props.searchRadius * 1000, //radius in store is in KM radius in maps is meters
+      draggable: true
+    });
+    window.SEARCHRADIUS = this.searchCircle; //DEBUGGING ONLY
+
+    /** a circle bound to the center of searchCircle,
+     * its only purpose is to graphically represent searchCircle's center */
+    this.centerSearchCircle = new window.google.maps.Circle({
+      strokeColor: "#0e0047",
+      strokeOpacity: 0.8,
+      strokeWeight: 3,
+      fillColor: "#0e0047",
+      fillOpacity: 0.35,
+      map: window.map,
+      center: this.searchCircle.center.toJSON(),
+      radius: 10
+    });
+
+    // window.testCENTER = this.centerSearchRadius;
+
+    this.searchCircle.addListener("drag", () => {
+      this.centerSearchCircle.setCenter(this.searchCircle.center.toJSON());
+      // console.log(this.searchRadius.center.toJSON());
+    });
+
+    this.searchCircle.addListener("dragend", () => {
+      this.props.setSearchCenter(this.searchCircle.center.toJSON());
+    });
+    this.searchCircle.addListener("center_changed", () => {
+      this.props.setSearchCenter(this.searchCircle.center.toJSON());
+      this.centerSearchCircle.setCenter(this.searchCircle.center.toJSON());
+    });
+  };
+
+  zoomToBounds = () => {
+    const km = 0.009; //roughtly one km in degrees of lat/lng
+    const center = this.searchCircle.getCenter().toJSON();
+    const bounds = {
+      north: center.lat + km * this.props.searchRadius,
+      south: center.lat - km * this.props.searchRadius,
+      east: center.lng + km * this.props.searchRadius,
+      west: center.lng - km * this.props.searchRadius
+    };
+    console.log(bounds);
+    window.map.fitBounds(bounds);
   };
 
   render() {

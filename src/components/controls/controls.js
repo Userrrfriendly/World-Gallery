@@ -12,9 +12,6 @@ import LoadingBar from "../LoadingBar/loadingBar";
 const useStyles = makeStyles(theme => ({
   controls_panel: {
     textAlign: "center"
-    // display: "flex",
-    // alignItems: "center",
-    // justifyContent: "center"
   },
   controls: {
     color: "#fff",

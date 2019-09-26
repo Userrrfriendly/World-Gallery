@@ -57,7 +57,6 @@ const ImageWrapper = ({
     position: "relative"
   };
 
-  // console.log(photo);
   const handlePinOnMapClick = id => {
     getPhotoGeoLocation(id).then(res => {
       // console.log(props.src);
@@ -77,6 +76,7 @@ const ImageWrapper = ({
   // position: "absolute",
   // left: left,
   // top: top
+
   console.log(direction);
   if (direction === "column") {
     cont.position = "absolute";
@@ -126,4 +126,4 @@ const ImageWrapper = ({
   );
 };
 
-export default ImageWrapper;
+export default React.memo(ImageWrapper);

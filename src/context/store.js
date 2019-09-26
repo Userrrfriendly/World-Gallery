@@ -7,7 +7,11 @@ import DispatchContext from "./dispatchContext";
 export default function Store(props) {
   const initialState = {
     boundingBox: null,
-    radiusMarker: null
+    radiusMarker: null,
+    //
+    userLocation: null,
+    searchRadius: 3,
+    searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 } //paris, versailles
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

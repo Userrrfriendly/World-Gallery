@@ -3,41 +3,21 @@ import * as FlikrApi from "./requests/flikr";
 import MapWrapper from "./components/map/mapContainer";
 import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
-import { SET_BOUNDING_BOX, SET_RADIUS_MARKER } from "./context/rootReducer";
-// import Pagination from "material-ui-flat-pagination";
+import {
+  SET_BOUNDING_BOX,
+  SET_RADIUS_MARKER,
+  SET_USER_LOCATION,
+  SET_SEARCH_CENTER,
+  SET_SEARCH_RADIUS
+} from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
 import ImageGrid from "./components/imageGrid/imageGrid";
 import AppControls from "./components/controls/controls";
-// import { makeStyles } from "@material-ui/core"; //pagination
 
 import LoadMoreButton from "./components/controls/loadMoreBtn";
 import LoadingBar from "./components/LoadingBar/loadingBar";
-
-//pagination
-// const useStyles = makeStyles(theme => ({
-//   root: {
-//     "& button:first-child": {
-//       borderRadius: "6px 0px 0px 6px"
-//     },
-//     "& button:last-child": {
-//       borderRadius: "0px 6px 6px 0px"
-//     }
-//   },
-//   colorInheritOther: {
-//     marginTop: "1rem",
-//     color: "black",
-//     border: "1px solid grey",
-//     borderRadius: "0",
-//     fontWeight: "600"
-//   },
-//   colorInheritCurrent: {
-//     color: "red",
-//     marginTop: "1rem",
-//     border: "1px solid grey",
-//     borderRadius: "0"
-//   }
-// }));
+import ControlPanel from "./components/controlPanel/controlPanel";
 
 function App() {
   const state = useContext(StateContext);
@@ -45,15 +25,28 @@ function App() {
 
   const resultsRef = React.useRef(null);
 
+  /**sorting filters for the results */
+  const [sortMethod, setSortMethod] = useState("date-posted-desc");
+  const handeSelectSortMethod = event => {
+    setSortMethod(event.target.value);
+  };
+
+  /** option text for search */
+  const [searchText, setSearchText] = useState("");
+  const handleTextQueryChange = e => {
+    setSearchText(e.target.value);
+  };
+
   const [loadingPhotos, setLoadingPhotos] = useState(false);
+  const [triggerZoom, setTriggerZoom] = useState(false);
+  const [triggerCenter, setTriggerCenter] = useState(false);
 
-  // const classes = useStyles(); //pagination
-  // const [offset, setOffset] = useState(0); //pagination
+  const zoomToSearchArea = () => setTriggerZoom(true);
+  const disableZoom = () => setTriggerZoom(false);
+  const centerSearchAreaOnMap = () => setTriggerCenter(true);
+  const disableCenter = () => setTriggerCenter(false);
 
-  /**user location that will be fetched on page load with geoip-db,
-  used only when the map loads to add initial radius marker */
-  const [userLocation, setUserLocation] = useState(null);
-  const [mapVisible, setMapVisible] = useState(true);
+  const [mapVisible, setMapVisible] = useState(true); //REFACTOR FOR MAP TO COLLAPSE (height:0) OR DELETE METHOD
   const [photos, setPhotos] = useState(false);
   const [responseDetails, setResponseDetails] = useState(null);
 
@@ -67,7 +60,9 @@ function App() {
   /** Triggers plot photo on map  */
   const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
   const disableTriggerPhotoMarker = () => setTriggerPhotoMarker(false);
-  const pinPhotoOnMap = pin => {
+
+  const pinPhotoOnMap = React.useCallback(pin => {
+    console.log("pinPhotoOnMAp");
     const { position, thumbnail, title, id } = pin;
     setTriggerPhotoMarker({
       position: position,
@@ -75,7 +70,7 @@ function App() {
       title: title,
       id
     });
-  };
+  }, []);
 
   /* triggerPlotRadiusMarkerOnMap allows calling methods from anywhere inside mapContainer */
   const [
@@ -99,16 +94,23 @@ function App() {
   const searchFlikr = () => {
     console.log("fetching...");
     let searchParams;
-    if (state.boundingBox) {
-      searchParams = { ...state.boundingBox, type: "boundingBox" };
-    } else if (state.radiusMarker) {
-      searchParams = { ...state.radiusMarker, type: "radiusMarker" };
-    } else {
-      searchParams = {
-        ...state.radiusMarker,
-        search: "Search String goes here"
-      };
-    }
+    // if (state.boundingBox) {
+    //   searchParams = { ...state.boundingBox, type: "boundingBox" };
+    // } else if (state.radiusMarker) {
+    //   searchParams = { ...state.radiusMarker, type: "radiusMarker" };
+    // } else {
+    //   searchParams = {
+    //     ...state.radiusMarker,
+    //     search: "Search String goes here"
+    //   };
+    // }
+    searchParams = {
+      lat: state.searchCenter.lat,
+      lng: state.searchCenter.lng,
+      radius: state.searchRadius,
+      sortMethod,
+      searchText
+    };
 
     setLoadingPhotos(true);
     FlikrApi.getPhotosByTitle(searchParams)
@@ -119,12 +121,18 @@ function App() {
           totalPages: data.totalPages,
           totalPhotos: data.totalPhotos,
           perPage: data.perPage,
-          query: data.query
+          query: data.query,
+          lat: state.searchCenter.lat,
+          lng: state.searchCenter.lng,
+          radius: state.searchRadius,
+          sortMethod,
+          searchText
         });
         setPhotos(data.photos);
 
-        /* in this case scrollIntoView is not working correcty in crhome/safari so the following workaround was used:
-         *  When the response is loaded wait 30ms for the body to resize (while image gallery loads),
+        /* if scrollIntoView is called syncronously there is a chance that the images are not loaded yet
+         * thus the body is still the same height and the element simply cannot be scroll to top because instead:
+         *  When the response is loaded wait 100ms for the body to resize (while image gallery loads),
          * then scroll to the results (an empty div right above the results was used in order to avoid forwardingrefs)         *
          */
         window.setTimeout(() => {
@@ -132,7 +140,8 @@ function App() {
             behavior: "smooth",
             block: "start"
           });
-        }, 30);
+          window.END = document.body.offsetHeight;
+        }, 100);
       })
       .catch(error => {
         console.log(error);
@@ -142,13 +151,13 @@ function App() {
 
   const fetchNextPage = () => {
     console.log("fetching next page...");
-    let searchParams;
-    if (responseDetails.query.type === "boundingBox") {
-      searchParams = { ...responseDetails.query };
-    } else if (state.radiusMarker) {
-      searchParams = { ...responseDetails.query };
-    }
-
+    // let searchParams;
+    // if (responseDetails.query.type === "boundingBox") {
+    //   searchParams = { ...responseDetails.query };
+    // } else if (state.radiusMarker) {
+    //   searchParams = { ...responseDetails.query };
+    // }
+    const searchParams = { ...responseDetails };
     if (responseDetails.currentPage < responseDetails.totalPages) {
       searchParams.page = responseDetails.currentPage + 1;
     }
@@ -158,7 +167,9 @@ function App() {
     FlikrApi.getPhotosByTitle(searchParams)
       .then(data => {
         setLoadingPhotos(false);
+
         setResponseDetails({
+          ...responseDetails,
           currentPage: data.currentPage,
           totalPages: data.totalPages,
           totalPhotos: data.totalPhotos,
@@ -166,7 +177,6 @@ function App() {
           query: data.query
         });
         const updatedPhotos = photos.concat(data.photos);
-        console.log(updatedPhotos);
         setPhotos(updatedPhotos);
       })
       .catch(error => {
@@ -190,15 +200,21 @@ function App() {
       .then(res => res.json())
       .then(position => {
         console.log({ lat: position.latitude, lng: position.longitude });
-        setUserLocation({ lat: position.latitude, lng: position.longitude });
+        dispatch({
+          type: SET_USER_LOCATION,
+          userLocation: { lat: position.latitude, lng: position.longitude }
+        });
       })
       .catch(err => {
         /* if geoip-db call fails or if it is blocked by an add-blocker use native geolocation API for user position */
         console.log(err);
         const success = position => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
+          dispatch({
+            type: SET_USER_LOCATION,
+            userLocation: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            }
           });
         };
         if ("geolocation" in navigator) {
@@ -207,7 +223,7 @@ function App() {
           );
         }
       });
-  }, []);
+  }, [dispatch]);
 
   const setBounds = bounds => {
     dispatch({
@@ -223,12 +239,19 @@ function App() {
     });
   };
 
-  //pagination
-  // const handlePaginationClick = offset => {
-  //   // this.setState({ offset });
-  //   console.log(offset);
-  //   setOffset(offset);
-  // };
+  const setSearchCenter = center => {
+    dispatch({
+      type: SET_SEARCH_CENTER,
+      searchCenter: center
+    });
+  };
+
+  const setSearchRadius = radius => {
+    dispatch({
+      type: SET_SEARCH_RADIUS,
+      searchRadius: radius
+    });
+  };
 
   return (
     <div className="App">
@@ -241,51 +264,63 @@ function App() {
           pinRadiusMarkerOnMap={pinRadiusMarkerOnMap}
           pinBoundingBoxOnMap={pinBoundingBoxOnMap}
           searchFlikr={searchFlikr}
+          loadingPhotos={loadingPhotos}
           gridDirection={gridDirection}
           toggleGridDirection={toggleGridDirection}
-          loadingPhotos={loadingPhotos}
         />
-        {mapVisible && (
-          <MapWrapper
-            state={state}
-            userLocation={userLocation}
-            setBounds={setBounds}
-            getRadiusMarkerCoordinates={getRadiusMarkerCoordinates}
-            /* photoMarker*/
-            triggerPhotoMarker={triggerPhotoMarker}
-            disableTriggerPhotoMarker={disableTriggerPhotoMarker}
-            /* radius marker */
-            triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
-            disableRadiusTrigger={disableRadiusTrigger}
-            /* boundingBox Trigger */
-            triggerBoundingBox={triggerBoundingBox}
-            disableBoundingBoxTrigger={disableBoundingBoxTrigger}
-          />
-        )}
+        <div className="container" style={{ display: "flex" }}>
+          <ControlPanel
+            setSearchRadius={setSearchRadius}
+            searchFlikr={searchFlikr}
+            loadingPhotos={loadingPhotos}
+            zoomToSearchArea={zoomToSearchArea}
+            centerSearchAreaOnMap={centerSearchAreaOnMap}
+            sortMethod={sortMethod}
+            handeSelectSortMethod={handeSelectSortMethod}
+            handleTextQueryChange={handleTextQueryChange}
+            searchText={searchText}
+          ></ControlPanel>
+          {mapVisible && (
+            <MapWrapper
+              state={state}
+              /** */
+              userLocation={state.userLocation}
+              setSearchCenter={setSearchCenter}
+              searchRadius={state.searchRadius}
+              /** */
+              setBounds={setBounds}
+              getRadiusMarkerCoordinates={getRadiusMarkerCoordinates}
+              /* photoMarker*/
+              triggerPhotoMarker={triggerPhotoMarker}
+              disableTriggerPhotoMarker={disableTriggerPhotoMarker}
+              /* radius marker */
+              triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
+              disableRadiusTrigger={disableRadiusTrigger}
+              /* boundingBox Trigger */
+              triggerBoundingBox={triggerBoundingBox}
+              disableBoundingBoxTrigger={disableBoundingBoxTrigger}
+              /* triggeer zoom to search area */
+              triggerZoom={triggerZoom}
+              disableZoom={disableZoom}
+              /* trigger center search area on map */
+              triggerCenter={triggerCenter}
+              disableCenter={disableCenter}
+            />
+          )}
+        </div>
 
         <div ref={resultsRef}></div>
         {photos && (
           <ImageGrid
             photos={photos}
-            // title="Results"
             responseDetails={responseDetails}
-            pinPhotoOnMap={pinPhotoOnMap}
             direction={gridDirection}
+            pinPhotoOnMap={pinPhotoOnMap}
             columns={2}
             setAppBarHide={setAppBarHide}
           />
         )}
-        {/* <Pagination
-          classes={classes}
-          size="medium"
-          currentPageColor="inherit"
-          otherPageColor="inherit"
-          limit={1}
-          offset={offset}
-          total={100}
-          reduced={true}
-          onClick={(e, offset) => handlePaginationClick(offset)}
-        /> */}
+
         {responseDetails &&
           responseDetails.currentPage < responseDetails.totalPages && (
             <>

@@ -51,7 +51,7 @@ const navButtonStyles = base => ({
 });
 
 const CustomHeader = props => {
-  //most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery
+  /*most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery*/
   const classes = useStyles();
   const handlePinOnMapClick = id => {
     getPhotoGeoLocation(id).then(res => {
@@ -107,15 +107,27 @@ const CustomHeader = props => {
 
 const ImageGrid = ({
   photos,
-  // title,
   responseDetails,
   direction,
   pinPhotoOnMap,
-  setAppBarHide
+  setAppBarHide,
+  columns
 }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
+  React.useEffect(() => {
+    console.log("IMAGE GRID SMTH UPDATED!!!!!");
+  }, [
+    photos,
+    responseDetails,
+    direction,
+    pinPhotoOnMap,
+    setAppBarHide,
+    columns
+  ]);
+
+  console.log("IMAGEGRID!##%$#@!");
   const openLightbox = useCallback(
     (event, { photo, index }) => {
       setAppBarHide(true);
@@ -133,25 +145,23 @@ const ImageGrid = ({
     setAppBarHide(false);
   };
 
-  //store pinPhotoOnMap so it can be accessed in imageRenderer
-  const pinPhoto = pinPhotoOnMap;
   const imageRenderer = useCallback(
-    ({ index, left, top, key, containerHeight, photo, onClick }) => {
+    props => {
       return (
         <ImageWrapper
-          key={key}
+          key={props.key}
           margin={"2px"}
-          index={index}
-          photo={photo}
-          left={left}
-          top={top}
-          pinPhotoOnMap={pinPhoto}
-          direction={direction}
-          openLightbox={onClick}
+          index={props.index}
+          photo={props.photo}
+          left={props.left}
+          top={props.top}
+          pinPhotoOnMap={pinPhotoOnMap}
+          direction={props.direction}
+          openLightbox={props.onClick}
         />
       );
     },
-    [direction, pinPhoto]
+    [pinPhotoOnMap]
   );
 
   return (
@@ -170,16 +180,18 @@ const ImageGrid = ({
           direction={direction}
           renderImage={imageRenderer}
           onClick={openLightbox}
-          //the above onClick is an optional react-photo-gallery prop
-          //It receives the arguments -> event and an object containing the index,
-          //Photos obj originally sent and the next and previous photos in the gallery if they exist
+          pinPhotoOnMap={pinPhotoOnMap}
+
+          // the above onClick is an optional react-photo-gallery prop
+          // It receives the arguments -> event and an object containing the index,
+          // Photos obj originally sent and the next and previous photos in the gallery if they exist
         />
       )}
       <ModalGateway>
         {viewerIsOpen ? (
           <Modal onClose={closeLightbox}>
             <Carousel
-              pinPhotoOnMap={pinPhoto}
+              pinPhotoOnMap={pinPhotoOnMap}
               components={{ Header: CustomHeader }}
               currentIndex={currentImage}
               views={photos.map(x => ({
@@ -199,4 +211,4 @@ const ImageGrid = ({
   );
 };
 
-export default ImageGrid;
+export default React.memo(ImageGrid);
