@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from "react";
 import Gallery from "react-photo-gallery";
 import ImageWrapper from "../imageWrapper/imageWrapper";
+import ImageMenu from "../imageWrapper/imageMenu";
+
 import Carousel, { Modal, ModalGateway } from "react-images";
 import { makeStyles, IconButton, Typography } from "@material-ui/core";
 import {
@@ -10,7 +12,6 @@ import {
   MyLocationRounded
 } from "@material-ui/icons";
 import { getPhotoGeoLocation } from "../../requests/flikr";
-
 const useStyles = makeStyles(theme => ({
   header_container: {
     position: "absolute",
@@ -77,7 +78,6 @@ const CustomHeader = props => {
   const classes = useStyles();
   const handlePinOnMapClick = id => {
     getPhotoGeoLocation(id).then(res => {
-      // console.log(props.data);
       const result = {
         position: res,
         thumbnail: props.data.src,
@@ -135,7 +135,8 @@ const ImageGrid = ({
   direction,
   pinPhotoOnMap,
   setAppBarHide,
-  columns
+  columns,
+  hiddenPhotos
 }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
@@ -148,15 +149,14 @@ const ImageGrid = ({
     direction,
     pinPhotoOnMap,
     setAppBarHide,
-    columns
+    columns,
+    hiddenPhotos
   ]);
 
   console.log("IMAGEGRID!##%$#@!");
   const openLightbox = useCallback(
     (event, { photo, index }) => {
       setAppBarHide(true);
-      // console.log(event);
-      // console.log(photo, index);
       setCurrentImage(index);
       setViewerIsOpen(true);
     },
@@ -169,6 +169,18 @@ const ImageGrid = ({
     setAppBarHide(false);
   };
 
+  /** ImageMenu */
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [photoData, setPhotoData] = useState(null);
+  const handleOpenMenuClick = (data, event) => {
+    setPhotoData(data);
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  /**Wrapper around ImageWrapper */
   const imageRenderer = useCallback(
     props => {
       return (
@@ -182,6 +194,7 @@ const ImageGrid = ({
           pinPhotoOnMap={pinPhotoOnMap}
           direction={props.direction}
           openLightbox={props.onClick}
+          handleOpenMenuClick={handleOpenMenuClick}
         />
       );
     },
@@ -196,16 +209,21 @@ const ImageGrid = ({
       <Typography variant="subtitle1" component="h2" gutterBottom>
         {photos.length === 0
           ? `Sorry could not find any photos in that particular area`
-          : `Displaying ${photos.length} of ${responseDetails.totalPhotos} the photos found...`}
+          : `Displaying ${photos.length} of total ${responseDetails.totalPhotos} photos found...`}
       </Typography>
+      {hiddenPhotos.length > 0 && (
+        <Typography variant="subtitle2" component="p" gutterBottom>
+          ({hiddenPhotos.length}) photos from blocked users are hidden.
+        </Typography>
+      )}
+
       {photos.length > 0 && (
         <Gallery
           photos={photos}
           direction={direction}
           renderImage={imageRenderer}
-          onClick={openLightbox}
           pinPhotoOnMap={pinPhotoOnMap}
-
+          onClick={openLightbox}
           // the above onClick is an optional react-photo-gallery prop
           // It receives the arguments -> event and an object containing the index,
           // Photos obj originally sent and the next and previous photos in the gallery if they exist
@@ -235,6 +253,12 @@ const ImageGrid = ({
           </Modal>
         ) : null}
       </ModalGateway>
+      <ImageMenu
+        anchorEl={anchorEl}
+        handleOpenMenuClick={handleOpenMenuClick}
+        handleMenuClose={handleMenuClose}
+        photoData={photoData}
+      />
     </div>
   );
 };

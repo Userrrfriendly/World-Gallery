@@ -1,7 +1,6 @@
-import React from "react";
-import { Fab, makeStyles } from "@material-ui/core";
-import { MyLocationRounded } from "@material-ui/icons";
-// import { MyLocationRounded, MoreVert } from "@material-ui/icons";
+import React, { useState } from "react";
+import { Fab, makeStyles, Zoom } from "@material-ui/core";
+import { MyLocationRounded, MoreVert } from "@material-ui/icons";
 import { getPhotoGeoLocation } from "../../requests/flikr";
 
 const useStyles = makeStyles(theme => ({
@@ -18,9 +17,9 @@ const useStyles = makeStyles(theme => ({
     top: "2px",
     right: "2px",
     position: "absolute",
-    backgroundColor: "#ffffff59",
+    backgroundColor: "#ffffffa6",
     "&:hover": {
-      backgroundColor: "#fff",
+      backgroundColor: "#f5f5f5e8",
       boxShadow: "0px 0px 11px 0px rgba(0,0,0,0.75)"
     }
   },
@@ -46,9 +45,12 @@ const ImageWrapper = ({
   left,
   selected,
   pinPhotoOnMap,
-  openLightbox
+  openLightbox,
+  handleOpenMenuClick
 }) => {
   const classes = useStyles();
+
+  const [hover, setHover] = useState(false);
 
   const cont = {
     backgroundColor: "#eee",
@@ -59,7 +61,6 @@ const ImageWrapper = ({
 
   const handlePinOnMapClick = id => {
     getPhotoGeoLocation(id).then(res => {
-      // console.log(photo);
       const result = {
         position: res,
         thumbnail: photo.thumb,
@@ -68,10 +69,22 @@ const ImageWrapper = ({
         owner: photo.owner,
         thumbWidth: photo.width_t
       };
-      // console.log(result);
-      // console.log(pinPhotoOnMap);
       return pinPhotoOnMap(result);
     });
+  };
+
+  const handleOnMouseEnter = (photo, e) => {
+    setHover(true);
+  };
+  const handleOnMouseLeave = (photo, e) => {
+    setHover(false);
+  };
+
+  const handleTouch = () => {
+    setHover(true);
+    window.setTimeout(() => {
+      setHover(false);
+    }, 3000);
   };
 
   //CONTAINER OVERRIDES FOR COLUMNT LAYOUT
@@ -86,8 +99,6 @@ const ImageWrapper = ({
     cont.top = top;
   }
 
-  const { photoId, ...photoClean } = photo; //removes photoId from photo so that react doesnt throw an error on render
-
   return (
     <div
       style={{
@@ -100,33 +111,47 @@ const ImageWrapper = ({
         // top: top
       }}
       className={classes.container}
+      onMouseEnter={handleOnMouseEnter.bind(this, photo)}
+      onMouseLeave={handleOnMouseLeave}
+      onTouchStart={handleTouch}
     >
       <img
-        {...photoClean}
-        photoid=""
+        src={photo.src}
+        title={
+          photo.title
+            ? photo.title + ` - by user ${photo.ownername}`
+            : `untitled - by user ${photo.ownername}`
+        }
         alt={photo.alt}
+        srcSet={photo.srcSet}
+        width={photo.width}
+        heigth={photo.height}
+        sizes={photo.sizes}
         className={classes.image}
         onClick={event => openLightbox.call(this, event, { index, photo })}
       />
+      <Zoom in={hover}>
+        <Fab
+          size="small"
+          aria-label="add"
+          className={classes.options_btn}
+          onClick={handleOpenMenuClick.bind(this, photo)}
+        >
+          <MoreVert />
+        </Fab>
+      </Zoom>
 
-      {/* <Fab
-        size="small"
-        aria-label="add"
-        className={classes.options_btn}
-      >
-        <MoreVert />
-      </Fab> */}
-
-      <Fab
-        size="small"
-        color="secondary"
-        aria-label="add"
-        className={classes.pin_to_map_btn}
-        onClick={handlePinOnMapClick.bind(this, photo.photoId)}
-      >
-        <MyLocationRounded />
-      </Fab>
-      <p>Image Title and stuff</p>
+      <Zoom in={hover}>
+        <Fab
+          size="small"
+          color="secondary"
+          aria-label="add"
+          className={classes.pin_to_map_btn}
+          onClick={handlePinOnMapClick.bind(this, photo.photoId)}
+        >
+          <MyLocationRounded />
+        </Fab>
+      </Zoom>
     </div>
   );
 };

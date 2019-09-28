@@ -9,7 +9,9 @@ import {
   SET_RADIUS_MARKER,
   SET_USER_LOCATION,
   SET_SEARCH_CENTER,
-  SET_SEARCH_RADIUS
+  SET_SEARCH_RADIUS,
+  SET_PHOTOS,
+  UPDATE_PHOTOS
 } from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
@@ -21,7 +23,7 @@ import ControlPanel from "./components/controlPanel/controlPanel";
 import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
 
 function App() {
-  const state = useContext(StateContext);
+  const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
   const screenWidth900px = useMediaQuery("(min-width:900px)");
@@ -51,7 +53,6 @@ function App() {
   const disableCenter = () => setTriggerCenter(false);
 
   const [mapVisible, setMapVisible] = useState(true); //REFACTOR FOR MAP TO COLLAPSE (height:0) OR DELETE METHOD
-  const [photos, setPhotos] = useState(false);
   const [responseDetails, setResponseDetails] = useState(null);
 
   const [gridDirection, setGridDirection] = useState("row");
@@ -99,20 +100,20 @@ function App() {
   const searchFlikr = () => {
     console.log("fetching...");
     let searchParams;
-    // if (state.boundingBox) {
-    //   searchParams = { ...state.boundingBox, type: "boundingBox" };
-    // } else if (state.radiusMarker) {
-    //   searchParams = { ...state.radiusMarker, type: "radiusMarker" };
+    // if (store.boundingBox) {
+    //   searchParams = { ...store.boundingBox, type: "boundingBox" };
+    // } else if (store.radiusMarker) {
+    //   searchParams = { ...store.radiusMarker, type: "radiusMarker" };
     // } else {
     //   searchParams = {
-    //     ...state.radiusMarker,
+    //     ...store.radiusMarker,
     //     search: "Search String goes here"
     //   };
     // }
     searchParams = {
-      lat: state.searchCenter.lat,
-      lng: state.searchCenter.lng,
-      radius: state.searchRadius,
+      lat: store.searchCenter.lat,
+      lng: store.searchCenter.lng,
+      radius: store.searchRadius,
       sortMethod,
       searchText
     };
@@ -127,13 +128,16 @@ function App() {
           totalPhotos: data.totalPhotos,
           perPage: data.perPage,
           query: data.query,
-          lat: state.searchCenter.lat,
-          lng: state.searchCenter.lng,
-          radius: state.searchRadius,
+          lat: store.searchCenter.lat,
+          lng: store.searchCenter.lng,
+          radius: store.searchRadius,
           sortMethod,
           searchText
         });
-        setPhotos(data.photos);
+        dispatch({
+          type: SET_PHOTOS,
+          photos: data.photos
+        });
 
         /* if scrollIntoView is called syncronously there is a chance that the images are not loaded yet
          * thus the body is still the same height and the element simply cannot be scroll to top because instead:
@@ -159,7 +163,7 @@ function App() {
     // let searchParams;
     // if (responseDetails.query.type === "boundingBox") {
     //   searchParams = { ...responseDetails.query };
-    // } else if (state.radiusMarker) {
+    // } else if (store.radiusMarker) {
     //   searchParams = { ...responseDetails.query };
     // }
     const searchParams = { ...responseDetails };
@@ -181,8 +185,10 @@ function App() {
           perPage: data.perPage,
           query: data.query
         });
-        const updatedPhotos = photos.concat(data.photos);
-        setPhotos(updatedPhotos);
+        dispatch({
+          type: UPDATE_PHOTOS,
+          photos: data.photos
+        });
       })
       .catch(error => {
         setLoadingPhotos(false);
@@ -191,14 +197,14 @@ function App() {
 
   useEffect(() => {
     //debugging only
-    console.log(state);
+    console.log(store);
     console.log(responseDetails);
-  }, [state, responseDetails]);
+  }, [store, responseDetails]);
 
   useEffect(() => {
     //debugging only
-    console.log(photos);
-  }, [photos]);
+    console.log(store.filteredPhotos);
+  }, [store.filteredPhotos]);
 
   useEffect(() => {
     /*fetch user location when app mounts*/
@@ -297,11 +303,11 @@ function App() {
           )}
           {mapVisible && (
             <MapWrapper
-              state={state}
+              store={store}
               /** */
-              userLocation={state.userLocation}
+              userLocation={store.userLocation}
               setSearchCenter={setSearchCenter}
-              searchRadius={state.searchRadius}
+              searchRadius={store.searchRadius}
               /** */
               setBounds={setBounds}
               getRadiusMarkerCoordinates={getRadiusMarkerCoordinates}
@@ -340,9 +346,10 @@ function App() {
         </section>
 
         <div ref={resultsRef}></div>
-        {photos && (
+        {store.filteredPhotos && (
           <ImageGrid
-            photos={photos}
+            photos={store.filteredPhotos}
+            hiddenPhotos={store.hiddenPhotos}
             responseDetails={responseDetails}
             direction={gridDirection}
             pinPhotoOnMap={pinPhotoOnMap}
