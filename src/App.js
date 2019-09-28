@@ -36,9 +36,10 @@ function App() {
 
   /** option text for search */
   const [searchText, setSearchText] = useState("");
-  const handleTextQueryChange = e => {
+  const handleTextQueryChange = (e, clearText) => {
     setSearchText(e.target.value);
   };
+  const clearTextQuery = () => setSearchText("");
 
   const [loadingPhotos, setLoadingPhotos] = useState(false);
   const [triggerZoom, setTriggerZoom] = useState(false);
@@ -191,7 +192,8 @@ function App() {
   useEffect(() => {
     //debugging only
     console.log(state);
-  }, [state]);
+    console.log(responseDetails);
+  }, [state, responseDetails]);
 
   useEffect(() => {
     //debugging only
@@ -289,6 +291,7 @@ function App() {
               sortMethod={sortMethod}
               handeSelectSortMethod={handeSelectSortMethod}
               handleTextQueryChange={handleTextQueryChange}
+              clearTextQuery={clearTextQuery}
               searchText={searchText}
             ></ControlPanel>
           )}

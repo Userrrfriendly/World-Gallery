@@ -35,7 +35,10 @@ export const getPhotosByTitle = searchParams => {
   url.append("per_page", "100"); //250max for photos with geolocation
   url.append("format", "json");
   url.append("nojsoncallback", "1");
-  url.append("extras", "url_t,url_m,url_c,url_l,url_h,url_o");
+  url.append(
+    "extras",
+    "url_t,url_m,url_c,url_l,url_h,url_o,geo, date_upload, date_taken, owner_name"
+  );
   if (searchParams.page) url.append("page", searchParams.page);
 
   let arrayOfPhotos = fetch("https://api.flickr.com/services/rest/?" + url)
@@ -83,6 +86,10 @@ export const getPhotosByTitle = searchParams => {
           photos: json.photos.photo.map(img => {
             return {
               // ...img,
+              dateupload: img.dateupload,
+              datetaken: img.datetaken,
+              ownername: img.ownername,
+              geolocation: { lat: img.latitude, lng: img.longitude },
               photoId: img.id,
               width_t: img.width_t ? parseInt(img.width_t) : "",
               width_c: img.width_c ? parseInt(img.width_c) : "",
@@ -199,6 +206,7 @@ export const getPhotoGeoLocation = photo_id => {
   let result = fetch("https://api.flickr.com/services/rest?" + url)
     .then(res => {
       return res.json().then(json => {
+        console.log(json);
         let position = {
           lat: parseFloat(json.photo.location.latitude),
           lng: parseFloat(json.photo.location.longitude)

@@ -123,6 +123,7 @@ const ControlPanel = props => {
         {/* Search by Text */}
         <TextQuery
           handleTextQueryChange={props.handleTextQueryChange}
+          clearTextQuery={props.clearTextQuery}
           searchText={props.searchText}
           searchFlikr={props.searchFlikr}
         />
