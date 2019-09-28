@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import * as FlikrApi from "./requests/flikr";
 import MapWrapper from "./components/map/mapContainer";
 import StateContext from "./context/stateContext";
@@ -13,15 +14,17 @@ import {
 
 import Appbar from "./components/appBar/appBar";
 import ImageGrid from "./components/imageGrid/imageGrid";
-import AppControls from "./components/controls/controls";
 
 import LoadMoreButton from "./components/controls/loadMoreBtn";
 import LoadingBar from "./components/LoadingBar/loadingBar";
 import ControlPanel from "./components/controlPanel/controlPanel";
+import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
 
 function App() {
   const state = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+
+  const screenWidth900px = useMediaQuery("(min-width:900px)");
 
   const resultsRef = React.useRef(null);
 
@@ -80,14 +83,12 @@ function App() {
     triggerPlotRadiusMarkerOnMap,
     setTtriggerPlotRadiusMarkerOnMap
   ] = useState(false);
-  const pinRadiusMarkerOnMap = () => {
-    setTtriggerPlotRadiusMarkerOnMap(true);
-  };
+
   const disableRadiusTrigger = () => setTtriggerPlotRadiusMarkerOnMap(false);
   /**Bounds */
-  const [triggerBoundingBox, setTriggerBoundingBox] = useState(false);
-  const pinBoundingBoxOnMap = () => setTriggerBoundingBox(true);
-  const disableBoundingBoxTrigger = () => setTriggerBoundingBox(false);
+  // const [triggerBoundingBox, setTriggerBoundingBox] = useState(false);
+  // const pinBoundingBoxOnMap = () => setTriggerBoundingBox(true);
+  // const disableBoundingBoxTrigger = () => setTriggerBoundingBox(false);
 
   const toggleMap = () => {
     const prevState = mapVisible;
@@ -260,29 +261,37 @@ function App() {
     <div className="App">
       <Appbar
         toggleMap={toggleMap}
-        searchFlikr={searchFlikr}
+        // searchFlikr={searchFlikr}
         appBarHide={appBarHide}
+        photos={responseDetails ? responseDetails.totalPages : 0}
+        toggleGridDirection={toggleGridDirection}
+        gridDirection={gridDirection}
       >
-        <AppControls
-          pinRadiusMarkerOnMap={pinRadiusMarkerOnMap}
-          pinBoundingBoxOnMap={pinBoundingBoxOnMap}
-          searchFlikr={searchFlikr}
-          loadingPhotos={loadingPhotos}
-          gridDirection={gridDirection}
-          toggleGridDirection={toggleGridDirection}
-        />
-        <div className="container" style={{ display: "flex" }}>
-          <ControlPanel
-            setSearchRadius={setSearchRadius}
-            searchFlikr={searchFlikr}
-            loadingPhotos={loadingPhotos}
-            zoomToSearchArea={zoomToSearchArea}
-            centerSearchAreaOnMap={centerSearchAreaOnMap}
-            sortMethod={sortMethod}
-            handeSelectSortMethod={handeSelectSortMethod}
-            handleTextQueryChange={handleTextQueryChange}
-            searchText={searchText}
-          ></ControlPanel>
+        <section
+          // className={classes.main_container}
+          style={
+            screenWidth900px
+              ? { display: "flex", height: "calc(100vh - 7px - 64px)" } //7px margins, 64appbar
+              : {
+                  display: "flex",
+                  height: "calc(100vh - 7px - 64px )",
+                  flexFlow: "column"
+                }
+          }
+        >
+          {screenWidth900px && (
+            <ControlPanel
+              setSearchRadius={setSearchRadius}
+              searchFlikr={searchFlikr}
+              loadingPhotos={loadingPhotos}
+              zoomToSearchArea={zoomToSearchArea}
+              centerSearchAreaOnMap={centerSearchAreaOnMap}
+              sortMethod={sortMethod}
+              handeSelectSortMethod={handeSelectSortMethod}
+              handleTextQueryChange={handleTextQueryChange}
+              searchText={searchText}
+            ></ControlPanel>
+          )}
           {mapVisible && (
             <MapWrapper
               state={state}
@@ -300,17 +309,32 @@ function App() {
               triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
               disableRadiusTrigger={disableRadiusTrigger}
               /* boundingBox Trigger */
-              triggerBoundingBox={triggerBoundingBox}
-              disableBoundingBoxTrigger={disableBoundingBoxTrigger}
+              // triggerBoundingBox={triggerBoundingBox}
+              // disableBoundingBoxTrigger={disableBoundingBoxTrigger}
               /* triggeer zoom to search area */
               triggerZoom={triggerZoom}
               disableZoom={disableZoom}
               /* trigger center search area on map */
               triggerCenter={triggerCenter}
               disableCenter={disableCenter}
+              /**ScreenSize */
+              screenWidth900px={screenWidth900px}
             />
           )}
-        </div>
+          {!screenWidth900px && (
+            <ControlPanelMobile
+              setSearchRadius={setSearchRadius}
+              searchFlikr={searchFlikr}
+              loadingPhotos={loadingPhotos}
+              zoomToSearchArea={zoomToSearchArea}
+              centerSearchAreaOnMap={centerSearchAreaOnMap}
+              sortMethod={sortMethod}
+              handeSelectSortMethod={handeSelectSortMethod}
+              handleTextQueryChange={handleTextQueryChange}
+              searchText={searchText}
+            />
+          )}
+        </section>
 
         <div ref={resultsRef}></div>
         {photos && (

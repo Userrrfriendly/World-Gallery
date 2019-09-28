@@ -50,6 +50,28 @@ const navButtonStyles = base => ({
   }
 });
 
+const ViewRenderer = props => {
+  /** https://github.com/jossmac/react-images/issues/300 */
+  const overScanCount = 1;
+  const { data, getStyles, index, currentIndex } = props;
+  const { alt, src } = data;
+
+  return Math.abs(currentIndex - index) <= overScanCount ? (
+    <div style={getStyles("view", props)}>
+      <img
+        alt={alt || `Image ${index}`}
+        src={src}
+        style={{
+          height: "auto",
+          maxHeight: "100vh",
+          maxWidth: "100%",
+          userSelect: "none"
+        }}
+      />
+    </div>
+  ) : null;
+};
+
 const CustomHeader = props => {
   /*most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery*/
   const classes = useStyles();
@@ -168,7 +190,7 @@ const ImageGrid = ({
 
   return (
     <div>
-      <Typography variant="h3" component="h1" style={{ marginTop: "1rem" }}>
+      <Typography variant="h3" component="h1" style={{ marginTop: "1.9rem" }}>
         Results:
       </Typography>
       <Typography variant="subtitle1" component="h2" gutterBottom>
@@ -194,7 +216,11 @@ const ImageGrid = ({
           <Modal onClose={closeLightbox}>
             <Carousel
               pinPhotoOnMap={pinPhotoOnMap}
-              components={{ Header: CustomHeader }}
+              components={{
+                Header: CustomHeader,
+
+                View: ViewRenderer
+              }}
               currentIndex={currentImage}
               views={photos.map(x => ({
                 ...x,

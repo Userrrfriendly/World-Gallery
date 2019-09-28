@@ -14,7 +14,12 @@ import {
   Tooltip,
   makeStyles
 } from "@material-ui/core/";
-import { KeyboardArrowUp, Map, ImageSearchRounded } from "@material-ui/icons/";
+import {
+  KeyboardArrowUp,
+  Map,
+  ViewStream as Rows,
+  ViewWeek as Columns
+} from "@material-ui/icons/";
 import Logo from "../../assets/logo";
 
 const useStyles = makeStyles(theme => ({
@@ -110,7 +115,7 @@ export default function HideAppBar(props) {
             </div>
             <div className={classes.grow} />
             <div className={classes.icons_container}>
-              <Tooltip title="Search Photos" aria-label="Search Photos">
+              {/* <Tooltip title="Search Photos" aria-label="Search Photos">
                 <IconButton
                   color="inherit"
                   aria-label="search photos"
@@ -118,7 +123,36 @@ export default function HideAppBar(props) {
                 >
                   <ImageSearchRounded />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
+              {props.photos > 0 && (
+                <Tooltip
+                  title={
+                    props.gridDirection === "column"
+                      ? "Display images as Rows"
+                      : "Display images as Columns"
+                  }
+                  aria-label={
+                    props.gridDirection === "column"
+                      ? "Display images as Rows"
+                      : "Display images as Columns"
+                  }
+                >
+                  <IconButton
+                    color="inherit"
+                    onClick={props.toggleGridDirection}
+                  >
+                    {props.gridDirection === "column" ? (
+                      <>
+                        <Rows className={classes.control_icon} />
+                      </>
+                    ) : (
+                      <>
+                        <Columns className={classes.control_icon} />
+                      </>
+                    )}
+                  </IconButton>
+                </Tooltip>
+              )}
               <Tooltip title="Toggle Map" aria-label="Toggle Map">
                 <IconButton
                   color="inherit"

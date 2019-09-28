@@ -86,6 +86,8 @@ const ImageWrapper = ({
     cont.top = top;
   }
 
+  const { photoId, ...photoClean } = photo; //removes photoId from photo so that react doesnt throw an error on render
+
   return (
     <div
       style={{
@@ -100,7 +102,8 @@ const ImageWrapper = ({
       className={classes.container}
     >
       <img
-        {...photo}
+        {...photoClean}
+        photoid=""
         alt={photo.alt}
         className={classes.image}
         onClick={event => openLightbox.call(this, event, { index, photo })}

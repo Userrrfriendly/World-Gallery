@@ -38,10 +38,12 @@ const infoWindowContents = data => {
 
 const mapStyle = {
   width: "100vw",
-  height: "75vh",
+  // height: "75vh",
   border: "1px solid black",
   maxWidth: "100%",
-  boxSizing: "border-box"
+  boxSizing: "border-box",
+  minHeight: "75vh",
+  maxHeight: "100%"
 };
 class Map extends React.Component {
   state = {
@@ -153,7 +155,9 @@ class Map extends React.Component {
         center: rome, //Rome, colosseo
         zoom: 10,
         gestureHandling: "cooperative",
-        mapTypeId: window.google.maps.MapTypeId.TERRAIN
+        mapTypeId: window.google.maps.MapTypeId.TERRAIN,
+        streetViewControl: false,
+        fullscreenControl: false
       }
     );
     window.largeInfowindow = new window.google.maps.InfoWindow({
@@ -360,7 +364,15 @@ class Map extends React.Component {
         role="application"
         aria-label="Map"
         id="map-container"
-        style={mapStyle}
+        style={
+          this.props.screenWidth900px
+            ? mapStyle
+            : {
+                ...mapStyle,
+                minHeight: "50vh",
+                flexGrow: "1"
+              }
+        }
       ></div>
     );
   }
