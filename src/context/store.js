@@ -14,8 +14,10 @@ export default function Store(props) {
     searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 }, //paris, versailles,
     photos: null,
     filteredPhotos: null,
+    mapPhotos: [],
     hiddenPhotos: [],
-    blockedUsers: []
+    blockedUsers: [],
+    favorites: []
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

@@ -11,7 +11,8 @@ import {
   SET_SEARCH_CENTER,
   SET_SEARCH_RADIUS,
   SET_PHOTOS,
-  UPDATE_PHOTOS
+  UPDATE_PHOTOS,
+  ADD_IMG_TO_FAVORITES
 } from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
@@ -21,6 +22,7 @@ import LoadMoreButton from "./components/controls/loadMoreBtn";
 import LoadingBar from "./components/LoadingBar/loadingBar";
 import ControlPanel from "./components/controlPanel/controlPanel";
 import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
+// import { find as _find } from "lodash";
 
 function App() {
   const store = useContext(StateContext);
@@ -66,19 +68,29 @@ function App() {
   const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
   const disableTriggerPhotoMarker = () => setTriggerPhotoMarker(false);
 
-  const pinPhotoOnMap = React.useCallback(pin => {
-    console.log("pinPhotoOnMAp");
-    const { position, thumbnail, title, id, owner, thumbWidth } = pin;
-    setTriggerPhotoMarker({
-      position: position,
-      thumbnail: thumbnail,
-      title: title,
-      id,
-      owner,
-      thumbWidth
-      //src-screenset
+  // const pinPhotoOnMap = React.useCallback(pin => {
+  //   console.log("pinPhotoOnMAp");
+  //   const { position, thumbnail, title, id, owner, thumbWidth } = pin;
+  //   setTriggerPhotoMarker({
+  //     position: position,
+  //     thumbnail: thumbnail,
+  //     title: title,
+  //     id,
+  //     owner,
+  //     thumbWidth
+  //     //src-screenset
+  //   });
+  // }, []);
+
+  const addImgToFavorites = img => {
+    console.log("adding to favorites");
+    // const { position, thumbnail, title, id, owner, thumbWidth } = img;
+    //scr-set?
+    dispatch({
+      type: ADD_IMG_TO_FAVORITES,
+      image: img
     });
-  }, []);
+  };
 
   /* triggerPlotRadiusMarkerOnMap allows calling methods from anywhere inside mapContainer */
   const [
@@ -144,13 +156,13 @@ function App() {
          *  When the response is loaded wait 100ms for the body to resize (while image gallery loads),
          * then scroll to the results (an empty div right above the results was used in order to avoid forwardingrefs)         *
          */
-        window.setTimeout(() => {
-          resultsRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-          window.END = document.body.offsetHeight;
-        }, 100);
+        // window.setTimeout(() => {
+        //   resultsRef.current.scrollIntoView({
+        //     behavior: "smooth",
+        //     block: "start"
+        //   });
+        //   window.END = document.body.offsetHeight;
+        // }, 100);
       })
       .catch(error => {
         console.log(error);
@@ -265,6 +277,22 @@ function App() {
     });
   };
 
+  // const mapPhotos = React.useCallback(() => {
+  //   //removes any photos that are in favorites from the photos passed to the map to remove duplicate markers
+  //   if (store.favorites.length > 0) {
+  //     const photos = store.filteredPhotos.filter(img => {
+  //       if (_find(store.favorites, el => el.photoId === img.photoId)) {
+  //         return false;
+  //       } else {
+  //         return true;
+  //       }
+  //     });
+  //     return photos;
+  //   } else {
+  //     return store.filteredPhotos;
+  //   }
+  // }, [store.favorites, store.filteredPhotos]);
+
   return (
     <div className="App">
       <Appbar
@@ -303,7 +331,10 @@ function App() {
           )}
           {mapVisible && (
             <MapWrapper
-              store={store}
+              // store={store}
+              // photos={mapPhotos()}
+              photos={store.mapPhotos}
+              favorites={store.favorites}
               /** */
               userLocation={store.userLocation}
               setSearchCenter={setSearchCenter}
@@ -352,7 +383,8 @@ function App() {
             hiddenPhotos={store.hiddenPhotos}
             responseDetails={responseDetails}
             direction={gridDirection}
-            pinPhotoOnMap={pinPhotoOnMap}
+            // pinPhotoOnMap={pinPhotoOnMap}
+            addImgToFavorites={addImgToFavorites}
             columns={2}
             setAppBarHide={setAppBarHide}
           />

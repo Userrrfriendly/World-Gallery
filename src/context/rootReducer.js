@@ -1,3 +1,4 @@
+import { find as _find } from "lodash";
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
 export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 
@@ -7,6 +8,8 @@ export const SET_SEARCH_CENTER = "SET_SEARCH_CENTER";
 export const SET_PHOTOS = "SET_PHOTOS";
 export const UPDATE_PHOTOS = "UPDATE_PHOTOS";
 export const BLOCK_USER = "BLOCK_USER";
+export const ADD_IMG_TO_FAVORITES = "ADD_IMG_TO_FAVORITES";
+export const REMOVE_IMG_FROM_FAVORITES = "REMOVE_IMG_FROM_FAVORITES";
 
 const setBoundingBox = (action, state) => {
   return { ...state, boundingBox: action.boundingBox };
@@ -34,12 +37,28 @@ const setSearchCenter = (action, state) => {
 
 const setPhotos = (action, state) => {
   /* currently setPhotos resets blocked users (initial request) */
+  const filteredPhotos = action.photos;
+  let mapPhotos = action.photos;
+  /** filter out any favorite photos so there are no duplicate markers  */
+  if (state.favorites.length > 0) {
+    mapPhotos = mapPhotos.filter(img => {
+      if (_find(state.favorites, el => el.photoId === img.photoId)) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    console.log(mapPhotos);
+  }
+
   return {
     ...state,
     photos: action.photos,
-    filteredPhotos: action.photos,
+    filteredPhotos,
     blockedUsers: [],
-    hiddenPhotos: []
+    hiddenPhotos: [],
+    mapPhotos
   };
 };
 
@@ -52,10 +71,23 @@ const updatePhotos = (action, state) => {
     state.blockedUsers.includes(photo.owner)
   );
   const filteredPhotos = state.filteredPhotos.concat(newPhotosFiltered);
+
+  let mapPhotos = state.mapPhotos;
+  if (state.favorites.length > 0) {
+    mapPhotos = mapPhotos.filter(img => {
+      if (_find(state.favorites, el => el.photoId === img.photoId)) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    console.log(filteredPhotos);
+  }
+
   const hiddenPhotos = state.hiddenPhotos.concat(newHiddenPhotos);
   const photos = state.photos.concat(action.photos);
 
-  return { ...state, photos, filteredPhotos, hiddenPhotos };
+  return { ...state, photos, filteredPhotos, hiddenPhotos, mapPhotos };
 };
 
 const blockUser = (action, state) => {
@@ -73,6 +105,29 @@ const blockUser = (action, state) => {
     filteredPhotos,
     hiddenPhotos
   };
+};
+
+const addImgToFavorites = (action, state) => {
+  const favorites = state.favorites.concat(action.image);
+  let mapPhotos = state.mapPhotos;
+  if (favorites.length > 0) {
+    mapPhotos = mapPhotos.filter(img => {
+      if (_find(favorites, el => el.photoId === img.photoId)) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    console.log(mapPhotos);
+  }
+  return { ...state, favorites, mapPhotos };
+};
+
+const removeImgFromFavorites = (action, state) => {
+  const favorites = [...state.favorites];
+  const index = favorites.indexOf(action.image);
+  if (index !== -1) favorites.splice(index, 1);
+  return { ...state, favorites };
 };
 
 export const rootReducer = (state, action) => {
@@ -102,6 +157,13 @@ export const rootReducer = (state, action) => {
     case BLOCK_USER:
       console.log(action.type);
       return blockUser(action, state);
+    case ADD_IMG_TO_FAVORITES:
+      console.log(action.type);
+      return addImgToFavorites(action, state);
+    case REMOVE_IMG_FROM_FAVORITES:
+      console.log(action.type);
+      return removeImgFromFavorites(action, state);
+
     default:
       return state;
   }

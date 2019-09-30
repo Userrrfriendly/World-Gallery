@@ -1,5 +1,7 @@
 import React from "react";
-import PhotoMarker_20 from "../../assets/PhotoMarker_20.svg";
+// import PhotoMarker_20 from "../../assets/PhotoMarker_20.svg";
+// import { isEqual as _isEqual, find as _find } from "lodash";
+import heartMarker from "../../assets/heart-32_marker.png";
 
 const infoWindowContents = data => {
   return `
@@ -9,11 +11,11 @@ const infoWindowContents = data => {
   <img title="${
     data.title ? data.title : "untitled photo"
   }" style="margin: 0 auto;display: block;cursor:pointer;" 
-    src=${data.thumbnail} alt="${data.title}">
+    src=${data.thumb} alt="${data.title}">
   <a 
     title="open photo in flickr"
     style="background-color: #3f51b5;
-    width: ${data.thumbWidth}px;
+    width: ${data.width_t}px;
     color: white;
     padding: 4px 5px;
     text-align: center;
@@ -22,7 +24,7 @@ const infoWindowContents = data => {
     text-align: center;
     margin: 0 auto 0.5rem ;
     display: block;" 
-    href=https://www.flickr.com/photos/${data.owner}/${data.id}
+    href=https://www.flickr.com/photos/${data.owner}/${data.photoId}
     target="_blank">View in flickr
   </a>
   `;
@@ -49,7 +51,8 @@ class Map extends React.Component {
   state = {
     boundingBox: null,
     selectionMarker: null,
-    pinndedPhotos: []
+    pinndedPhotos: [],
+    favorites: []
   };
 
   componentDidMount() {
@@ -59,11 +62,36 @@ class Map extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log(this.props);
     /**SET RADIUS IF IT CHANGED */
     if (prevProps.searchRadius !== this.props.searchRadius) {
       this.searchCircle.setRadius(this.props.searchRadius * 1000);
     }
     console.log("map updated");
+
+    if (prevProps.photos !== this.props.photos) {
+      console.log("PHOTOS CHANGED - RERENDERING MARKERS");
+      let photos = this.props.photos;
+      // const favorites =
+      //   prevProps.favorites !== this.props.favorites
+      //     ? this.props.favorites
+      //     : this.state.favorites;
+
+      this.state.pinndedPhotos.forEach(pin => pin.setMap(null));
+      this.setState({ pinndedPhotos: [] });
+
+      photos.forEach(photo => {
+        return this.pinPhotoMarkerOnMap(photo);
+      });
+    } else {
+      console.log("PHOTOS DID NOT CHANGE - NO RERENDER FOR MARKERS");
+    }
+
+    if (prevProps.favorites !== this.props.favorites) {
+      console.log("if prevProps favorites....");
+      this.setState({ favorites: [] });
+      this.props.favorites.forEach(f => this.pinFavorite(f));
+    }
 
     /*when the user location changes pan the map to it
     (either when the response comes from geoip-db or if the user sets it explicitly)*/
@@ -263,22 +291,36 @@ class Map extends React.Component {
   };
 
   pinPhotoMarkerOnMap = pin => {
-    console.log(pin);
-    const customMarker = {
-      url: PhotoMarker_20,
-      scale: 0.1
-    };
+    // const customMarker = {
+    //   url: PhotoMarker_20,
+    //   scale: 0.1
+    // };
 
     let marker = new window.google.maps.Marker({
-      position: pin.position,
+      // position: pin.position,
+      position: pin.geolocation,
       map: window.map,
-      icon: customMarker,
+      // icon: customMarker,
       title: pin.title,
-      animation: window.google.maps.Animation.DROP
+      animation: window.google.maps.Animation.DROP,
+      photoId: pin.photoId,
+      color: "blue"
     });
 
-    window.map.panTo(marker.getPosition());
+    // window.SETMARKER = () =>
+    //   window.LASTMARKER.setIcon({
+    //     // path: window.google.maps.SymbolPath.CIRCLE,
+    //     path: path4,
+    //     // fill: "#e74c3c",
+    //     scale: 1
+    //   });
+    window.SETIMG = () => window.LASTMARKER.setIcon(heartMarker);
 
+    window.RESET = () => {
+      // debugging ONLY
+      this.state.pinndedPhotos.forEach(pin => pin.setMap(null));
+      this.setState({ pinndedPhotos: [] });
+    };
     this.setState(prevState => {
       const pins = prevState.pinndedPhotos;
       pins.push(marker);
@@ -300,6 +342,29 @@ class Map extends React.Component {
     // marker.addListener('click', function() {
     //   infowindow.open(map, marker);
     // });
+  };
+  pinFavorite = img => {
+    let marker = new window.google.maps.Marker({
+      position: img.geolocation,
+      map: window.map,
+      icon: heartMarker,
+      title: img.title,
+      animation: window.google.maps.Animation.DROP,
+      photoId: img.photoId,
+      favorite: true
+    });
+
+    this.setState(prevState => {
+      const favorites = prevState.favorites;
+      favorites.push(marker);
+      return { favorites: favorites };
+    });
+
+    marker.addListener("click", function() {
+      window.map.panTo(this.getPosition());
+      window.largeInfowindow.setContent(infoWindowContents(img));
+      window.largeInfowindow.open(window.map, marker);
+    });
   };
 
   addSearchCircle = center => {
@@ -378,4 +443,4 @@ class Map extends React.Component {
   }
 }
 
-export default Map;
+export default React.memo(Map);

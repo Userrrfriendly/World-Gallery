@@ -11,7 +11,7 @@ import {
   FullscreenExit,
   MyLocationRounded
 } from "@material-ui/icons";
-import { getPhotoGeoLocation } from "../../requests/flikr";
+// import { getPhotoGeoLocation } from "../../requests/flikr";
 const useStyles = makeStyles(theme => ({
   header_container: {
     position: "absolute",
@@ -76,18 +76,20 @@ const ViewRenderer = props => {
 const CustomHeader = props => {
   /*most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery*/
   const classes = useStyles();
-  const handlePinOnMapClick = id => {
-    getPhotoGeoLocation(id).then(res => {
-      const result = {
-        position: res,
-        thumbnail: props.data.src,
-        title: props.data.title,
-        id: props.data.photoId,
-        thumbWidth: props.data.width_t
-      };
-      return props.carouselProps.pinPhotoOnMap(result);
-    });
-  };
+  // const handlePinOnMapClick = id => {
+  //   getPhotoGeoLocation(id).then(res => {
+  //     const result = {
+  //       position: res,
+  //       thumbnail: props.data.src,
+  //       title: props.data.title,
+  //       id: props.data.photoId,
+  //       thumbWidth: props.data.width_t
+  //     };
+  //     // return props.carouselProps.pinPhotoOnMap(result);
+  //     return props.carouselProps.pinPhotoOnMap(result);
+  //   });
+  // };
+
   return props.isModal ? (
     <div
       className={
@@ -99,7 +101,8 @@ const CustomHeader = props => {
       <IconButton
         aria-label="Pin photo on map"
         className={classes.lightbox_btn}
-        onClick={handlePinOnMapClick.bind(this, props.data.photoId)}
+        // onClick={handlePinOnMapClick.bind(this, props.data.photoId)}
+        onClick={props.carouselProps.addImgToFavorites.bind(this, props.data)}
       >
         <MyLocationRounded />
       </IconButton>
@@ -133,7 +136,8 @@ const ImageGrid = ({
   photos,
   responseDetails,
   direction,
-  pinPhotoOnMap,
+  // pinPhotoOnMap,
+  addImgToFavorites,
   setAppBarHide,
   columns,
   hiddenPhotos
@@ -147,7 +151,8 @@ const ImageGrid = ({
     photos,
     responseDetails,
     direction,
-    pinPhotoOnMap,
+    // pinPhotoOnMap,
+    addImgToFavorites,
     setAppBarHide,
     columns,
     hiddenPhotos
@@ -191,14 +196,16 @@ const ImageGrid = ({
           photo={props.photo}
           left={props.left}
           top={props.top}
-          pinPhotoOnMap={pinPhotoOnMap}
+          // pinPhotoOnMap={pinPhotoOnMap}
+          addImgToFavorites={addImgToFavorites}
           direction={props.direction}
           openLightbox={props.onClick}
           handleOpenMenuClick={handleOpenMenuClick}
         />
       );
     },
-    [pinPhotoOnMap]
+    // [pinPhotoOnMap]
+    [addImgToFavorites]
   );
 
   return (
@@ -222,7 +229,8 @@ const ImageGrid = ({
           photos={photos}
           direction={direction}
           renderImage={imageRenderer}
-          pinPhotoOnMap={pinPhotoOnMap}
+          // pinPhotoOnMap={pinPhotoOnMap}
+          addImgToFavorites={addImgToFavorites}
           onClick={openLightbox}
           // the above onClick is an optional react-photo-gallery prop
           // It receives the arguments -> event and an object containing the index,
@@ -233,7 +241,8 @@ const ImageGrid = ({
         {viewerIsOpen ? (
           <Modal onClose={closeLightbox}>
             <Carousel
-              pinPhotoOnMap={pinPhotoOnMap}
+              // pinPhotoOnMap={pinPhotoOnMap}
+              addImgToFavorites={addImgToFavorites}
               components={{
                 Header: CustomHeader,
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Fab, makeStyles, Zoom } from "@material-ui/core";
 import { MyLocationRounded, MoreVert } from "@material-ui/icons";
-import { getPhotoGeoLocation } from "../../requests/flikr";
+// import { getPhotoGeoLocation } from "../../requests/flikr";
 
 const useStyles = makeStyles(theme => ({
   pin_to_map_btn: {
@@ -44,7 +44,8 @@ const ImageWrapper = ({
   top,
   left,
   selected,
-  pinPhotoOnMap,
+  // pinPhotoOnMap,
+  addImgToFavorites,
   openLightbox,
   handleOpenMenuClick
 }) => {
@@ -59,19 +60,19 @@ const ImageWrapper = ({
     position: "relative"
   };
 
-  const handlePinOnMapClick = id => {
-    getPhotoGeoLocation(id).then(res => {
-      const result = {
-        position: res,
-        thumbnail: photo.thumb,
-        title: photo.title,
-        id: photo.photoId,
-        owner: photo.owner,
-        thumbWidth: photo.width_t
-      };
-      return pinPhotoOnMap(result);
-    });
-  };
+  // const handlePinOnMapClick = id => {
+  //   getPhotoGeoLocation(id).then(res => {
+  //     const result = {
+  //       position: res,
+  //       thumbnail: photo.thumb,
+  //       title: photo.title,
+  //       id: photo.photoId,
+  //       owner: photo.owner,
+  //       thumbWidth: photo.width_t
+  //     };
+  //     return pinPhotoOnMap(result);
+  //   });
+  // };
 
   const handleOnMouseEnter = (photo, e) => {
     setHover(true);
@@ -147,7 +148,8 @@ const ImageWrapper = ({
           color="secondary"
           aria-label="add"
           className={classes.pin_to_map_btn}
-          onClick={handlePinOnMapClick.bind(this, photo.photoId)}
+          // onClick={handlePinOnMapClick.bind(this, photo.photoId)}
+          onClick={addImgToFavorites.bind(this, photo)}
         >
           <MyLocationRounded />
         </Fab>

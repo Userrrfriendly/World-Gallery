@@ -32,7 +32,7 @@ export const getPhotosByTitle = searchParams => {
   url.append("radius", kmToMiles(searchParams.radius)); //1 to 32 km
   // url.append("radius", 0.310686); //1 to 31 km
   url.append("radius_units", "km");
-  url.append("per_page", "100"); //250max for photos with geolocation
+  url.append("per_page", "50"); //250max for photos with geolocation
   url.append("format", "json");
   url.append("nojsoncallback", "1");
   url.append(
@@ -89,7 +89,10 @@ export const getPhotosByTitle = searchParams => {
               dateupload: img.dateupload,
               datetaken: img.datetaken,
               ownername: img.ownername,
-              geolocation: { lat: img.latitude, lng: img.longitude },
+              geolocation: {
+                lat: parseFloat(img.latitude),
+                lng: parseFloat(img.longitude)
+              },
               photoId: img.id,
               width_t: img.width_t ? parseInt(img.width_t) : "",
               width_c: img.width_c ? parseInt(img.width_c) : "",
