@@ -6,7 +6,7 @@ import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
 import {
   SET_BOUNDING_BOX,
-  SET_RADIUS_MARKER,
+  // SET_RADIUS_MARKER,
   SET_USER_LOCATION,
   SET_SEARCH_CENTER,
   SET_SEARCH_RADIUS,
@@ -103,6 +103,15 @@ function App() {
   // const [triggerBoundingBox, setTriggerBoundingBox] = useState(false);
   // const pinBoundingBoxOnMap = () => setTriggerBoundingBox(true);
   // const disableBoundingBoxTrigger = () => setTriggerBoundingBox(false);
+  const [triggerMapExtents, setTriggerMapExtents] = useState(false);
+  const disableMapExtentsTrigger = () => setTriggerMapExtents(false);
+
+  // const getMapExtents = () => {
+  //   dispatch({
+  //     type: SET_BOUNDING_BOX,
+  //     bounds: window.map.getBounds().toJSON()
+  //   });
+  // };
 
   const toggleMap = () => {
     const prevState = mapVisible;
@@ -122,29 +131,59 @@ function App() {
     //     search: "Search String goes here"
     //   };
     // }
-    searchParams = {
-      lat: store.searchCenter.lat,
-      lng: store.searchCenter.lng,
-      radius: store.searchRadius,
-      sortMethod,
-      searchText
-    };
+    switch (store.searchMethod) {
+      case "CIRCLE":
+        searchParams = {
+          lat: store.searchCenter.lat,
+          lng: store.searchCenter.lng,
+          radius: store.searchRadius,
+          searchMethod: store.searchMethod,
+          resultsPerPage: store.resultsPerPage,
+          sortMethod,
+          searchText
+        };
+        break;
+      case "EXTENTS":
+        const bounds = window.map ? window.map.getBounds().toJSON() : "error";
+        // console.log(window.map.getBounds().toJSON());
+        console.log(bounds);
+        // getMapExtents();
+        searchParams = {
+          searchMethod: store.searchMethod,
+          bounds,
+          sortMethod,
+          searchText
+        };
+        break;
+      default:
+        console.log("invalid searchMethod");
+        return;
+    }
+    // searchParams = {
+    //   lat: store.searchCenter.lat,
+    //   lng: store.searchCenter.lng,
+    //   radius: store.searchRadius,
+    //   sortMethod,
+    //   searchText
+    // };
 
     setLoadingPhotos(true);
     FlikrApi.getPhotosByTitle(searchParams)
       .then(data => {
         setLoadingPhotos(false);
         setResponseDetails({
-          currentPage: data.currentPage,
-          totalPages: data.totalPages,
-          totalPhotos: data.totalPhotos,
-          perPage: data.perPage,
-          query: data.query,
-          lat: store.searchCenter.lat,
-          lng: store.searchCenter.lng,
-          radius: store.searchRadius,
-          sortMethod,
-          searchText
+          ...data
+          // currentPage: data.currentPage,
+          // totalPages: data.totalPages,
+          // totalPhotos: data.totalPhotos,
+          // perPage: data.perPage,
+          // query: data.query,
+          // // {...data.query},
+          // lat: store.searchCenter.lat,
+          // lng: store.searchCenter.lng,
+          // radius: store.searchRadius,
+          // sortMethod,
+          // searchText
         });
         dispatch({
           type: SET_PHOTOS,
@@ -182,7 +221,7 @@ function App() {
     if (responseDetails.currentPage < responseDetails.totalPages) {
       searchParams.page = responseDetails.currentPage + 1;
     }
-
+    console.log(searchParams);
     setLoadingPhotos(true);
 
     FlikrApi.getPhotosByTitle(searchParams)
@@ -190,12 +229,13 @@ function App() {
         setLoadingPhotos(false);
 
         setResponseDetails({
-          ...responseDetails,
-          currentPage: data.currentPage,
-          totalPages: data.totalPages,
-          totalPhotos: data.totalPhotos,
-          perPage: data.perPage,
-          query: data.query
+          ...data
+          // ...responseDetails,
+          // currentPage: data.currentPage,
+          // totalPages: data.totalPages,
+          // totalPhotos: data.totalPhotos,
+          // perPage: data.perPage,
+          // query: data.query
         });
         dispatch({
           type: UPDATE_PHOTOS,
@@ -256,12 +296,12 @@ function App() {
     });
   };
 
-  const getRadiusMarkerCoordinates = marker => {
-    dispatch({
-      type: SET_RADIUS_MARKER,
-      radiusMarker: marker
-    });
-  };
+  // const getRadiusMarkerCoordinates = marker => {
+  //   dispatch({
+  //     type: SET_RADIUS_MARKER,
+  //     radiusMarker: marker
+  //   });
+  // };
 
   const setSearchCenter = center => {
     dispatch({
@@ -341,7 +381,10 @@ function App() {
               searchRadius={store.searchRadius}
               /** */
               setBounds={setBounds}
-              getRadiusMarkerCoordinates={getRadiusMarkerCoordinates}
+              // getRadiusMarkerCoordinates={getRadiusMarkerCoordinates} //LEGACY?
+              /**triggerGetMapExtents */
+              triggerMapExtents={triggerMapExtents}
+              disableMapExtentsTrigger={disableMapExtentsTrigger}
               /* photoMarker*/
               triggerPhotoMarker={triggerPhotoMarker}
               disableTriggerPhotoMarker={disableTriggerPhotoMarker}

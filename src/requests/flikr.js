@@ -20,19 +20,36 @@ export const getPhotosByTitle = searchParams => {
   // url.append('tags', marker.title); //text produces broader results than tags leave it for now may implement later
   if (searchParams.searchText) url.append("text", searchParams.searchText);
   if (searchParams.sortMethod) url.append("sort", searchParams.sortMethod);
-  // if (searchParams.type === "boundingBox") {
-  //   const { south, west, north, east } = searchParams;
-  //   query = { type: "boundingBox", south, west, north, east };
-  //   url.append("bbox", `${west},${south},${east},${north}`);
-  // }
+  if (searchParams.searchMethod === "EXTENTS") {
+    const { south, west, north, east } = searchParams.bounds;
+    query = {
+      searchMethod: searchParams.searchMethod,
+      bounds: searchParams.bounds
+      // south,
+      // west,
+      // north,
+      // east
+    };
+    url.append("bbox", `${west},${south},${east},${north}`);
+  }
+  if (searchParams.searchMethod === "CIRCLE") {
+    url.append("lat", searchParams.lat);
+    url.append("lon", searchParams.lng);
+    url.append("radius", kmToMiles(searchParams.radius)); //1 to 32 km
+    url.append("radius_units", "km");
+    query = {
+      searchMethod: "CIRCLE",
+      lat: searchParams.lat,
+      lng: searchParams.lng,
+      radius: searchParams.radius
+    };
+  }
 
-  url.append("lat", searchParams.lat);
-  url.append("lon", searchParams.lng);
   url.append("has_geo", "1");
-  url.append("radius", kmToMiles(searchParams.radius)); //1 to 32 km
-  // url.append("radius", 0.310686); //1 to 31 km
-  url.append("radius_units", "km");
-  url.append("per_page", "50"); //250max for photos with geolocation
+  url.append(
+    "per_page",
+    searchParams.resultsPerPage ? searchParams.resultsPerPage : "50"
+  ); //250max for photos with geolocation
   url.append("format", "json");
   url.append("nojsoncallback", "1");
   url.append(
@@ -78,11 +95,11 @@ export const getPhotosByTitle = searchParams => {
         // };
         // console.log(test);
         return {
+          ...query,
           currentPage: json.photos.page,
           totalPages: json.photos.pages,
           totalPhotos: json.photos.total,
           perPage: json.photos.perpage,
-          query,
           photos: json.photos.photo.map(img => {
             return {
               // ...img,

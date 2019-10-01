@@ -9,6 +9,8 @@ export default function Store(props) {
     boundingBox: null,
     radiusMarker: null,
     //
+    searchMethod: "EXTENTS",
+    resultsPerPage: 50,
     userLocation: null,
     searchRadius: 3,
     searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 }, //paris, versailles,

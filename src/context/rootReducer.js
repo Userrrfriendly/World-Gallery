@@ -1,6 +1,6 @@
 import { find as _find } from "lodash";
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
-export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
+// export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 
 export const SET_USER_LOCATION = "SET_USER_LOCATION";
 export const SET_SEARCH_RADIUS = "SET_SEARCH_RADIUS";
@@ -15,9 +15,9 @@ const setBoundingBox = (action, state) => {
   return { ...state, boundingBox: action.boundingBox };
 };
 
-const setRadiusMarker = (action, state) => {
-  return { ...state, radiusMarker: action.radiusMarker };
-};
+// const setRadiusMarker = (action, state) => {
+//   return { ...state, radiusMarker: action.radiusMarker };
+// };
 
 const setUserLocation = (action, state) => {
   return {
@@ -64,6 +64,7 @@ const setPhotos = (action, state) => {
 
 const updatePhotos = (action, state) => {
   /** updatePhotos will expand the previous query of photos (previous results + new results) */
+  /**One for each sounds better... if true go to newFiltered if false go to newHidden */
   const newPhotosFiltered = action.photos.filter(
     photo => !state.blockedUsers.includes(photo.owner)
   );
@@ -73,17 +74,18 @@ const updatePhotos = (action, state) => {
   const filteredPhotos = state.filteredPhotos.concat(newPhotosFiltered);
 
   let mapPhotos = state.mapPhotos;
+  let newMapPhotos = [...action.photos];
   if (state.favorites.length > 0) {
-    mapPhotos = mapPhotos.filter(img => {
+    newMapPhotos = newMapPhotos.filter(img => {
       if (_find(state.favorites, el => el.photoId === img.photoId)) {
         return false;
       } else {
         return true;
       }
     });
-    console.log(filteredPhotos);
   }
 
+  mapPhotos = mapPhotos.concat(newMapPhotos);
   const hiddenPhotos = state.hiddenPhotos.concat(newHiddenPhotos);
   const photos = state.photos.concat(action.photos);
 
@@ -135,9 +137,9 @@ export const rootReducer = (state, action) => {
     case SET_BOUNDING_BOX:
       console.log(action.type);
       return setBoundingBox(action, state);
-    case SET_RADIUS_MARKER:
-      console.log(action.type);
-      return setRadiusMarker(action, state);
+    // case SET_RADIUS_MARKER:
+    //   console.log(action.type);
+    //   return setRadiusMarker(action, state);
     //new ones
     case SET_USER_LOCATION:
       console.log(action.type);

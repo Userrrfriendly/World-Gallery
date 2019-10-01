@@ -121,6 +121,11 @@ class Map extends React.Component {
       const stopTimer = () => clearInterval(timer);
     }
 
+    // if (this.props.triggerMapExtents) {
+    //   window.
+    //   this.props.disableMapExtentsTrigger();
+    // }
+
     if (this.props.triggerPhotoMarker) {
       this.pinPhotoMarkerOnMap(this.props.triggerPhotoMarker);
       this.props.disableTriggerPhotoMarker();
@@ -177,11 +182,13 @@ class Map extends React.Component {
       lat: 41.890384586382844,
       lng: 12.492241690388028
     }; //Rome, colosseo
+    const europe = { lat: 47.55241106676634, lng: 11.389968539500511 };
+
     window.map = new window.google.maps.Map(
       document.getElementById("map-container"),
       {
-        center: rome, //Rome, colosseo
-        zoom: 10,
+        center: europe,
+        zoom: 5,
         gestureHandling: "cooperative",
         mapTypeId: window.google.maps.MapTypeId.TERRAIN,
         streetViewControl: false,
