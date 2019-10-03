@@ -151,7 +151,6 @@ const ImageGrid = ({
     photos,
     responseDetails,
     direction,
-    // pinPhotoOnMap,
     addImgToFavorites,
     setAppBarHide,
     columns,

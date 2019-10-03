@@ -10,7 +10,7 @@ export default function Store(props) {
     radiusMarker: null,
     //
     searchMethod: "EXTENTS",
-    resultsPerPage: 50,
+    resultsPerPage: 30,
     userLocation: null,
     searchRadius: 3,
     searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 }, //paris, versailles,

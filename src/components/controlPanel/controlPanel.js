@@ -144,8 +144,6 @@ const ControlPanel = props => {
               <Divider className={classes.divider} />
               <MinTakenDatePicker />
               <MaxTakenDatePicker />
-              {/* <DatePicker label="Max Date Taken" /> */}
-              {/* <DatePicker label="Max Date Taken" /> */}
             </>
           }
           mapOptions={

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import * as FlikrApi from "./requests/flikr";
 import MapWrapper from "./components/map/mapContainer";
@@ -50,9 +50,13 @@ function App() {
   const [triggerCenter, setTriggerCenter] = useState(false);
 
   const zoomToSearchArea = () => setTriggerZoom(true);
-  const disableZoom = () => setTriggerZoom(false);
+  const disableZoom = useCallback(() => setTriggerZoom(false), [
+    setTriggerZoom
+  ]);
   const centerSearchAreaOnMap = () => setTriggerCenter(true);
-  const disableCenter = () => setTriggerCenter(false);
+  const disableCenter = useCallback(() => setTriggerCenter(false), [
+    setTriggerCenter
+  ]);
 
   const [mapVisible, setMapVisible] = useState(true); //REFACTOR FOR MAP TO COLLAPSE (height:0) OR DELETE METHOD
   const [responseDetails, setResponseDetails] = useState(null);
@@ -82,15 +86,18 @@ function App() {
   //   });
   // }, []);
 
-  const addImgToFavorites = img => {
-    console.log("adding to favorites");
-    // const { position, thumbnail, title, id, owner, thumbWidth } = img;
-    //scr-set?
-    dispatch({
-      type: ADD_IMG_TO_FAVORITES,
-      image: img
-    });
-  };
+  const addImgToFavorites = useCallback(
+    img => {
+      console.log("adding to favorites");
+      // const { position, thumbnail, title, id, owner, thumbWidth } = img;
+      //scr-set?
+      dispatch({
+        type: ADD_IMG_TO_FAVORITES,
+        image: img
+      });
+    },
+    [dispatch]
+  );
 
   /* triggerPlotRadiusMarkerOnMap allows calling methods from anywhere inside mapContainer */
   const [
@@ -98,13 +105,19 @@ function App() {
     setTtriggerPlotRadiusMarkerOnMap
   ] = useState(false);
 
-  const disableRadiusTrigger = () => setTtriggerPlotRadiusMarkerOnMap(false);
+  const disableRadiusTrigger = useCallback(
+    () => setTtriggerPlotRadiusMarkerOnMap(false),
+    [setTtriggerPlotRadiusMarkerOnMap]
+  );
   /**Bounds */
   // const [triggerBoundingBox, setTriggerBoundingBox] = useState(false);
   // const pinBoundingBoxOnMap = () => setTriggerBoundingBox(true);
   // const disableBoundingBoxTrigger = () => setTriggerBoundingBox(false);
   const [triggerMapExtents, setTriggerMapExtents] = useState(false);
-  const disableMapExtentsTrigger = () => setTriggerMapExtents(false);
+  const disableMapExtentsTrigger = useCallback(
+    () => setTriggerMapExtents(false),
+    [setTriggerMapExtents]
+  );
 
   // const getMapExtents = () => {
   //   dispatch({
@@ -223,7 +236,10 @@ function App() {
     // } else if (store.radiusMarker) {
     //   searchParams = { ...responseDetails.query };
     // }
-    const searchParams = { ...responseDetails };
+    const searchParams = {
+      ...responseDetails,
+      resultsPerPage: responseDetails.perPage
+    };
     if (responseDetails.currentPage < responseDetails.totalPages) {
       searchParams.page = responseDetails.currentPage + 1;
     }
@@ -295,12 +311,15 @@ function App() {
       });
   }, [dispatch]);
 
-  const setBounds = bounds => {
-    dispatch({
-      type: SET_BOUNDING_BOX,
-      boundingBox: bounds
-    });
-  };
+  const setBounds = useCallback(
+    bounds => {
+      dispatch({
+        type: SET_BOUNDING_BOX,
+        boundingBox: bounds
+      });
+    },
+    [dispatch]
+  );
 
   // const getRadiusMarkerCoordinates = marker => {
   //   dispatch({
@@ -309,12 +328,15 @@ function App() {
   //   });
   // };
 
-  const setSearchCenter = center => {
-    dispatch({
-      type: SET_SEARCH_CENTER,
-      searchCenter: center
-    });
-  };
+  const setSearchCenter = useCallback(
+    center => {
+      dispatch({
+        type: SET_SEARCH_CENTER,
+        searchCenter: center
+      });
+    },
+    [dispatch]
+  );
 
   const setSearchRadius = radius => {
     dispatch({
@@ -375,41 +397,37 @@ function App() {
               searchText={searchText}
             ></ControlPanel>
           )}
-          {mapVisible && (
-            <MapWrapper
-              // store={store}
-              // photos={mapPhotos()}
-              photos={store.mapPhotos}
-              favorites={store.favorites}
-              /** */
-              userLocation={store.userLocation}
-              setSearchCenter={setSearchCenter}
-              searchRadius={store.searchRadius}
-              /** */
-              setBounds={setBounds}
-              // getRadiusMarkerCoordinates={getRadiusMarkerCoordinates} //LEGACY?
-              /**triggerGetMapExtents */
-              triggerMapExtents={triggerMapExtents}
-              disableMapExtentsTrigger={disableMapExtentsTrigger}
-              /* photoMarker*/
-              triggerPhotoMarker={triggerPhotoMarker}
-              disableTriggerPhotoMarker={disableTriggerPhotoMarker}
-              /* radius marker */
-              triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
-              disableRadiusTrigger={disableRadiusTrigger}
-              /* boundingBox Trigger */
-              // triggerBoundingBox={triggerBoundingBox}
-              // disableBoundingBoxTrigger={disableBoundingBoxTrigger}
-              /* triggeer zoom to search area */
-              triggerZoom={triggerZoom}
-              disableZoom={disableZoom}
-              /* trigger center search area on map */
-              triggerCenter={triggerCenter}
-              disableCenter={disableCenter}
-              /**ScreenSize */
-              screenWidth900px={screenWidth900px}
-            />
-          )}
+          {/* {mapVisible && ()} */}
+          <MapWrapper
+            photos={store.mapPhotos}
+            favorites={store.favorites}
+            userLocation={store.userLocation}
+            setSearchCenter={setSearchCenter}
+            searchRadius={store.searchRadius}
+            // /** */
+            setBounds={setBounds}
+            // /**triggerGetMapExtents */
+            triggerMapExtents={triggerMapExtents}
+            disableMapExtentsTrigger={disableMapExtentsTrigger}
+            // /* photoMarker*/
+            // triggerPhotoMarker={triggerPhotoMarker}
+            // disableTriggerPhotoMarker={disableTriggerPhotoMarker}
+            // /* radius marker */
+            triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
+            disableRadiusTrigger={disableRadiusTrigger}
+            // /* boundingBox Trigger */
+            // // triggerBoundingBox={triggerBoundingBox}
+            // // disableBoundingBoxTrigger={disableBoundingBoxTrigger}
+            // /* triggeer zoom to search area */
+            triggerZoom={triggerZoom}
+            disableZoom={disableZoom}
+            // /* trigger center search area on map */
+            triggerCenter={triggerCenter}
+            disableCenter={disableCenter}
+            // /**ScreenSize */
+            screenWidth900px={screenWidth900px}
+          />
+
           {!screenWidth900px && (
             <ControlPanelMobile
               setSearchRadius={setSearchRadius}

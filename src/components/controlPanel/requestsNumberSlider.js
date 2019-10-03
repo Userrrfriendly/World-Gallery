@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { makeStyles, Input, Typography, Slider } from "@material-ui/core/";
-// import Typography from "@material-ui/core/Typography";
-// import Slider from "@material-ui/core/Slider";
+import StateContext from "../../context/stateContext";
+import DispatchContext from "../../context/dispatchContext";
+import { SET_MAX_RESULTS_PER_PAGE } from "../../context/rootReducer";
 
 const useStyles = makeStyles({
   root: {
@@ -19,29 +20,43 @@ const useStyles = makeStyles({
 
 export default function RequestNumberSlider(props) {
   const classes = useStyles();
-  const [value, setValue] = React.useState(30);
+  const store = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
 
   const handleSliderChange = (event, newValue) => {
-    setValue(newValue);
-    // props.setSearchRadius(newValue);
-    // Do smth to global state/store
+    dispatch({
+      type: SET_MAX_RESULTS_PER_PAGE,
+      resultsPerPage: newValue
+    });
   };
 
   const handleInputChange = event => {
     let val = parseInt(event.target.value);
     if (!Number.isNaN(val) && typeof val == "number") {
-      setValue(val === "" ? "" : Number(val));
-      // Do smth to global state/store
+      dispatch({
+        type: SET_MAX_RESULTS_PER_PAGE,
+        resultsPerPage: val
+      });
     }
   };
 
   const handleBlur = () => {
+    const value = store.resultsPerPage;
     if (value <= 10) {
-      setValue(10);
-    } else if (value <= 100) {
-      setValue(Math.trunc(value / 10) * 10);
-    } else if (value > 100) {
-      setValue(100);
+      dispatch({
+        type: SET_MAX_RESULTS_PER_PAGE,
+        resultsPerPage: 10
+      });
+    } else if (value <= 250) {
+      dispatch({
+        type: SET_MAX_RESULTS_PER_PAGE,
+        resultsPerPage: Math.trunc(value / 10) * 10
+      });
+    } else if (value > 250) {
+      dispatch({
+        type: SET_MAX_RESULTS_PER_PAGE,
+        resultsPerPage: 250
+      });
     }
   };
 
@@ -53,17 +68,17 @@ export default function RequestNumberSlider(props) {
 
       <div className={classes.root}>
         <Slider
-          value={value}
+          value={store.resultsPerPage}
           onChange={handleSliderChange}
           aria-labelledby="input-slider"
           step={10}
           min={10}
-          max={100}
+          max={250}
           style={{ width: "75%", marginRight: "0.5rem", marginLeft: "0.5rem" }}
         />
         <Input
           className={classes.input}
-          value={value}
+          value={store.resultsPerPage}
           type="number"
           margin="dense"
           onChange={handleInputChange}
@@ -71,7 +86,7 @@ export default function RequestNumberSlider(props) {
           inputProps={{
             step: 10,
             min: 10,
-            max: 100,
+            max: 250,
             type: "number",
             "aria-labelledby": "input-slider"
           }}

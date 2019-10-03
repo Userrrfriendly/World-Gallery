@@ -2,6 +2,7 @@ import { find as _find } from "lodash";
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
 // export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 
+export const SET_MAX_RESULTS_PER_PAGE = "SET_MAX_RESULTS_PER_PAGE";
 export const SET_USER_LOCATION = "SET_USER_LOCATION";
 export const SET_SEARCH_RADIUS = "SET_SEARCH_RADIUS";
 export const SET_SEARCH_CENTER = "SET_SEARCH_CENTER";
@@ -22,6 +23,13 @@ const setBoundingBox = (action, state) => {
 // const setRadiusMarker = (action, state) => {
 //   return { ...state, radiusMarker: action.radiusMarker };
 // };
+
+const setResultsPerPage = (action, state) => {
+  return {
+    ...state,
+    resultsPerPage: action.resultsPerPage
+  };
+};
 
 const setUserLocation = (action, state) => {
   return {
@@ -161,6 +169,10 @@ export const rootReducer = (state, action) => {
     //   console.log(action.type);
     //   return setRadiusMarker(action, state);
     //new ones
+
+    case SET_MAX_RESULTS_PER_PAGE:
+      console.log(action.type);
+      return setResultsPerPage(action, state);
     case SET_USER_LOCATION:
       console.log(action.type);
       return setUserLocation(action, state);
