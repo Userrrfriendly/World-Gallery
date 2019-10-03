@@ -149,14 +149,20 @@ const ControlPanel = props => {
           mapOptions={
             <div className={classes.map_options_container}>
               {/* <CustomSwitch label="Pin all results on map" /> */}
-              <CustomSwitch label="Hide all results from the map" />
-              <CustomSwitch label="Hide all favorites from the map" />
+              <CustomSwitch
+                callback={props.togglePhotoMarkerDisplay}
+                label="Hide all results from the map"
+              />
+              <CustomSwitch
+                callback={props.toggleFavorites}
+                label="Hide all favorites from the map"
+              />
               <Button
                 variant="contained"
                 style={{ marginTop: "1rem", color: "black" }}
                 color="secondary"
                 size={"large"}
-                onClick={props.searchFlikr}
+                onClick={props.getMyLocation}
                 // className={smallScreen ? classes.controls_mobile : classes.controls}
               >
                 <MyLocationTwoTone style={{ marginRight: "1rem" }} />

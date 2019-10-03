@@ -4,11 +4,11 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
 export default function HideResultsSwitch(props) {
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
 
   const handleSwitchChange = event => {
     setChecked(event.target.checked);
-    //props.callback
+    props.callback();
   };
 
   return (

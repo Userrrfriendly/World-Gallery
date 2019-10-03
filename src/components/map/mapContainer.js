@@ -51,7 +51,7 @@ class Map extends React.Component {
   state = {
     boundingBox: null,
     selectionMarker: null,
-    pinndedPhotos: [],
+    photoMarkers: [],
     favorites: []
   };
 
@@ -72,16 +72,11 @@ class Map extends React.Component {
     if (prevProps.photos !== this.props.photos) {
       console.log("PHOTOS CHANGED - RERENDERING MARKERS");
       let photos = this.props.photos;
-      // const favorites =
-      //   prevProps.favorites !== this.props.favorites
-      //     ? this.props.favorites
-      //     : this.state.favorites;
-
-      this.state.pinndedPhotos.forEach(pin => pin.setMap(null));
-      this.setState({ pinndedPhotos: [] });
+      this.state.photoMarkers.forEach(pin => pin.setMap(null));
+      this.setState({ photoMarkers: [] });
 
       photos.forEach(photo => {
-        return this.pinPhotoMarkerOnMap(photo);
+        return this.createPhotoMarker(photo, this.props.displayPhotoMarkers);
       });
     } else {
       console.log("PHOTOS DID NOT CHANGE - NO RERENDER FOR MARKERS");
@@ -89,8 +84,24 @@ class Map extends React.Component {
 
     if (prevProps.favorites !== this.props.favorites) {
       console.log("if prevProps favorites....");
+      this.hideAllFavorites();
       this.setState({ favorites: [] });
-      this.props.favorites.forEach(f => this.pinFavorite(f));
+      const showFavorites = this.props.displayFavorites;
+      this.props.favorites.forEach(f => this.pinFavorite(f, showFavorites));
+    }
+
+    if (prevProps.displayPhotoMarkers !== this.props.displayPhotoMarkers) {
+      console.log("SHOW/HIDE PHOTOMARKERS");
+      this.props.displayPhotoMarkers
+        ? this.showAllPhotoMarkers()
+        : this.hideAllPhotoMarkers();
+    }
+
+    if (prevProps.displayFavorites !== this.props.displayFavorites) {
+      console.log("SHOW/HIDE PHOTOMARKERS");
+      this.props.displayFavorites
+        ? this.showAllFavorites()
+        : this.hideAllFavorites();
     }
 
     /*when the user location changes pan the map to it
@@ -99,7 +110,7 @@ class Map extends React.Component {
       /**  even though the component has mounted and is currently in re-render(update) phase
        * window.map can be undefined (especially on first load where google.maps api is not cached and is not fully initialized)
        * so there is a slim chance that window.map.panTo will run before google.maps is fully loaded thus trowing an error
-       * The following ugly code checks if google.maps is loaded before trying to zoom/add SearchCircle to the users location
+       * mapReady() checks if google.maps is loaded before trying to zoom  to the users location
        * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
        * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
        */
@@ -110,8 +121,8 @@ class Map extends React.Component {
         }
         if (window.map) {
           window.map.panTo(this.props.userLocation);
-          this.addSearchCircle(this.props.userLocation);
-          window.map.setZoom(12);
+          // this.addSearchCircle(this.props.userLocation);
+          window.map.setZoom(16);
           stopTimer();
         } else {
           waitingThreshold -= 10;
@@ -127,7 +138,10 @@ class Map extends React.Component {
     // }
 
     if (this.props.triggerPhotoMarker) {
-      this.pinPhotoMarkerOnMap(this.props.triggerPhotoMarker);
+      this.createPhotoMarker(
+        this.props.triggerPhotoMarker,
+        this.props.displayPhotoMarkers
+      );
       this.props.disableTriggerPhotoMarker();
     }
 
@@ -178,10 +192,10 @@ class Map extends React.Component {
 
   initMap = () => {
     console.log("Google Maps API Loaded...");
-    const rome = {
-      lat: 41.890384586382844,
-      lng: 12.492241690388028
-    }; //Rome, colosseo
+    // const rome = {
+    //   lat: 41.890384586382844,
+    //   lng: 12.492241690388028
+    // }; //Rome, colosseo
     const europe = { lat: 47.55241106676634, lng: 11.389968539500511 };
 
     window.map = new window.google.maps.Map(
@@ -199,7 +213,7 @@ class Map extends React.Component {
       maxWidth: 200
     });
 
-    this.addSearchCircle(rome);
+    // this.addSearchCircle(rome);
 
     window.google.maps.event.addListenerOnce(window.map, "idle", () => {
       document.getElementsByTagName("iframe")[0].title = "Google Maps";
@@ -255,12 +269,12 @@ class Map extends React.Component {
     }
   };
 
-  removeMarker = () => {
-    if (this.state.selectionMarker) {
-      this.state.selectionMarker.setMap(null);
-      this.setState({ selectionMarker: null });
-    }
-  };
+  // removeMarker = () => {
+  //   if (this.state.selectionMarker) {
+  //     this.state.selectionMarker.setMap(null);
+  //     this.setState({ selectionMarker: null });
+  //   }
+  // };
 
   removePolygon = () => {
     if (this.state.boundingBox) {
@@ -269,35 +283,35 @@ class Map extends React.Component {
     }
   };
 
-  addRadiusMarker = location => {
-    if (this.state.selectionMarker) {
-      this.removeMarker();
-      this.props.getRadiusMarkerCoordinates(null);
-    } else {
-      //if a specific location is passed as arg, place the marker at that coords. If no args are passed use center of map
-      const centerXY = location ? location : window.map.center.toJSON();
-      //if marker/polygon already exists remove it
-      this.removeMarker();
-      this.removePolygon();
+  // addRadiusMarker = location => {
+  //   if (this.state.selectionMarker) {
+  //     this.removeMarker();
+  //     this.props.getRadiusMarkerCoordinates(null);
+  //   } else {
+  //     //if a specific location is passed as arg, place the marker at that coords. If no args are passed use center of map
+  //     const centerXY = location ? location : window.map.center.toJSON();
+  //     //if marker/polygon already exists remove it
+  //     this.removeMarker();
+  //     this.removePolygon();
 
-      let marker = new window.google.maps.Marker({
-        position: centerXY,
-        map: window.map,
-        title: "Test",
-        draggable: true,
-        animation: window.google.maps.Animation.DROP
-      });
-      marker.addListener("dragend", () =>
-        this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON())
-      );
-      this.setState({ selectionMarker: marker });
-      this.props.setBounds(null);
-      this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON());
-      window.marker = marker;
-    }
-  };
+  //     let marker = new window.google.maps.Marker({
+  //       position: centerXY,
+  //       map: window.map,
+  //       title: "Test",
+  //       draggable: true,
+  //       animation: window.google.maps.Animation.DROP
+  //     });
+  //     marker.addListener("dragend", () =>
+  //       this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON())
+  //     );
+  //     this.setState({ selectionMarker: marker });
+  //     this.props.setBounds(null);
+  //     this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON());
+  //     window.marker = marker;
+  //   }
+  // };
 
-  pinPhotoMarkerOnMap = pin => {
+  createPhotoMarker = (pin, map) => {
     // const customMarker = {
     //   url: PhotoMarker_20,
     //   scale: 0.1
@@ -306,7 +320,7 @@ class Map extends React.Component {
     let marker = new window.google.maps.Marker({
       // position: pin.position,
       position: pin.geolocation,
-      map: window.map,
+      map: map ? window.map : null, //window.map,
       // icon: customMarker,
       title: pin.title,
       animation: window.google.maps.Animation.DROP,
@@ -314,24 +328,16 @@ class Map extends React.Component {
       color: "blue"
     });
 
-    // window.SETMARKER = () =>
-    //   window.LASTMARKER.setIcon({
-    //     // path: window.google.maps.SymbolPath.CIRCLE,
-    //     path: path4,
-    //     // fill: "#e74c3c",
-    //     scale: 1
-    //   });
     window.SETIMG = () => window.LASTMARKER.setIcon(heartMarker);
-
     window.RESET = () => {
-      // debugging ONLY
-      this.state.pinndedPhotos.forEach(pin => pin.setMap(null));
-      this.setState({ pinndedPhotos: [] });
+      this.state.photoMarkers.forEach(pin => pin.setMap(null));
+      this.setState({ photoMarkers: [] });
     };
+
     this.setState(prevState => {
-      const pins = prevState.pinndedPhotos;
+      const pins = prevState.photoMarkers;
       pins.push(marker);
-      return { pinndedPhotos: pins };
+      return { photoMarkers: pins };
     });
 
     marker.addListener("click", function() {
@@ -350,10 +356,46 @@ class Map extends React.Component {
     //   infowindow.open(map, marker);
     // });
   };
-  pinFavorite = img => {
+
+  showAllPhotoMarkers = () => {
+    const map = window.map;
+    const markers = this.state.photoMarkers;
+    for (let i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  };
+
+  hideAllPhotoMarkers = () => {
+    const markers = this.state.photoMarkers;
+    for (let i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
+  };
+
+  showAllFavorites = () => {
+    const map = window.map;
+    const markers = this.state.favorites;
+    for (let i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  };
+
+  hideAllFavorites = () => {
+    const markers = this.state.favorites;
+    console.log(markers);
+
+    for (let i = 0; i < markers.length; i++) {
+      console.log(i);
+      markers[i].setMap(null);
+    }
+    console.log(markers);
+  };
+
+  pinFavorite = (img, show) => {
+    // console.log(map ? window.map : null);
     let marker = new window.google.maps.Marker({
       position: img.geolocation,
-      map: window.map,
+      map: show ? window.map : null,
       icon: heartMarker,
       title: img.title,
       animation: window.google.maps.Animation.DROP,

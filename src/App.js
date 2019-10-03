@@ -72,6 +72,19 @@ function App() {
   const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
   const disableTriggerPhotoMarker = () => setTriggerPhotoMarker(false);
 
+  /** Markers trigger */
+  const [displayPhotoMarkers, setDisplayPhotoMarkers] = useState(true);
+  const togglePhotoMarkerDisplay = useCallback(() => {
+    setDisplayPhotoMarkers(!displayPhotoMarkers);
+  }, [setDisplayPhotoMarkers, displayPhotoMarkers]);
+
+  const [displayFavorites, setDisplayFavorites] = useState(true);
+  // const toggleFavorites = useCallback(() => {
+  //   setDisplayFavorites(!displayFavorites);
+  // }, [setDisplayFavorites, displayFavorites]);
+
+  const toggleFavorites = () => setDisplayFavorites(!displayFavorites);
+
   // const pinPhotoOnMap = React.useCallback(pin => {
   //   console.log("pinPhotoOnMAp");
   //   const { position, thumbnail, title, id, owner, thumbWidth } = pin;
@@ -89,8 +102,6 @@ function App() {
   const addImgToFavorites = useCallback(
     img => {
       console.log("adding to favorites");
-      // const { position, thumbnail, title, id, owner, thumbWidth } = img;
-      //scr-set?
       dispatch({
         type: ADD_IMG_TO_FAVORITES,
         image: img
@@ -169,6 +180,7 @@ function App() {
           maxUploadDate: store.maxUploadDate,
           minTakenDate: store.minTakenDate,
           maxTakenDate: store.maxTakenDate,
+          resultsPerPage: store.resultsPerPage,
           bounds,
           sortMethod,
           searchText
@@ -280,7 +292,7 @@ function App() {
     console.log(store.filteredPhotos);
   }, [store.filteredPhotos]);
 
-  useEffect(() => {
+  const getMyLocation = () => {
     /*fetch user location when app mounts*/
     fetch("https://geoip-db.com/json/42e6a770-b3ac-11e9-80ca-c95181800da7")
       .then(res => res.json())
@@ -309,7 +321,7 @@ function App() {
           );
         }
       });
-  }, [dispatch]);
+  };
 
   const setBounds = useCallback(
     bounds => {
@@ -395,6 +407,9 @@ function App() {
               handleTextQueryChange={handleTextQueryChange}
               clearTextQuery={clearTextQuery}
               searchText={searchText}
+              getMyLocation={getMyLocation}
+              togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
+              toggleFavorites={toggleFavorites}
             ></ControlPanel>
           )}
           {/* {mapVisible && ()} */}
@@ -405,6 +420,8 @@ function App() {
             setSearchCenter={setSearchCenter}
             searchRadius={store.searchRadius}
             // /** */
+            displayPhotoMarkers={displayPhotoMarkers}
+            displayFavorites={displayFavorites}
             setBounds={setBounds}
             // /**triggerGetMapExtents */
             triggerMapExtents={triggerMapExtents}
