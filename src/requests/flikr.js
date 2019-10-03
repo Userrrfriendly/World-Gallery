@@ -20,6 +20,18 @@ export const getPhotosByTitle = searchParams => {
   // url.append('tags', marker.title); //text produces broader results than tags leave it for now may implement later
   if (searchParams.searchText) url.append("text", searchParams.searchText);
   if (searchParams.sortMethod) url.append("sort", searchParams.sortMethod);
+  if (searchParams.minUploadDate) {
+    url.append("min_upload_date", searchParams.minUploadDate);
+  }
+  if (searchParams.maxUploadDate) {
+    url.append("max_upload_date", searchParams.maxUploadDate);
+  }
+  if (searchParams.minTakenDate) {
+    url.append("min_taken_date", searchParams.minTakenDate);
+  }
+  if (searchParams.maxTakenDate) {
+    url.append("max_taken_date", searchParams.maxTakenDate);
+  }
   if (searchParams.searchMethod === "EXTENTS") {
     const { south, west, north, east } = searchParams.bounds;
     query = {

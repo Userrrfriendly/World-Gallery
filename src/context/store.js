@@ -19,7 +19,11 @@ export default function Store(props) {
     mapPhotos: [],
     hiddenPhotos: [],
     blockedUsers: [],
-    favorites: []
+    favorites: [],
+    minUploadDate: null,
+    maxUploadDate: null,
+    minTakenDate: null,
+    maxTakenDate: null
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

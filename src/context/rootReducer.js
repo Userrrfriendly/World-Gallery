@@ -10,6 +10,10 @@ export const UPDATE_PHOTOS = "UPDATE_PHOTOS";
 export const BLOCK_USER = "BLOCK_USER";
 export const ADD_IMG_TO_FAVORITES = "ADD_IMG_TO_FAVORITES";
 export const REMOVE_IMG_FROM_FAVORITES = "REMOVE_IMG_FROM_FAVORITES";
+export const SET_MIN_UPLOAD_DATE = "SET_MIN_UPLOAD_DATE";
+export const SET_MAX_UPLOAD_DATE = "SET_MAX_UPLOAD_DATE";
+export const SET_MIN_TAKEN_DATE = "SET_MIN_TAKEN_DATE";
+export const SET_MAX_TAKEN_DATE = "SET_MAX_TAKEN_DATE";
 
 const setBoundingBox = (action, state) => {
   return { ...state, boundingBox: action.boundingBox };
@@ -132,6 +136,22 @@ const removeImgFromFavorites = (action, state) => {
   return { ...state, favorites };
 };
 
+const setMinUploadDate = (action, state) => {
+  return { ...state, minUploadDate: action.minUploadDate };
+};
+
+const setMaxUploadDate = (action, state) => {
+  return { ...state, maxUploadDate: action.maxUploadDate };
+};
+
+const setMinTakenDate = (action, state) => {
+  return { ...state, minTakenDate: action.minTakenDate };
+};
+
+const setMaxTakenDate = (action, state) => {
+  return { ...state, maxTakenDate: action.maxTakenDate };
+};
+
 export const rootReducer = (state, action) => {
   switch (action.type) {
     case SET_BOUNDING_BOX:
@@ -165,6 +185,18 @@ export const rootReducer = (state, action) => {
     case REMOVE_IMG_FROM_FAVORITES:
       console.log(action.type);
       return removeImgFromFavorites(action, state);
+    case SET_MIN_UPLOAD_DATE:
+      console.log(action.type);
+      return setMinUploadDate(action, state);
+    case SET_MAX_UPLOAD_DATE:
+      console.log(action.type);
+      return setMaxUploadDate(action, state);
+    case SET_MIN_TAKEN_DATE:
+      console.log(action.type);
+      return setMinTakenDate(action, state);
+    case SET_MAX_TAKEN_DATE:
+      console.log(action.type);
+      return setMaxTakenDate(action, state);
 
     default:
       return state;

@@ -38,7 +38,7 @@ export default function TextQuery(props) {
             id="adornment-text"
             type="text"
             fullWidth
-            placeholder="search for a keyword/phrase in photo-titles,tags,albums"
+            placeholder="search for a keyword in tags,albums,titles etc"
             value={props.searchText}
             onChange={props.handleTextQueryChange}
             endAdornment={
@@ -57,7 +57,7 @@ export default function TextQuery(props) {
           />
         </FormControl>
         <FormHelperText style={{ margin: "5px 0 " }}>
-          Adding text to the query will greatly limit the photos results
+          Adding text to the query will greatly limit the results
         </FormHelperText>
       </form>
     </>

@@ -139,6 +139,8 @@ function App() {
           radius: store.searchRadius,
           searchMethod: store.searchMethod,
           resultsPerPage: store.resultsPerPage,
+          minUploadDate: store.minUploadDate,
+          maxUploadDate: store.maxUploadDate,
           sortMethod,
           searchText
         };
@@ -150,6 +152,10 @@ function App() {
         // getMapExtents();
         searchParams = {
           searchMethod: store.searchMethod,
+          minUploadDate: store.minUploadDate,
+          maxUploadDate: store.maxUploadDate,
+          minTakenDate: store.minTakenDate,
+          maxTakenDate: store.maxTakenDate,
           bounds,
           sortMethod,
           searchText
@@ -250,7 +256,7 @@ function App() {
   useEffect(() => {
     //debugging only
     console.log(store);
-    console.log(responseDetails);
+    console.log(responseDetails); // IF RESPONSE DETAILS RETURNS ERROR THE APP CAN CRASH
   }, [store, responseDetails]);
 
   useEffect(() => {

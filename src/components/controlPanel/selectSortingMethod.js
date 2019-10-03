@@ -22,7 +22,7 @@ export default function SelectSortingMethod(props) {
 
   return (
     <FormControl className={classes.formControl}>
-      <InputLabel htmlFor="sorting-helper">Sort photos by...</InputLabel>
+      <InputLabel htmlFor="sorting-helper">Display results by:</InputLabel>
       <Select
         classes={{ root: classes.root_select }}
         value={props.sortMethod}
