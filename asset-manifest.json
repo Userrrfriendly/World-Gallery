@@ -1,16 +1,15 @@
 {
   "files": {
     "main.css": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css",
-    "main.js": "/Flickr-GeoExplorer/static/js/main.cf4d3ec7.chunk.js",
-    "main.js.map": "/Flickr-GeoExplorer/static/js/main.cf4d3ec7.chunk.js.map",
+    "main.js": "/Flickr-GeoExplorer/static/js/main.ba068d5e.chunk.js",
+    "main.js.map": "/Flickr-GeoExplorer/static/js/main.ba068d5e.chunk.js.map",
     "runtime~main.js": "/Flickr-GeoExplorer/static/js/runtime~main.8e663d21.js",
     "runtime~main.js.map": "/Flickr-GeoExplorer/static/js/runtime~main.8e663d21.js.map",
-    "static/js/2.a7e24f22.chunk.js": "/Flickr-GeoExplorer/static/js/2.a7e24f22.chunk.js",
-    "static/js/2.a7e24f22.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.a7e24f22.chunk.js.map",
+    "static/js/2.e4db71b8.chunk.js": "/Flickr-GeoExplorer/static/js/2.e4db71b8.chunk.js",
+    "static/js/2.e4db71b8.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.e4db71b8.chunk.js.map",
     "index.html": "/Flickr-GeoExplorer/index.html",
-    "precache-manifest.ff7c82b2cedfb93bfd2d0a75f00ea864.js": "/Flickr-GeoExplorer/precache-manifest.ff7c82b2cedfb93bfd2d0a75f00ea864.js",
+    "precache-manifest.a12ec13ec0f8f4c3c5ac4cbb3e293d8b.js": "/Flickr-GeoExplorer/precache-manifest.a12ec13ec0f8f4c3c5ac4cbb3e293d8b.js",
     "service-worker.js": "/Flickr-GeoExplorer/service-worker.js",
-    "static/css/main.34de6062.chunk.css.map": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css.map",
-    "static/media/PhotoMarker_20.svg": "/Flickr-GeoExplorer/static/media/PhotoMarker_20.e88b541b.svg"
+    "static/css/main.34de6062.chunk.css.map": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css.map"
   }
 }
