@@ -270,10 +270,10 @@ class Map extends React.Component {
     }
   };
 
-  createPhotoMarker = (pin, map) => {
+  createPhotoMarker = (pin, show) => {
     let marker = new window.google.maps.Marker({
       position: pin.geolocation,
-      map: map ? window.map : null,
+      map: show ? window.map : null,
       icon: photoMarker,
       scaledSize: 0.5,
       title: pin.title,
@@ -336,17 +336,12 @@ class Map extends React.Component {
 
   hideAllFavorites = () => {
     const markers = this.state.favorites;
-    console.log(markers);
-
     for (let i = 0; i < markers.length; i++) {
-      console.log(i);
       markers[i].setMap(null);
     }
-    console.log(markers);
   };
 
   pinFavorite = (img, show) => {
-    // console.log(map ? window.map : null);
     let marker = new window.google.maps.Marker({
       position: img.geolocation,
       map: show ? window.map : null,

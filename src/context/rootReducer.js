@@ -1,4 +1,4 @@
-import { find as _find } from "lodash";
+import { find as _find, findIndex as _findIndex } from "lodash";
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
 // export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 
@@ -139,9 +139,17 @@ const addImgToFavorites = (action, state) => {
 
 const removeImgFromFavorites = (action, state) => {
   const favorites = [...state.favorites];
-  const index = favorites.indexOf(action.image);
+  const isInCurrentResults = _find(state.photos, action.image) ? true : false;
+  const mapPhotos = isInCurrentResults
+    ? state.mapPhotos.concat(action.image)
+    : state.mapPhotos;
+
+  const index = _findIndex(favorites, function(o) {
+    return o.photoId === action.image.photoId;
+  });
+
   if (index !== -1) favorites.splice(index, 1);
-  return { ...state, favorites };
+  return { ...state, favorites, mapPhotos };
 };
 
 const setMinUploadDate = (action, state) => {

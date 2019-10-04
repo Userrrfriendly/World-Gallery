@@ -1,21 +1,24 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import Gallery from "react-photo-gallery";
 import ImageWrapper from "../imageWrapper/imageWrapper";
 import ImageMenu from "../imageWrapper/imageMenu";
-
+import StateContext from "../../context/stateContext";
 import Carousel, { Modal, ModalGateway } from "react-images";
 import { makeStyles, IconButton, Typography } from "@material-ui/core";
 import {
   Close,
   Fullscreen,
   FullscreenExit,
-  MyLocationRounded
+  Favorite,
+  FavoriteBorder
 } from "@material-ui/icons";
-// import { getPhotoGeoLocation } from "../../requests/flikr";
+import { find as _find } from "lodash";
+
 const useStyles = makeStyles(theme => ({
   header_container: {
     position: "absolute",
-    top: "1px",
+    top: "2px",
+    left: "2px",
     width: "100vw",
     display: "flex",
     zIndex: "2000",
@@ -52,7 +55,9 @@ const navButtonStyles = base => ({
 });
 
 const ViewRenderer = props => {
-  /** https://github.com/jossmac/react-images/issues/300 */
+  /** By default react-images carousel loads all images
+   * Vustom viewRenderer ensures changes that behaviour and requests each image when it is about to render it
+   * more on the issue:-->  https://github.com/jossmac/react-images/issues/300 */
   const overScanCount = 1;
   const { data, getStyles, index, currentIndex } = props;
   const { alt, src } = data;
@@ -76,19 +81,13 @@ const ViewRenderer = props => {
 const CustomHeader = props => {
   /*most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery*/
   const classes = useStyles();
-  // const handlePinOnMapClick = id => {
-  //   getPhotoGeoLocation(id).then(res => {
-  //     const result = {
-  //       position: res,
-  //       thumbnail: props.data.src,
-  //       title: props.data.title,
-  //       id: props.data.photoId,
-  //       thumbWidth: props.data.width_t
-  //     };
-  //     // return props.carouselProps.pinPhotoOnMap(result);
-  //     return props.carouselProps.pinPhotoOnMap(result);
-  //   });
-  // };
+  const store = useContext(StateContext);
+  const isFavorite = _find(
+    store.favorites,
+    el => el.photoId === props.currentView.photoId
+  )
+    ? true
+    : false;
 
   return props.isModal ? (
     <div
@@ -101,10 +100,17 @@ const CustomHeader = props => {
       <IconButton
         aria-label="Pin photo on map"
         className={classes.lightbox_btn}
-        // onClick={handlePinOnMapClick.bind(this, props.data.photoId)}
-        onClick={props.carouselProps.addImgToFavorites.bind(this, props.data)}
+        onClick={props.carouselProps.imageToggleFavorites.bind(
+          this,
+          props.data,
+          isFavorite
+        )}
       >
-        <MyLocationRounded />
+        {isFavorite ? (
+          <Favorite style={{ color: "gold" }} />
+        ) : (
+          <FavoriteBorder />
+        )}
       </IconButton>
 
       <div className={classes.btn_container_right}>
@@ -136,8 +142,8 @@ const ImageGrid = ({
   photos,
   responseDetails,
   direction,
-  // pinPhotoOnMap,
-  addImgToFavorites,
+  // addImgToFavorites,
+  imageToggleFavorites,
   setAppBarHide,
   columns,
   hiddenPhotos
@@ -146,18 +152,20 @@ const ImageGrid = ({
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
   React.useEffect(() => {
-    console.log("IMAGE GRID SMTH UPDATED!!!!!");
+    //debugging
+    console.log("IMAGE GRID: some props Caused Rerender!!!!!");
   }, [
     photos,
     responseDetails,
     direction,
-    addImgToFavorites,
+    // addImgToFavorites,
+    imageToggleFavorites,
     setAppBarHide,
     columns,
     hiddenPhotos
   ]);
 
-  console.log("IMAGEGRID!##%$#@!");
+  console.log("IMAGEGRID UPDATED!");
   const openLightbox = useCallback(
     (event, { photo, index }) => {
       setAppBarHide(true);
@@ -195,16 +203,15 @@ const ImageGrid = ({
           photo={props.photo}
           left={props.left}
           top={props.top}
-          // pinPhotoOnMap={pinPhotoOnMap}
-          addImgToFavorites={addImgToFavorites}
+          // addImgToFavorites={addImgToFavorites}
+          imageToggleFavorites={imageToggleFavorites}
           direction={props.direction}
           openLightbox={props.onClick}
           handleOpenMenuClick={handleOpenMenuClick}
         />
       );
     },
-    // [pinPhotoOnMap]
-    [addImgToFavorites]
+    [imageToggleFavorites]
   );
 
   return (
@@ -228,8 +235,7 @@ const ImageGrid = ({
           photos={photos}
           direction={direction}
           renderImage={imageRenderer}
-          // pinPhotoOnMap={pinPhotoOnMap}
-          addImgToFavorites={addImgToFavorites}
+          // addImgToFavorites={addImgToFavorites}
           onClick={openLightbox}
           // the above onClick is an optional react-photo-gallery prop
           // It receives the arguments -> event and an object containing the index,
@@ -240,8 +246,8 @@ const ImageGrid = ({
         {viewerIsOpen ? (
           <Modal onClose={closeLightbox}>
             <Carousel
-              // pinPhotoOnMap={pinPhotoOnMap}
-              addImgToFavorites={addImgToFavorites}
+              // addImgToFavorites={addImgToFavorites}
+              imageToggleFavorites={imageToggleFavorites}
               components={{
                 Header: CustomHeader,
 

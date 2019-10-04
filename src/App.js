@@ -12,7 +12,8 @@ import {
   SET_SEARCH_RADIUS,
   SET_PHOTOS,
   UPDATE_PHOTOS,
-  ADD_IMG_TO_FAVORITES
+  ADD_IMG_TO_FAVORITES,
+  REMOVE_IMG_FROM_FAVORITES
 } from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
@@ -69,8 +70,8 @@ function App() {
   const [appBarHide, setAppBarHide] = useState(false);
 
   /** Triggers plot photo on map  */
-  const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
-  const disableTriggerPhotoMarker = () => setTriggerPhotoMarker(false);
+  // const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
+  // const disableTriggerPhotoMarker = () => setTriggerPhotoMarker(false);
 
   /** Markers trigger */
   const [displayPhotoMarkers, setDisplayPhotoMarkers] = useState(true);
@@ -85,27 +86,31 @@ function App() {
 
   const toggleFavorites = () => setDisplayFavorites(!displayFavorites);
 
-  // const pinPhotoOnMap = React.useCallback(pin => {
-  //   console.log("pinPhotoOnMAp");
-  //   const { position, thumbnail, title, id, owner, thumbWidth } = pin;
-  //   setTriggerPhotoMarker({
-  //     position: position,
-  //     thumbnail: thumbnail,
-  //     title: title,
-  //     id,
-  //     owner,
-  //     thumbWidth
-  //     //src-screenset
-  //   });
-  // }, []);
+  // const addImgToFavorites = useCallback(
+  //   img => {
+  //     console.log("adding to favorites");
+  //     dispatch({
+  //       type: ADD_IMG_TO_FAVORITES,
+  //       image: img
+  //     });
+  //   },
+  //   [dispatch]
+  // );
 
-  const addImgToFavorites = useCallback(
-    img => {
-      console.log("adding to favorites");
-      dispatch({
-        type: ADD_IMG_TO_FAVORITES,
-        image: img
-      });
+  const imageToggleFavorites = useCallback(
+    (img, isFavorite) => {
+      console.log(isFavorite);
+      if (!isFavorite) {
+        dispatch({
+          type: ADD_IMG_TO_FAVORITES,
+          image: img
+        });
+      } else {
+        dispatch({
+          type: REMOVE_IMG_FROM_FAVORITES,
+          image: img
+        });
+      }
     },
     [dispatch]
   );
@@ -458,7 +463,8 @@ function App() {
             responseDetails={responseDetails}
             direction={gridDirection}
             // pinPhotoOnMap={pinPhotoOnMap}
-            addImgToFavorites={addImgToFavorites}
+            // addImgToFavorites={addImgToFavorites}
+            imageToggleFavorites={imageToggleFavorites}
             columns={2}
             setAppBarHide={setAppBarHide}
           />

@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Fab, makeStyles, Zoom } from "@material-ui/core";
-import { MyLocationRounded, MoreVert } from "@material-ui/icons";
+import { Favorite, FavoriteBorder, MoreVert } from "@material-ui/icons";
+import { find as _find } from "lodash";
+import StateContext from "../../context/stateContext";
 // import { getPhotoGeoLocation } from "../../requests/flikr";
 
 const useStyles = makeStyles(theme => ({
@@ -44,14 +46,17 @@ const ImageWrapper = ({
   top,
   left,
   selected,
-  // pinPhotoOnMap,
-  addImgToFavorites,
+  imageToggleFavorites,
   openLightbox,
   handleOpenMenuClick
 }) => {
   const classes = useStyles();
-
+  const state = useContext(StateContext);
   const [hover, setHover] = useState(false);
+  // const isFavorite = useState()
+  const isFavorite = _find(state.favorites, el => el.photoId === photo.photoId)
+    ? true
+    : false;
 
   const cont = {
     backgroundColor: "#eee",
@@ -92,7 +97,6 @@ const ImageWrapper = ({
   // position: "absolute",
   // left: left,
   // top: top
-
   console.log(direction);
   if (direction === "column") {
     cont.position = "absolute";
@@ -148,10 +152,15 @@ const ImageWrapper = ({
           color="secondary"
           aria-label="add"
           className={classes.pin_to_map_btn}
-          // onClick={handlePinOnMapClick.bind(this, photo.photoId)}
-          onClick={addImgToFavorites.bind(this, photo)}
+          onClick={imageToggleFavorites.bind(this, photo, isFavorite)}
         >
-          <MyLocationRounded />
+          {isFavorite ? (
+            <Favorite style={{ color: "gold" }} />
+          ) : (
+            <FavoriteBorder style={{ color: "#000" }} />
+          )}
+          {/* <FavoriteBorder style={{ color: "#000" }} /> */}
+          {/* <Favorite style={{ color: "gold" }} /> */}
         </Fab>
       </Zoom>
     </div>
