@@ -25,8 +25,9 @@ import MaxUploadDatePicker from "./datePickers/maxUploadDatePicker";
 import MaxTakenDatePicker from "./datePickers/maxTakenDatePicker";
 import MinTakenDatePicker from "./datePickers/minTakenDatePicker";
 import StateContext from "../../context/stateContext";
+import DispatchContext from "../../context/dispatchContext";
+import { SET_USER_LOCATION } from "../../context/rootReducer";
 import LoadingBar from "../LoadingBar/loadingBar";
-
 const useStyles = makeStyles(theme => ({
   panel: {
     textAlign: "center",
@@ -64,7 +65,37 @@ const useStyles = makeStyles(theme => ({
 
 const ControlPanel = props => {
   const store = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
+
   const classes = useStyles();
+
+  const handleMyLocationClick = () => {
+    if (store.userLocation) {
+      props.zoomToLocation(store.userLocation);
+    } else {
+      /* if geoip-db call failed or if it was blocked by an add-blocker use native geolocation API */
+      const success = position => {
+        props.zoomToLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        dispatch({
+          type: SET_USER_LOCATION,
+          userLocation: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+        });
+      };
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(success, err =>
+          console.log(err)
+        );
+      } else {
+        alert("Sorry geolocation is not supported by your broweser.");
+      }
+    }
+  };
 
   const infoTextBox = `Zoom to the location that you want to search for photos and hit the green button below to make the request.`;
   const infoTextCircle = `Drag the blue circle on the map to select the place where you want
@@ -166,7 +197,7 @@ to search for photos, when done press the button below to make the request.`;
                 style={{ marginTop: "1rem", color: "black" }}
                 color="secondary"
                 size={"large"}
-                onClick={props.getMyLocation}
+                onClick={handleMyLocationClick}
                 // className={smallScreen ? classes.controls_mobile : classes.controls}
               >
                 <MyLocationTwoTone style={{ marginRight: "1rem" }} />
@@ -199,9 +230,7 @@ to search for photos, when done press the button below to make the request.`;
           searchText={props.searchText}
           searchFlikr={props.searchFlikr}
         /> */}
-        {/* TEST */}
 
-        {/* END TEST */}
         <Box className={classes.panel_item}>{props.children}</Box>
       </div>
     </Paper>

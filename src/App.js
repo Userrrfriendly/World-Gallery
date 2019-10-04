@@ -171,9 +171,7 @@ function App() {
         break;
       case "EXTENTS":
         const bounds = window.map ? window.map.getBounds().toJSON() : "error";
-        // console.log(window.map.getBounds().toJSON());
         console.log(bounds);
-        // getMapExtents();
         searchParams = {
           searchMethod: store.searchMethod,
           minUploadDate: store.minUploadDate,
@@ -190,13 +188,6 @@ function App() {
         console.log("invalid searchMethod");
         return;
     }
-    // searchParams = {
-    //   lat: store.searchCenter.lat,
-    //   lng: store.searchCenter.lng,
-    //   radius: store.searchRadius,
-    //   sortMethod,
-    //   searchText
-    // };
 
     setLoadingPhotos(true);
     FlikrApi.getPhotosByTitle(searchParams)
@@ -204,17 +195,6 @@ function App() {
         setLoadingPhotos(false);
         setResponseDetails({
           ...data
-          // currentPage: data.currentPage,
-          // totalPages: data.totalPages,
-          // totalPhotos: data.totalPhotos,
-          // perPage: data.perPage,
-          // query: data.query,
-          // // {...data.query},
-          // lat: store.searchCenter.lat,
-          // lng: store.searchCenter.lng,
-          // radius: store.searchRadius,
-          // sortMethod,
-          // searchText
         });
         dispatch({
           type: SET_PHOTOS,
@@ -222,17 +202,16 @@ function App() {
         });
 
         /* if scrollIntoView is called syncronously there is a chance that the images are not loaded yet
-         * thus the body is still the same height and the element simply cannot be scroll to top because instead:
+         * thus the body is still the same height and the element simply cannot be scrolled to. instead:
          *  When the response is loaded wait 100ms for the body to resize (while image gallery loads),
-         * then scroll to the results (an empty div right above the results was used in order to avoid forwardingrefs)         *
+         * then scroll to the results (an empty div right above the results was used in order to avoid forwardingRefs)         *
          */
-        // window.setTimeout(() => {
-        //   resultsRef.current.scrollIntoView({
-        //     behavior: "smooth",
-        //     block: "start"
-        //   });
-        //   window.END = document.body.offsetHeight;
-        // }, 100);
+        window.setTimeout(() => {
+          resultsRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        }, 100);
       })
       .catch(error => {
         console.log(error);
@@ -292,35 +271,46 @@ function App() {
     console.log(store.filteredPhotos);
   }, [store.filteredPhotos]);
 
-  const getMyLocation = () => {
-    /*fetch user location when app mounts*/
-    fetch("https://geoip-db.com/json/42e6a770-b3ac-11e9-80ca-c95181800da7")
-      .then(res => res.json())
-      .then(position => {
-        console.log({ lat: position.latitude, lng: position.longitude });
-        dispatch({
-          type: SET_USER_LOCATION,
-          userLocation: { lat: position.latitude, lng: position.longitude }
-        });
-      })
-      .catch(err => {
-        /* if geoip-db call fails or if it is blocked by an add-blocker use native geolocation API for user position */
-        console.log(err);
-        const success = position => {
+  useEffect(
+    () => {
+      /*fetch user location when app mounts*/
+      fetch("https://geoip-db.com/json/42e6a770-b3ac-11e9-80ca-c95181800da7")
+        .then(res => res.json())
+        .then(position => {
           dispatch({
             type: SET_USER_LOCATION,
-            userLocation: {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            }
+            userLocation: { lat: position.latitude, lng: position.longitude }
           });
-        };
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(success, err =>
-            console.log(err)
-          );
-        }
-      });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // eslint-disable-next-line
+    []
+  );
+
+  const zoomToLocation = location => {
+    /** in case window.map is undefined (not loaded/initialized):
+     * mapReady() checks if google.maps is loaded before trying to zoom to the given location
+     * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
+     * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
+     */
+    let waitingThreshold = 3000; //max number of milliseconds to wait for google.maps to initialize
+    const mapReady = () => {
+      if (waitingThreshold <= 0) {
+        stopTimer();
+      }
+      if (window.map) {
+        window.map.panTo(location);
+        window.map.setZoom(16);
+        stopTimer();
+      } else {
+        waitingThreshold -= 10;
+      }
+    };
+    const timer = setInterval(mapReady, 10);
+    const stopTimer = () => clearInterval(timer);
   };
 
   const setBounds = useCallback(
@@ -407,7 +397,7 @@ function App() {
               handleTextQueryChange={handleTextQueryChange}
               clearTextQuery={clearTextQuery}
               searchText={searchText}
-              getMyLocation={getMyLocation}
+              zoomToLocation={zoomToLocation}
               togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
               toggleFavorites={toggleFavorites}
             ></ControlPanel>

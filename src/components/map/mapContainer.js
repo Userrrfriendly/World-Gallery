@@ -104,33 +104,31 @@ class Map extends React.Component {
         : this.hideAllFavorites();
     }
 
-    /*when the user location changes pan the map to it
-    (either when the response comes from geoip-db or if the user sets it explicitly)*/
-    if (prevProps.userLocation !== this.props.userLocation) {
-      /**  even though the component has mounted and is currently in re-render(update) phase
-       * window.map can be undefined (especially on first load where google.maps api is not cached and is not fully initialized)
-       * so there is a slim chance that window.map.panTo will run before google.maps is fully loaded thus trowing an error
-       * mapReady() checks if google.maps is loaded before trying to zoom  to the users location
-       * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
-       * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
-       */
-      let waitingThreshold = 3000; //max number of milliseconds to wait for google.maps to initialize
-      const mapReady = () => {
-        if (waitingThreshold <= 0) {
-          stopTimer();
-        }
-        if (window.map) {
-          window.map.panTo(this.props.userLocation);
-          // this.addSearchCircle(this.props.userLocation);
-          window.map.setZoom(16);
-          stopTimer();
-        } else {
-          waitingThreshold -= 10;
-        }
-      };
-      const timer = setInterval(mapReady, 10);
-      const stopTimer = () => clearInterval(timer);
-    }
+    // if (prevProps.userLocation !== this.props.userLocation) {
+    //   /**  even though the component has mounted and is currently in re-render(update) phase
+    //    * window.map can be undefined (especially on first load where google.maps api is not cached and is not fully initialized)
+    //    * so there is a slim chance that window.map.panTo will run before google.maps is fully loaded thus trowing an error
+    //    * mapReady() checks if google.maps is loaded before trying to zoom  to the users location
+    //    * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
+    //    * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
+    //    */
+    //   let waitingThreshold = 3000; //max number of milliseconds to wait for google.maps to initialize
+    //   const mapReady = () => {
+    //     if (waitingThreshold <= 0) {
+    //       stopTimer();
+    //     }
+    //     if (window.map) {
+    //       window.map.panTo(this.props.userLocation);
+    //       // this.addSearchCircle(this.props.userLocation);
+    //       window.map.setZoom(16);
+    //       stopTimer();
+    //     } else {
+    //       waitingThreshold -= 10;
+    //     }
+    //   };
+    //   const timer = setInterval(mapReady, 10);
+    //   const stopTimer = () => clearInterval(timer);
+    // }
 
     // if (this.props.triggerMapExtents) {
     //   window.
