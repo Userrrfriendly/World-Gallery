@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Paper,
   makeStyles,
@@ -17,15 +17,15 @@ import {
 import RadiusSlider from "./RadiusSlider";
 import SelectSortingMethod from "./selectSortingMethod";
 import TextQuery from "./textQuery";
-// import AutoPinSwitch from "./switches/autoPinSwitch";
 import CustomSwitch from "./switches/customSwitch";
 import RequstNumberSlider from "./requestsNumberSlider";
 import OptionsPanel from "./expansionPanels";
-import DatePicker from "./datePicker";
 import MinUploadDatePicker from "./datePickers/minUploadDatePicker";
 import MaxUploadDatePicker from "./datePickers/maxUploadDatePicker";
 import MaxTakenDatePicker from "./datePickers/maxTakenDatePicker";
 import MinTakenDatePicker from "./datePickers/minTakenDatePicker";
+import StateContext from "../../context/stateContext";
+import LoadingBar from "../LoadingBar/loadingBar";
 
 const useStyles = makeStyles(theme => ({
   panel: {
@@ -63,16 +63,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ControlPanel = props => {
+  const store = useContext(StateContext);
   const classes = useStyles();
 
+  const infoTextBox = `Zoom to the location that you want to search for photos and hit the green button below to make the request.`;
+  const infoTextCircle = `Drag the blue circle on the map to select the place where you want
+to search for photos, when done press the button below to make the request.`;
   return (
     <Paper className={classes.panel}>
       <div className={classes.wrapper}>
         <Box className={classes.panel_item}>
           <Typography>
-            Drag the blue circle on the map to select the place where you want
-            to search for photos, when done press the button below to make the
-            request.
+            {store.searchMethod === "EXTENTS" && infoTextBox}
+            {store.searchMethod === "CIRCLE" && infoTextCircle}
           </Typography>
         </Box>
         <Box className={classes.panel_item + classes.search_photos_box}>
@@ -86,6 +89,7 @@ const ControlPanel = props => {
             <ImageSearchRounded className={classes.control_icon} />
             Search Photos
           </Button>
+          {props.loadingPhotos && <LoadingBar />}
         </Box>
         <Divider className={classes.divider} />
         {/* Radius Slider  */}

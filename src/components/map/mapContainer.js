@@ -1,7 +1,7 @@
 import React from "react";
-// import PhotoMarker_20 from "../../assets/PhotoMarker_20.svg";
-// import { isEqual as _isEqual, find as _find } from "lodash";
-import heartMarker from "../../assets/heart-32_marker.png";
+
+import heartMarker from "../../assets/loveinterestDark.png";
+import photoMarker from "../../assets/photoDark_Blue.png";
 
 const infoWindowContents = data => {
   return `
@@ -155,10 +155,6 @@ class Map extends React.Component {
       this.props.disableZoom();
     }
 
-    // if (this.props.triggerPlotRadiusMarkerOnMap) {
-    //   this.addRadiusMarker();
-    //   this.props.disableRadiusTrigger();
-    // }
     // if (this.props.triggerBoundingBox) {
     //   this.addPolygon();
     //   this.props.disableBoundingBoxTrigger();
@@ -269,13 +265,6 @@ class Map extends React.Component {
     }
   };
 
-  // removeMarker = () => {
-  //   if (this.state.selectionMarker) {
-  //     this.state.selectionMarker.setMap(null);
-  //     this.setState({ selectionMarker: null });
-  //   }
-  // };
-
   removePolygon = () => {
     if (this.state.boundingBox) {
       this.state.boundingBox.setMap(null);
@@ -283,45 +272,12 @@ class Map extends React.Component {
     }
   };
 
-  // addRadiusMarker = location => {
-  //   if (this.state.selectionMarker) {
-  //     this.removeMarker();
-  //     this.props.getRadiusMarkerCoordinates(null);
-  //   } else {
-  //     //if a specific location is passed as arg, place the marker at that coords. If no args are passed use center of map
-  //     const centerXY = location ? location : window.map.center.toJSON();
-  //     //if marker/polygon already exists remove it
-  //     this.removeMarker();
-  //     this.removePolygon();
-
-  //     let marker = new window.google.maps.Marker({
-  //       position: centerXY,
-  //       map: window.map,
-  //       title: "Test",
-  //       draggable: true,
-  //       animation: window.google.maps.Animation.DROP
-  //     });
-  //     marker.addListener("dragend", () =>
-  //       this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON())
-  //     );
-  //     this.setState({ selectionMarker: marker });
-  //     this.props.setBounds(null);
-  //     this.props.getRadiusMarkerCoordinates(marker.getPosition().toJSON());
-  //     window.marker = marker;
-  //   }
-  // };
-
   createPhotoMarker = (pin, map) => {
-    // const customMarker = {
-    //   url: PhotoMarker_20,
-    //   scale: 0.1
-    // };
-
     let marker = new window.google.maps.Marker({
-      // position: pin.position,
       position: pin.geolocation,
-      map: map ? window.map : null, //window.map,
-      // icon: customMarker,
+      map: map ? window.map : null,
+      icon: photoMarker,
+      scaledSize: 0.5,
       title: pin.title,
       animation: window.google.maps.Animation.DROP,
       photoId: pin.photoId,
