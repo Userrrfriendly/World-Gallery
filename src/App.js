@@ -248,12 +248,6 @@ function App() {
 
         setResponseDetails({
           ...data
-          // ...responseDetails,
-          // currentPage: data.currentPage,
-          // totalPages: data.totalPages,
-          // totalPhotos: data.totalPhotos,
-          // perPage: data.perPage,
-          // query: data.query
         });
         dispatch({
           type: UPDATE_PHOTOS,
@@ -318,6 +312,34 @@ function App() {
     const stopTimer = () => clearInterval(timer);
   };
 
+  const handleMyLocationClick = () => {
+    if (store.userLocation) {
+      zoomToLocation(store.userLocation);
+    } else {
+      /* if geoip-db call failed or if it was blocked by an add-blocker use native geolocation API */
+      const success = position => {
+        zoomToLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        dispatch({
+          type: SET_USER_LOCATION,
+          userLocation: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+        });
+      };
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(success, err =>
+          console.log(err)
+        );
+      } else {
+        alert("Sorry geolocation is not supported by your broweser.");
+      }
+    }
+  };
+
   const setBounds = useCallback(
     bounds => {
       dispatch({
@@ -352,34 +374,27 @@ function App() {
     });
   };
 
-  // const mapPhotos = React.useCallback(() => {
-  //   //removes any photos that are in favorites from the photos passed to the map to remove duplicate markers
-  //   if (store.favorites.length > 0) {
-  //     const photos = store.filteredPhotos.filter(img => {
-  //       if (_find(store.favorites, el => el.photoId === img.photoId)) {
-  //         return false;
-  //       } else {
-  //         return true;
-  //       }
-  //     });
-  //     return photos;
-  //   } else {
-  //     return store.filteredPhotos;
-  //   }
-  // }, [store.favorites, store.filteredPhotos]);
-
   return (
     <div className="App">
       <Appbar
         toggleMap={toggleMap}
-        // searchFlikr={searchFlikr}
         appBarHide={appBarHide}
         photos={responseDetails ? responseDetails.totalPages : 0}
         toggleGridDirection={toggleGridDirection}
         gridDirection={gridDirection}
+        handeSelectSortMethod={handeSelectSortMethod}
+        sortMethod={sortMethod}
+        handleTextQueryChange={handleTextQueryChange}
+        clearTextQuery={clearTextQuery}
+        searchText={searchText}
+        searchFlikr={searchFlikr}
+        handleMyLocationClick={handleMyLocationClick}
+        togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
+        toggleFavorites={toggleFavorites}
+        displayPhotoMarkers={displayPhotoMarkers}
+        displayFavorites={displayFavorites}
       >
         <section
-          // className={classes.main_container}
           style={
             screenWidth900px
               ? { display: "flex", height: "calc(100vh - 7px - 64px)" } //7px margins, 64appbar
@@ -405,6 +420,9 @@ function App() {
               zoomToLocation={zoomToLocation}
               togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
               toggleFavorites={toggleFavorites}
+              displayPhotoMarkers={displayPhotoMarkers}
+              displayFavorites={displayFavorites}
+              handleMyLocationClick={handleMyLocationClick}
             ></ControlPanel>
           )}
           {/* {mapVisible && ()} */}
@@ -462,8 +480,6 @@ function App() {
             hiddenPhotos={store.hiddenPhotos}
             responseDetails={responseDetails}
             direction={gridDirection}
-            // pinPhotoOnMap={pinPhotoOnMap}
-            // addImgToFavorites={addImgToFavorites}
             imageToggleFavorites={imageToggleFavorites}
             columns={2}
             setAppBarHide={setAppBarHide}

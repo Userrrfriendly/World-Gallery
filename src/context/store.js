@@ -9,7 +9,7 @@ export default function Store(props) {
     boundingBox: null,
     radiusMarker: null,
     //
-    searchMethod: "EXTENTS",
+    searchMethod: "EXTENTS", // "CIRCLE" or "BOX"?
     resultsPerPage: 30,
     userLocation: null,
     searchRadius: 3,
@@ -20,10 +20,10 @@ export default function Store(props) {
     hiddenPhotos: [],
     blockedUsers: [],
     favorites: [],
-    minUploadDate: null,
-    maxUploadDate: null,
-    minTakenDate: null,
-    maxTakenDate: null
+    minUploadDate: false,
+    maxUploadDate: false,
+    minTakenDate: false,
+    maxTakenDate: false
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

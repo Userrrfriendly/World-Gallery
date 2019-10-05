@@ -8,34 +8,38 @@ import {
 } from "@material-ui/pickers";
 import Checkbox from "@material-ui/core/Checkbox";
 import DispatchContext from "../../../context/dispatchContext";
+import StateContext from "../../../context/stateContext";
 import { SET_MAX_TAKEN_DATE } from "../../../context/rootReducer";
 
 export default function MaxTakenDatePicker(props) {
   const dispatch = useContext(DispatchContext);
+  const store = useContext(StateContext);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [checked, setChecked] = useState(false);
+  const [placeholderDate, setPlaceholderDate] = useState(new Date());
+
+  const checked = store.maxTakenDate ? true : false;
+  let selectedDate = checked ? store.maxTakenDate : placeholderDate;
 
   const handleCheckBox = event => {
-    setChecked(event.target.checked);
     if (event.target.checked) {
       dispatch({
         type: SET_MAX_TAKEN_DATE,
-        maxTakenDate: format(selectedDate, "yyyy-MM-dd") //sql format readable by humans and flickr API
+        maxTakenDate: format(selectedDate, "yyyy-MM-dd")
       });
     } else {
       dispatch({
         type: SET_MAX_TAKEN_DATE,
-        maxTakenDate: null
+        maxTakenDate: false
       });
     }
   };
 
   const handleDateChange = date => {
-    setSelectedDate(date);
+    selectedDate = date;
+    setPlaceholderDate(date);
     dispatch({
       type: SET_MAX_TAKEN_DATE,
-      maxTakenDate: format(date, "yyyy-MM-dd") //sql format
+      maxTakenDate: format(date, "yyyy-MM-dd")
     });
   };
 
@@ -43,7 +47,6 @@ export default function MaxTakenDatePicker(props) {
     <div style={{ display: "flex" }}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <KeyboardDatePicker
-          // minDate={"2000,1,1"}
           style={{ marginLeft: "0.5rem" }}
           disabled={!checked}
           margin="normal"

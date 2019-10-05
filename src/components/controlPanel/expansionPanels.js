@@ -33,7 +33,7 @@ export default function ExpansionPanels(props) {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="request-options-content"
         >
-          <Typography className={classes.heading}>Request Options</Typography>
+          <Typography className={classes.heading}>Query Options</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails
           id="request-options-content"

@@ -16,11 +16,12 @@ import {
 } from "@material-ui/core/";
 import {
   KeyboardArrowUp,
-  Map,
   ViewStream as Rows,
   ViewWeek as Columns
 } from "@material-ui/icons/";
 import Logo from "../../assets/logo";
+import DrawerMenu from "../drawer/drawer";
+import { useScreenWidth as useScreenWidth900 } from "../../CustomHooks/useScreenWidth";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -102,7 +103,23 @@ export default function HideAppBar(props) {
       <CssBaseline />
       <HideOnScroll appBarHide={props.appBarHide} {...props}>
         <AppBar>
-          <Toolbar>
+          <Toolbar disableGutters={useScreenWidth900() ? false : true}>
+            {!useScreenWidth900() && (
+              <DrawerMenu
+                handeSelectSortMethod={props.handeSelectSortMethod}
+                sortMethod={props.sortMethod}
+                handleTextQueryChange={props.handleTextQueryChange}
+                clearTextQuery={props.clearTextQuery}
+                searchText={props.searchText}
+                searchFlikr={props.searchFlikr}
+                handleMyLocationClick={props.handleMyLocationClick}
+                togglePhotoMarkerDisplay={props.togglePhotoMarkerDisplay}
+                toggleFavorites={props.toggleFavorites}
+                displayPhotoMarkers={props.displayPhotoMarkers}
+                displayFavorites={props.displayFavorites}
+              />
+            )}
+
             <div className={classes.logo_container} onClick={scrollToTop}>
               <Logo
                 style={{ width: "40px", marginRight: "0.75rem", fill: "white" }}
@@ -115,15 +132,6 @@ export default function HideAppBar(props) {
             </div>
             <div className={classes.grow} />
             <div className={classes.icons_container}>
-              {/* <Tooltip title="Search Photos" aria-label="Search Photos">
-                <IconButton
-                  color="inherit"
-                  aria-label="search photos"
-                  onClick={props.searchFlikr}
-                >
-                  <ImageSearchRounded />
-                </IconButton>
-              </Tooltip> */}
               {props.photos > 0 && (
                 <Tooltip
                   title={
@@ -153,7 +161,8 @@ export default function HideAppBar(props) {
                   </IconButton>
                 </Tooltip>
               )}
-              <Tooltip title="Toggle Map" aria-label="Toggle Map">
+              {/* //Favorites Page will be placed here when ready 
+               <Tooltip title="Toggle Map" aria-label="Toggle Map">
                 <IconButton
                   color="inherit"
                   aria-label="toggle map"
@@ -161,7 +170,7 @@ export default function HideAppBar(props) {
                 >
                   <Map />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
             </div>
           </Toolbar>
         </AppBar>

@@ -3,11 +3,10 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
-export default function HideResultsSwitch(props) {
-  const [checked, setChecked] = React.useState(false);
+export default function SwitchButton(props) {
+  const checked = !props.checked;
 
   const handleSwitchChange = event => {
-    setChecked(event.target.checked);
     props.callback();
   };
 

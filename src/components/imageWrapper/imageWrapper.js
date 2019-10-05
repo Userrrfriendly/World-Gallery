@@ -53,7 +53,6 @@ const ImageWrapper = ({
   const classes = useStyles();
   const state = useContext(StateContext);
   const [hover, setHover] = useState(false);
-  // const isFavorite = useState()
   const isFavorite = _find(state.favorites, el => el.photoId === photo.photoId)
     ? true
     : false;
@@ -64,20 +63,6 @@ const ImageWrapper = ({
     overflow: "hidden",
     position: "relative"
   };
-
-  // const handlePinOnMapClick = id => {
-  //   getPhotoGeoLocation(id).then(res => {
-  //     const result = {
-  //       position: res,
-  //       thumbnail: photo.thumb,
-  //       title: photo.title,
-  //       id: photo.photoId,
-  //       owner: photo.owner,
-  //       thumbWidth: photo.width_t
-  //     };
-  //     return pinPhotoOnMap(result);
-  //   });
-  // };
 
   const handleOnMouseEnter = (photo, e) => {
     setHover(true);
@@ -159,8 +144,6 @@ const ImageWrapper = ({
           ) : (
             <FavoriteBorder style={{ color: "#000" }} />
           )}
-          {/* <FavoriteBorder style={{ color: "#000" }} /> */}
-          {/* <Favorite style={{ color: "gold" }} /> */}
         </Fab>
       </Zoom>
     </div>

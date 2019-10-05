@@ -25,9 +25,8 @@ import MaxUploadDatePicker from "./datePickers/maxUploadDatePicker";
 import MaxTakenDatePicker from "./datePickers/maxTakenDatePicker";
 import MinTakenDatePicker from "./datePickers/minTakenDatePicker";
 import StateContext from "../../context/stateContext";
-import DispatchContext from "../../context/dispatchContext";
-import { SET_USER_LOCATION } from "../../context/rootReducer";
 import LoadingBar from "../LoadingBar/loadingBar";
+
 const useStyles = makeStyles(theme => ({
   panel: {
     textAlign: "center",
@@ -65,100 +64,78 @@ const useStyles = makeStyles(theme => ({
 
 const ControlPanel = props => {
   const store = useContext(StateContext);
-  const dispatch = useContext(DispatchContext);
 
   const classes = useStyles();
 
-  const handleMyLocationClick = () => {
-    if (store.userLocation) {
-      props.zoomToLocation(store.userLocation);
-    } else {
-      /* if geoip-db call failed or if it was blocked by an add-blocker use native geolocation API */
-      const success = position => {
-        props.zoomToLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-        dispatch({
-          type: SET_USER_LOCATION,
-          userLocation: {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          }
-        });
-      };
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(success, err =>
-          console.log(err)
-        );
-      } else {
-        alert("Sorry geolocation is not supported by your broweser.");
-      }
-    }
-  };
-
-  const infoTextBox = `Zoom to the location that you want to search for photos and hit the green button below to make the request.`;
+  const infoTextBox = `Zoom to the location that you want to search for photos and hit the search button.`;
   const infoTextCircle = `Drag the blue circle on the map to select the place where you want
 to search for photos, when done press the button below to make the request.`;
   return (
     <Paper className={classes.panel}>
       <div className={classes.wrapper}>
-        <Box className={classes.panel_item}>
-          <Typography>
-            {store.searchMethod === "EXTENTS" && infoTextBox}
-            {store.searchMethod === "CIRCLE" && infoTextCircle}
-          </Typography>
-        </Box>
-        <Box className={classes.panel_item + classes.search_photos_box}>
-          <Button
-            variant="contained"
-            style={{ backgroundColor: "#179207" }}
-            size={"large"}
-            onClick={props.searchFlikr}
-            // className={smallScreen ? classes.controls_mobile : classes.controls}
-          >
-            <ImageSearchRounded className={classes.control_icon} />
-            Search Photos
-          </Button>
-          {props.loadingPhotos && <LoadingBar />}
-        </Box>
-        <Divider className={classes.divider} />
-        {/* Radius Slider  */}
-        {/* <RadiusSlider setSearchRadius={props.setSearchRadius} />
-        <Box className={classes.panel_item + " " + classes.search_photos_box}>
-          <Tooltip
-            title="Move Search-Area to the Center of map"
-            aria-label="Move Search-Area to the Center of map"
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              size="medium"
-              className={classes.secondary_btn}
-              onClick={props.centerSearchAreaOnMap}
-              // className={smallScreen ? classes.controls_mobile : classes.controls}
+        {store.searchMethod === "EXTENTS" && (
+          <>
+            <Box className={classes.panel_item}>
+              <Typography>{infoTextBox}</Typography>
+            </Box>
+            <Box className={classes.panel_item + classes.search_photos_box}>
+              <Button
+                variant="contained"
+                style={{ backgroundColor: "#179207" }}
+                size={"large"}
+                onClick={props.searchFlikr}
+              >
+                <ImageSearchRounded className={classes.control_icon} />
+                Search Photos
+              </Button>
+              {props.loadingPhotos && <LoadingBar />}
+            </Box>
+          </>
+        )}
+        {/* SEARCH BY RADIUS */}
+        {store.searchMethod === "CIRCLE" && (
+          <>
+            <Box className={classes.panel_item}>
+              <Typography>{infoTextCircle}</Typography>
+            </Box>
+            <RadiusSlider setSearchRadius={props.setSearchRadius} />
+            <Box
+              className={classes.panel_item + " " + classes.search_photos_box}
             >
-              <CenterFocusStrong />
-            </Button>
-          </Tooltip>
-          <Tooltip
-            title="Zoom to Search-Area extents"
-            aria-label="Zoom to Search-Area extents"
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              size="medium"
-              className={classes.secondary_btn}
-              onClick={props.zoomToSearchArea}
-              // className={smallScreen ? classes.controls_mobile : classes.controls}
-            >
-              <ZoomOutMap />
-            </Button>
-          </Tooltip>
-        </Box> */}
+              <Tooltip
+                title="Move Search-Area to the Center of map"
+                aria-label="Move Search-Area to the Center of map"
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="medium"
+                  className={classes.secondary_btn}
+                  onClick={props.centerSearchAreaOnMap}
+                >
+                  <CenterFocusStrong />
+                </Button>
+              </Tooltip>
+              <Tooltip
+                title="Zoom to Search-Area extents"
+                aria-label="Zoom to Search-Area extents"
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="medium"
+                  className={classes.secondary_btn}
+                  onClick={props.zoomToSearchArea}
+                >
+                  <ZoomOutMap />
+                </Button>
+              </Tooltip>
+            </Box>
+          </>
+        )}
 
-        {/* NEW */}
+        <Divider className={classes.divider} />
+
         <OptionsPanel
           requestOptions={
             <>
@@ -183,54 +160,29 @@ to search for photos, when done press the button below to make the request.`;
           }
           mapOptions={
             <div className={classes.map_options_container}>
-              {/* <CustomSwitch label="Pin all results on map" /> */}
               <CustomSwitch
                 callback={props.togglePhotoMarkerDisplay}
-                label="Hide all results from the map"
+                checked={props.displayPhotoMarkers}
+                label="Hide all results from map"
               />
               <CustomSwitch
                 callback={props.toggleFavorites}
-                label="Hide all favorites from the map"
+                checked={props.displayFavorites}
+                label="Hide all favorites from map"
               />
               <Button
                 variant="contained"
                 style={{ marginTop: "1rem", color: "black" }}
                 color="secondary"
                 size={"large"}
-                onClick={handleMyLocationClick}
-                // className={smallScreen ? classes.controls_mobile : classes.controls}
+                onClick={props.handleMyLocationClick}
               >
                 <MyLocationTwoTone style={{ marginRight: "1rem" }} />
                 My location
               </Button>
             </div>
           }
-        >
-          {/* <RequstNumberSlider /> */}
-        </OptionsPanel>
-        {/* /NEW */}
-
-        {/* <Divider className={classes.divider} />
-        <Typography align="center"> Search Options</Typography> */}
-        {/* Sorting Filters */}
-        {/* <Box
-          className={classes.panel_item}
-          style={{ textAlign: "left", margin: "0" }}
-        >
-          <SelectSortingMethod
-            handeSelectSortMethod={props.handeSelectSortMethod}
-            sortMethod={props.sortMethod}
-          />
-        </Box> */}
-
-        {/* Search by Text */}
-        {/* <TextQuery
-          handleTextQueryChange={props.handleTextQueryChange}
-          clearTextQuery={props.clearTextQuery}
-          searchText={props.searchText}
-          searchFlikr={props.searchFlikr}
-        /> */}
-
+        ></OptionsPanel>
         <Box className={classes.panel_item}>{props.children}</Box>
       </div>
     </Paper>

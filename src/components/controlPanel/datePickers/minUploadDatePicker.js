@@ -1,31 +1,37 @@
 import "date-fns";
 import React, { useState, useContext } from "react";
 import DateFnsUtils from "@date-io/date-fns";
-import { getUnixTime, fromUnixTime, format } from "date-fns";
+import { format } from "date-fns";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from "@material-ui/pickers";
 import Checkbox from "@material-ui/core/Checkbox";
-// import StateContext from "../../../context/stateContext";
+import StateContext from "../../../context/stateContext";
 import DispatchContext from "../../../context/dispatchContext";
 import { SET_MIN_UPLOAD_DATE } from "../../../context/rootReducer";
 
 export default function MinUploadDatePicker(props) {
-  // const store = useContext(StateContext);
+  const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+  /** placeholderDate is used:
+   * 1) As initial date at the initialization of the component
+   * 2) As a placeholder when the user unchecks the checkbox
+   * so that the date doesn't reset each time after disabling the datepicker
+   * current implementation won't work on mobile because:
+   * when the drawer is closed the datepickers are unmounted and its state is wiped
+   * -initial minUploadDate is set to Flickrs official launch year 2004
+   */
+  const [placeholderDate, setPlaceholderDate] = useState(new Date(2004, 1, 1));
 
-  //Flickr creation date: February 10, 2004
-  const [selectedDate, setSelectedDate] = useState(new Date(2004, 1, 1, 1));
-  const [checked, setChecked] = useState(false);
+  const checked = store.minUploadDate ? true : false;
+  let selectedDate = checked ? store.minUploadDate : placeholderDate;
 
   const handleCheckBox = event => {
-    setChecked(event.target.checked);
     if (event.target.checked) {
       dispatch({
         type: SET_MIN_UPLOAD_DATE,
-        // minUploadDate: getUnixTime(selectedDate)
-        minUploadDate: format(selectedDate, "yyyy-MM-dd") //sql format readable by humans and flickr API
+        minUploadDate: format(selectedDate, "yyyy-MM-dd")
       });
     } else {
       dispatch({
@@ -36,19 +42,13 @@ export default function MinUploadDatePicker(props) {
   };
 
   const handleDateChange = date => {
-    setSelectedDate(date);
+    selectedDate = date;
+    setPlaceholderDate(date);
     dispatch({
       type: SET_MIN_UPLOAD_DATE,
-      // minUploadDate: getUnixTime(date) //works but is unreadable
-      minUploadDate: format(date, "yyyy-MM-dd") //sql format
+      minUploadDate: format(date, "yyyy-MM-dd") //sql format, also works with flickr api and unlike getUnixTime(date) is readable
     });
   };
-
-  /** //debugging
-   window.GETUNIX = getUnixTime;
-  window.FROMUNIX = fromUnixTime;
-  window.FORMAT = format;
- */
 
   return (
     <div style={{ display: "flex" }}>
@@ -69,7 +69,6 @@ export default function MinUploadDatePicker(props) {
         />
       </MuiPickersUtilsProvider>
       <Checkbox
-        // classes={{ root: { alignSelf: "flex-end" } }}
         style={{ alignSelf: "flex-end", marginLeft: "1rem" }}
         checked={checked}
         onChange={handleCheckBox}
