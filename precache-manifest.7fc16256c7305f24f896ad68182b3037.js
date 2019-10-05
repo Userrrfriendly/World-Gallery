@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "467275f67ecf33f16bfbb5c16d8050cb",
+    "revision": "f2d978fc7cfd412015f5e211ad69fcf3",
     "url": "/Flickr-GeoExplorer/index.html"
   },
   {
-    "revision": "fbed7920a1fa99916722",
+    "revision": "c56215b17126284d430b",
     "url": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css"
   },
   {
-    "revision": "f97735d19be659af5fae",
-    "url": "/Flickr-GeoExplorer/static/js/2.e4db71b8.chunk.js"
+    "revision": "9b6b2042fa401ca768d3",
+    "url": "/Flickr-GeoExplorer/static/js/2.1efc13c2.chunk.js"
   },
   {
-    "revision": "fbed7920a1fa99916722",
-    "url": "/Flickr-GeoExplorer/static/js/main.ba068d5e.chunk.js"
+    "revision": "c56215b17126284d430b",
+    "url": "/Flickr-GeoExplorer/static/js/main.c61aaba2.chunk.js"
   },
   {
     "revision": "606dc6d3152a573c853a",
