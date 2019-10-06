@@ -35,8 +35,14 @@ export const getPhotosByTitle = searchParams => {
   if (searchParams.searchMethod === "EXTENTS") {
     const { south, west, north, east } = searchParams.bounds;
     query = {
+      bounds: searchParams.bounds,
       searchMethod: searchParams.searchMethod,
-      bounds: searchParams.bounds
+      maxTakenDate: searchParams.maxTakenDate,
+      maxUploadDate: searchParams.maxUploadDate,
+      minTakenDate: searchParams.minTakenDate,
+      minUploadDate: searchParams.minUploadDate,
+      searchText: searchParams.searchText,
+      sortMethod: searchParams.sortMethod
       // south,
       // west,
       // north,
@@ -50,10 +56,18 @@ export const getPhotosByTitle = searchParams => {
     url.append("radius", kmToMiles(searchParams.radius)); //1 to 32 km
     url.append("radius_units", "km");
     query = {
-      searchMethod: "CIRCLE",
+      // searchMethod: "CIRCLE",
+      // bounds: searchParams.bounds,
       lat: searchParams.lat,
       lng: searchParams.lng,
-      radius: searchParams.radius
+      radius: searchParams.radius,
+      searchMethod: searchParams.searchMethod,
+      maxTakenDate: searchParams.maxTakenDate,
+      maxUploadDate: searchParams.maxUploadDate,
+      minTakenDate: searchParams.minTakenDate,
+      minUploadDate: searchParams.minUploadDate,
+      searchText: searchParams.searchText,
+      sortMethod: searchParams.sortMethod
     };
   }
 

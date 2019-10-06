@@ -170,13 +170,14 @@ function App() {
           resultsPerPage: store.resultsPerPage,
           minUploadDate: store.minUploadDate,
           maxUploadDate: store.maxUploadDate,
+          minTakenDate: store.minTakenDate,
+          maxTakenDate: store.maxTakenDate,
           sortMethod,
           searchText
         };
         break;
       case "EXTENTS":
         const bounds = window.map ? window.map.getBounds().toJSON() : "error";
-        console.log(bounds);
         searchParams = {
           searchMethod: store.searchMethod,
           minUploadDate: store.minUploadDate,
