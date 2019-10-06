@@ -2,10 +2,7 @@ import "date-fns";
 import React, { useState, useContext } from "react";
 import DateFnsUtils from "@date-io/date-fns";
 import { format } from "date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from "@material-ui/pickers";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import Checkbox from "@material-ui/core/Checkbox";
 import StateContext from "../../../context/stateContext";
 import DispatchContext from "../../../context/dispatchContext";
@@ -53,7 +50,7 @@ export default function MinUploadDatePicker(props) {
   return (
     <div style={{ display: "flex" }}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDatePicker
+        <DatePicker
           minDate={"2000,1,1"}
           style={{ marginLeft: "0.5rem" }}
           disabled={!checked}
@@ -63,9 +60,6 @@ export default function MinUploadDatePicker(props) {
           format="dd/MM/yyyy"
           value={selectedDate}
           onChange={handleDateChange}
-          KeyboardButtonProps={{
-            "aria-label": "change date"
-          }}
         />
       </MuiPickersUtilsProvider>
       <Checkbox

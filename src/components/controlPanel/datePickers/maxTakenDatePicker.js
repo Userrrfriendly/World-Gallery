@@ -2,10 +2,7 @@ import "date-fns";
 import React, { useState, useContext } from "react";
 import DateFnsUtils from "@date-io/date-fns";
 import { format } from "date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from "@material-ui/pickers";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import Checkbox from "@material-ui/core/Checkbox";
 import DispatchContext from "../../../context/dispatchContext";
 import StateContext from "../../../context/stateContext";
@@ -46,7 +43,7 @@ export default function MaxTakenDatePicker(props) {
   return (
     <div style={{ display: "flex" }}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDatePicker
+        <DatePicker
           style={{ marginLeft: "0.5rem" }}
           disabled={!checked}
           margin="normal"
@@ -54,10 +51,7 @@ export default function MaxTakenDatePicker(props) {
           label="max taken date"
           format="dd/MM/yyyy"
           value={selectedDate}
-          onChange={handleDateChange}
-          KeyboardButtonProps={{
-            "aria-label": "change date"
-          }}
+          onChange={date => handleDateChange(date)}
         />
       </MuiPickersUtilsProvider>
       <Checkbox
