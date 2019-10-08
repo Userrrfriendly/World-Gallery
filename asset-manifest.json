@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css",
-    "main.js": "/Flickr-GeoExplorer/static/js/main.c61aaba2.chunk.js",
-    "main.js.map": "/Flickr-GeoExplorer/static/js/main.c61aaba2.chunk.js.map",
+    "main.js": "/Flickr-GeoExplorer/static/js/main.1cf25241.chunk.js",
+    "main.js.map": "/Flickr-GeoExplorer/static/js/main.1cf25241.chunk.js.map",
     "runtime~main.js": "/Flickr-GeoExplorer/static/js/runtime~main.8e663d21.js",
     "runtime~main.js.map": "/Flickr-GeoExplorer/static/js/runtime~main.8e663d21.js.map",
-    "static/js/2.1efc13c2.chunk.js": "/Flickr-GeoExplorer/static/js/2.1efc13c2.chunk.js",
-    "static/js/2.1efc13c2.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.1efc13c2.chunk.js.map",
+    "static/js/2.2c0325b8.chunk.js": "/Flickr-GeoExplorer/static/js/2.2c0325b8.chunk.js",
+    "static/js/2.2c0325b8.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.2c0325b8.chunk.js.map",
     "index.html": "/Flickr-GeoExplorer/index.html",
-    "precache-manifest.7fc16256c7305f24f896ad68182b3037.js": "/Flickr-GeoExplorer/precache-manifest.7fc16256c7305f24f896ad68182b3037.js",
+    "precache-manifest.2a7691346a69e25cf119f277ff4a3a8c.js": "/Flickr-GeoExplorer/precache-manifest.2a7691346a69e25cf119f277ff4a3a8c.js",
     "service-worker.js": "/Flickr-GeoExplorer/service-worker.js",
     "static/css/main.34de6062.chunk.css.map": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css.map"
   }
