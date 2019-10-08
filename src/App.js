@@ -23,6 +23,8 @@ import LoadMoreButton from "./components/controls/loadMoreBtn";
 import LoadingBar from "./components/LoadingBar/loadingBar";
 import ControlPanel from "./components/controlPanel/controlPanel";
 import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
+import { mapReady } from "./helpers/helpers";
+
 // import { find as _find } from "lodash";
 
 function App() {
@@ -291,26 +293,11 @@ function App() {
   );
 
   const zoomToLocation = location => {
-    /** in case window.map is undefined (not loaded/initialized):
-     * mapReady() checks if google.maps is loaded before trying to zoom to the given location
-     * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
-     * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
-     */
-    let waitingThreshold = 3000; //max number of milliseconds to wait for google.maps to initialize
-    const mapReady = () => {
-      if (waitingThreshold <= 0) {
-        stopTimer();
-      }
-      if (window.map) {
-        window.map.panTo(location);
-        window.map.setZoom(16);
-        stopTimer();
-      } else {
-        waitingThreshold -= 10;
-      }
+    const zoom = () => {
+      window.map.panTo(location);
+      window.map.setZoom(16);
     };
-    const timer = setInterval(mapReady, 10);
-    const stopTimer = () => clearInterval(timer);
+    mapReady(zoom);
   };
 
   const handleMyLocationClick = () => {
@@ -427,6 +414,19 @@ function App() {
             ></ControlPanel>
           )}
           {/* {mapVisible && ()} */}
+          {!screenWidth900px && (
+            <ControlPanelMobile
+              setSearchRadius={setSearchRadius}
+              searchFlikr={searchFlikr}
+              loadingPhotos={loadingPhotos}
+              zoomToSearchArea={zoomToSearchArea}
+              centerSearchAreaOnMap={centerSearchAreaOnMap}
+              sortMethod={sortMethod}
+              handeSelectSortMethod={handeSelectSortMethod}
+              handleTextQueryChange={handleTextQueryChange}
+              searchText={searchText}
+            />
+          )}
           <MapWrapper
             photos={store.mapPhotos}
             favorites={store.favorites}
@@ -459,7 +459,7 @@ function App() {
             screenWidth900px={screenWidth900px}
           />
 
-          {!screenWidth900px && (
+          {/* {!screenWidth900px && (
             <ControlPanelMobile
               setSearchRadius={setSearchRadius}
               searchFlikr={searchFlikr}
@@ -471,7 +471,7 @@ function App() {
               handleTextQueryChange={handleTextQueryChange}
               searchText={searchText}
             />
-          )}
+          )} */}
         </section>
 
         <div ref={resultsRef}></div>

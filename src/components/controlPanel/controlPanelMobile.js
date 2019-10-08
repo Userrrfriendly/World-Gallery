@@ -14,6 +14,7 @@ import {
 } from "@material-ui/icons";
 import RadiusSlider from "./RadiusSlider";
 import StateContext from "../../context/stateContext";
+import LocationSearch from "./geoCodingBar/geoCodingBar";
 
 const useStyles = makeStyles(theme => ({
   panel: {
@@ -60,7 +61,8 @@ const ControlPanelMobile = props => {
       <div className={classes.wrapper}>
         {store.searchMethod === "EXTENTS" ? (
           <>
-            <div>{infoTextBox}</div>
+            <div style={{ marginTop: "5px" }}>{infoTextBox}</div>
+            <LocationSearch />
             <Tooltip title="Search Photos" aria-label="Search Photos">
               <Button
                 variant="contained"

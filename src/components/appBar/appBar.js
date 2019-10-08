@@ -21,7 +21,7 @@ import {
 } from "@material-ui/icons/";
 import Logo from "../../assets/logo";
 import DrawerMenu from "../drawer/drawer";
-import { useScreenWidth as useScreenWidth900 } from "../../CustomHooks/useScreenWidth";
+import { useScreenWidth as useScreenWidth900 } from "../../helpers/CustomHooks/useScreenWidth";
 
 const useStyles = makeStyles(theme => ({
   root: {

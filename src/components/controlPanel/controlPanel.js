@@ -26,6 +26,7 @@ import MaxTakenDatePicker from "./datePickers/maxTakenDatePicker";
 import MinTakenDatePicker from "./datePickers/minTakenDatePicker";
 import StateContext from "../../context/stateContext";
 import LoadingBar from "../LoadingBar/loadingBar";
+import GeoCodingBar from "./geoCodingBar/geoCodingBar";
 
 const useStyles = makeStyles(theme => ({
   panel: {
@@ -183,6 +184,7 @@ to search for photos, when done press the button below to make the request.`;
             </div>
           }
         ></OptionsPanel>
+        <GeoCodingBar />
         <Box className={classes.panel_item}>{props.children}</Box>
       </div>
     </Paper>

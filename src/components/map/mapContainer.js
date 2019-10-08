@@ -47,6 +47,7 @@ const mapStyle = {
   minHeight: "75vh",
   maxHeight: "100%"
 };
+
 class Map extends React.Component {
   state = {
     boundingBox: null,
@@ -175,7 +176,7 @@ class Map extends React.Component {
     let body = window.document.querySelector("body");
     let script = window.document.createElement("script");
     script.src =
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyCzs3fKNRPknPJs8LaW9rsCvBxeY2QCJhg&v=3&callback=initMap";
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyCzs3fKNRPknPJs8LaW9rsCvBxeY2QCJhg&v=3&libraries=places&callback=initMap";
     script.async = true;
     script.defer = true;
     script.onerror = function() {
