@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Paper,
@@ -7,7 +7,7 @@ import {
   InputBase,
   IconButton
 } from "@material-ui/core/";
-import { mapReady } from "../../../helpers/helpers";
+import StateContext from "../../../context/stateContext";
 import { Close, Search as SearchIcon } from "@material-ui/icons/";
 
 const useStyles = makeStyles(theme => ({
@@ -38,27 +38,28 @@ const useStyles = makeStyles(theme => ({
 
 export default function LocationSearch() {
   const classes = useStyles();
-
+  const store = useContext(StateContext);
   const autoCompleteInputRef = useRef(null);
 
-  let geocoder;
+  let geocoder = useRef(null);
 
-  mapReady(() => {
-    geocoder = new window.google.maps.Geocoder();
-  });
+  useEffect(() => {
+    if (store.mapLoaded) {
+      geocoder.current = new window.google.maps.Geocoder();
+    }
+  }, [store.mapLoaded]);
 
   let autocomplete = useRef(null);
   const fillInInput = React.useCallback(() => {
-    geocodeAddress(geocoder, window.map);
+    geocodeAddress(geocoder.current, window.map);
   }, [geocoder]);
 
   useEffect(() => {
     console.log("USEFFECT ON MOUNT(***********************************)");
-    mapReady(() => {
+    if (store.mapLoaded) {
       autocomplete.current = new window.google.maps.places.Autocomplete(
-        autoCompleteInputRef.current
-        // document.getElementById("autocomplete")
-        // { types: ["geocode"] } // If no type is specified, all types will be returned.
+        autoCompleteInputRef.current //input element that will be handled to AutoComplete
+        // { types: ["geocode"] } // If no type is specified, all types will be returned (eg places, addresses etc).
       );
       // Avoid paying for data that you don't need by restricting the set of
       // place fields that are returned to just the address components & the formatted_address.
@@ -69,8 +70,8 @@ export default function LocationSearch() {
 
       // When the user selects an address from the drop-down,
       autocomplete.current.addListener("place_changed", fillInInput);
-    });
-  }, [fillInInput]);
+    }
+  }, [fillInInput, store.mapLoaded]);
 
   function geocodeAddress(geocoder, resultsMap) {
     const value = autoCompleteInputRef.current.value;
@@ -89,7 +90,7 @@ export default function LocationSearch() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    geocodeAddress(geocoder, window.map);
+    geocodeAddress(geocoder.current, window.map);
   };
 
   const clearInput = () => {
@@ -101,6 +102,7 @@ export default function LocationSearch() {
       <form onSubmit={handleSubmit} className={classes.form}>
         {/* InputBase is an uncontrolled component so that   google's autocomplete can change its value */}
         <InputBase
+          disabled={!store.mapLoaded}
           id="autocomplete"
           inputRef={autoCompleteInputRef}
           className={classes.input}
@@ -123,6 +125,7 @@ export default function LocationSearch() {
           type="submit"
           className={classes.iconButton}
           aria-label="search"
+          disabled={!store.mapLoaded}
         >
           <SearchIcon />
         </IconButton>

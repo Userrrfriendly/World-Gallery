@@ -15,6 +15,7 @@ export const SET_MIN_UPLOAD_DATE = "SET_MIN_UPLOAD_DATE";
 export const SET_MAX_UPLOAD_DATE = "SET_MAX_UPLOAD_DATE";
 export const SET_MIN_TAKEN_DATE = "SET_MIN_TAKEN_DATE";
 export const SET_MAX_TAKEN_DATE = "SET_MAX_TAKEN_DATE";
+export const SET_MAP_LOADED = "SET_MAP_LOADED";
 
 const setBoundingBox = (action, state) => {
   return { ...state, boundingBox: action.boundingBox };
@@ -168,6 +169,10 @@ const setMaxTakenDate = (action, state) => {
   return { ...state, maxTakenDate: action.maxTakenDate };
 };
 
+const setMapLoaded = (action, state) => {
+  return { ...state, mapLoaded: action.mapLoaded };
+};
+
 export const rootReducer = (state, action) => {
   switch (action.type) {
     case SET_BOUNDING_BOX:
@@ -217,7 +222,9 @@ export const rootReducer = (state, action) => {
     case SET_MAX_TAKEN_DATE:
       console.log(action.type);
       return setMaxTakenDate(action, state);
-
+    case SET_MAP_LOADED:
+      console.log(action.type);
+      return setMapLoaded(action, state);
     default:
       return state;
   }

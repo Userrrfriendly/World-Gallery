@@ -1,7 +1,14 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  Suspense,
+  lazy
+} from "react";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import * as FlikrApi from "./requests/flikr";
-import MapWrapper from "./components/map/mapContainer";
+import Skeleton from "@material-ui/lab/Skeleton";
 import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
 import {
@@ -13,7 +20,8 @@ import {
   SET_PHOTOS,
   UPDATE_PHOTOS,
   ADD_IMG_TO_FAVORITES,
-  REMOVE_IMG_FROM_FAVORITES
+  REMOVE_IMG_FROM_FAVORITES,
+  SET_MAP_LOADED
 } from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
@@ -25,11 +33,19 @@ import ControlPanel from "./components/controlPanel/controlPanel";
 import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
 import { mapReady } from "./helpers/helpers";
 
+const MapWrapper = lazy(() => import("./components/map/mapContainer"));
 // import { find as _find } from "lodash";
 
 function App() {
   const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+
+  const setMapLoaded = () => {
+    dispatch({
+      type: SET_MAP_LOADED,
+      mapLoaded: true
+    });
+  };
 
   const screenWidth900px = useMediaQuery("(min-width:900px)");
 
@@ -427,37 +443,40 @@ function App() {
               searchText={searchText}
             />
           )}
-          <MapWrapper
-            photos={store.mapPhotos}
-            favorites={store.favorites}
-            userLocation={store.userLocation}
-            setSearchCenter={setSearchCenter}
-            searchRadius={store.searchRadius}
-            // /** */
-            displayPhotoMarkers={displayPhotoMarkers}
-            displayFavorites={displayFavorites}
-            setBounds={setBounds}
-            // /**triggerGetMapExtents */
-            triggerMapExtents={triggerMapExtents}
-            disableMapExtentsTrigger={disableMapExtentsTrigger}
-            // /* photoMarker*/
-            // triggerPhotoMarker={triggerPhotoMarker}
-            // disableTriggerPhotoMarker={disableTriggerPhotoMarker}
-            // /* radius marker */
-            triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
-            disableRadiusTrigger={disableRadiusTrigger}
-            // /* boundingBox Trigger */
-            // // triggerBoundingBox={triggerBoundingBox}
-            // // disableBoundingBoxTrigger={disableBoundingBoxTrigger}
-            // /* triggeer zoom to search area */
-            triggerZoom={triggerZoom}
-            disableZoom={disableZoom}
-            // /* trigger center search area on map */
-            triggerCenter={triggerCenter}
-            disableCenter={disableCenter}
-            // /**ScreenSize */
-            screenWidth900px={screenWidth900px}
-          />
+          <Suspense fallback={<Skeleton variant="rect" />}>
+            <MapWrapper
+              setMapLoaded={setMapLoaded}
+              photos={store.mapPhotos}
+              favorites={store.favorites}
+              userLocation={store.userLocation}
+              setSearchCenter={setSearchCenter}
+              searchRadius={store.searchRadius}
+              // /** */
+              displayPhotoMarkers={displayPhotoMarkers}
+              displayFavorites={displayFavorites}
+              setBounds={setBounds}
+              // /**triggerGetMapExtents */
+              triggerMapExtents={triggerMapExtents}
+              disableMapExtentsTrigger={disableMapExtentsTrigger}
+              // /* photoMarker*/
+              // triggerPhotoMarker={triggerPhotoMarker}
+              // disableTriggerPhotoMarker={disableTriggerPhotoMarker}
+              // /* radius marker */
+              triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
+              disableRadiusTrigger={disableRadiusTrigger}
+              // /* boundingBox Trigger */
+              // // triggerBoundingBox={triggerBoundingBox}
+              // // disableBoundingBoxTrigger={disableBoundingBoxTrigger}
+              // /* triggeer zoom to search area */
+              triggerZoom={triggerZoom}
+              disableZoom={disableZoom}
+              // /* trigger center search area on map */
+              triggerCenter={triggerCenter}
+              disableCenter={disableCenter}
+              // /**ScreenSize */
+              screenWidth900px={screenWidth900px}
+            />
+          </Suspense>
 
           {/* {!screenWidth900px && (
             <ControlPanelMobile

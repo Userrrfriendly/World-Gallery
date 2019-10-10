@@ -9,6 +9,7 @@ export default function Store(props) {
     boundingBox: null,
     radiusMarker: null,
     //
+    mapLoaded: false,
     searchMethod: "EXTENTS", // "CIRCLE" or "BOX"?
     resultsPerPage: 30,
     userLocation: null,

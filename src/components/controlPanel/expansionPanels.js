@@ -6,8 +6,9 @@ import {
   ExpansionPanelDetails,
   Typography
 } from "@material-ui/core/";
-
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+import GeoCodingBar from "./geoCodingBar/geoCodingBar.js";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,6 +21,10 @@ const useStyles = makeStyles(theme => ({
   details_root: {
     display: "flex",
     flexFlow: "column"
+  },
+  details_root_geolocation: {
+    padding: "4px",
+    marginBottom: "12px"
   }
 }));
 
@@ -28,6 +33,23 @@ export default function ExpansionPanels(props) {
 
   return (
     <div className={classes.root}>
+      <ExpansionPanel defaultExpanded>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="geolocation-search"
+        >
+          <Typography className={classes.heading}>
+            Geolocation search
+          </Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails
+          id="geolocation-search"
+          classes={{ root: classes.details_root_geolocation }}
+        >
+          <GeoCodingBar />
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+
       <ExpansionPanel>
         <ExpansionPanelSummary
           expandIcon={<ExpandMoreIcon />}
@@ -42,6 +64,7 @@ export default function ExpansionPanels(props) {
           {props.requestOptions}
         </ExpansionPanelDetails>
       </ExpansionPanel>
+
       <ExpansionPanel>
         <ExpansionPanelSummary
           expandIcon={<ExpandMoreIcon />}

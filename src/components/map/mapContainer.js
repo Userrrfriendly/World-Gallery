@@ -183,6 +183,10 @@ class Map extends React.Component {
       document.write("Error Loading Google Maps...");
     };
     body.insertBefore(script, body.lastElementChild);
+    script.addEventListener("load", () => {
+      // console.log(window.google);
+      this.props.setMapLoaded();
+    });
   };
 
   initMap = () => {

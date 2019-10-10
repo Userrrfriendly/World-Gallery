@@ -26,7 +26,6 @@ import MaxTakenDatePicker from "./datePickers/maxTakenDatePicker";
 import MinTakenDatePicker from "./datePickers/minTakenDatePicker";
 import StateContext from "../../context/stateContext";
 import LoadingBar from "../LoadingBar/loadingBar";
-import GeoCodingBar from "./geoCodingBar/geoCodingBar";
 
 const useStyles = makeStyles(theme => ({
   panel: {
@@ -81,8 +80,9 @@ to search for photos, when done press the button below to make the request.`;
             </Box>
             <Box className={classes.panel_item + classes.search_photos_box}>
               <Button
+                disabled={!store.mapLoaded}
                 variant="contained"
-                style={{ backgroundColor: "#179207" }}
+                style={{ backgroundColor: "#179207", width: "100%" }}
                 size={"large"}
                 onClick={props.searchFlikr}
               >
@@ -177,6 +177,7 @@ to search for photos, when done press the button below to make the request.`;
                 color="secondary"
                 size={"large"}
                 onClick={props.handleMyLocationClick}
+                disabled={!store.mapLoaded}
               >
                 <MyLocationTwoTone style={{ marginRight: "1rem" }} />
                 My location
@@ -184,7 +185,7 @@ to search for photos, when done press the button below to make the request.`;
             </div>
           }
         ></OptionsPanel>
-        <GeoCodingBar />
+
         <Box className={classes.panel_item}>{props.children}</Box>
       </div>
     </Paper>
