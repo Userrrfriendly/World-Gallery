@@ -1,45 +1,11 @@
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback } from "react";
 import Gallery from "react-photo-gallery";
 import ImageWrapper from "../imageWrapper/imageWrapper";
 import ImageMenu from "../imageWrapper/imageMenu";
-import StateContext from "../../context/stateContext";
+import LightBoxHeader from "../lightboxComponents/lightboxHeader";
+import LightBoxViewRenderer from "../lightboxComponents/lightboxViewRenderer";
 import Carousel, { Modal, ModalGateway } from "react-images";
-import { makeStyles, IconButton, Typography } from "@material-ui/core";
-import {
-  Close,
-  Fullscreen,
-  FullscreenExit,
-  Favorite,
-  FavoriteBorder
-} from "@material-ui/icons";
-import { find as _find } from "lodash";
-
-const useStyles = makeStyles(theme => ({
-  header_container: {
-    position: "absolute",
-    top: "2px",
-    left: "2px",
-    width: "100vw",
-    display: "flex",
-    zIndex: "2000",
-    justifyContent: "space-between", //"flex-end", to align btns to the right
-    transition: "opacity 300ms",
-    opacity: "1"
-  },
-  lightbox_btn: {
-    color: "#fff",
-    background: "rgba(255, 255, 255, 0.2)",
-    margin: "2px",
-    border: "1px solid #00000024",
-    "&:hover": {
-      boxShadow: "0px 0px 11px 0px rgba(0,0,0,0.75)",
-      background: "rgba(255, 255, 255, 0.3)"
-    }
-  },
-  hide_on_idle: {
-    opacity: "0"
-  }
-}));
+import { Typography } from "@material-ui/core";
 
 const navButtonStyles = base => ({
   ...base,
@@ -54,95 +20,10 @@ const navButtonStyles = base => ({
   }
 });
 
-const ViewRenderer = props => {
-  /** By default react-images carousel loads all images
-   * Vustom viewRenderer ensures changes that behaviour and requests each image when it is about to render it
-   * more on the issue:-->  https://github.com/jossmac/react-images/issues/300 */
-  const overScanCount = 1;
-  const { data, getStyles, index, currentIndex } = props;
-  const { alt, src } = data;
-
-  return Math.abs(currentIndex - index) <= overScanCount ? (
-    <div style={getStyles("view", props)}>
-      <img
-        alt={alt || `Image ${index}`}
-        src={src}
-        style={{
-          height: "auto",
-          maxHeight: "100vh",
-          maxWidth: "100%",
-          userSelect: "none"
-        }}
-      />
-    </div>
-  ) : null;
-};
-
-const CustomHeader = props => {
-  /*most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery*/
-  const classes = useStyles();
-  const store = useContext(StateContext);
-  const isFavorite = _find(
-    store.favorites,
-    el => el.photoId === props.currentView.photoId
-  )
-    ? true
-    : false;
-
-  return props.isModal ? (
-    <div
-      className={
-        props.interactionIsIdle
-          ? classes.header_container + " " + classes.hide_on_idle
-          : classes.header_container
-      }
-    >
-      <IconButton
-        aria-label="Pin photo on map"
-        className={classes.lightbox_btn}
-        onClick={props.carouselProps.imageToggleFavorites.bind(
-          this,
-          props.data,
-          isFavorite
-        )}
-      >
-        {isFavorite ? (
-          <Favorite style={{ color: "gold" }} />
-        ) : (
-          <FavoriteBorder />
-        )}
-      </IconButton>
-
-      <div className={classes.btn_container_right}>
-        <IconButton
-          aria-label="toggle fullscreen"
-          className={classes.lightbox_btn}
-          edge="start"
-          onClick={props.modalProps.toggleFullscreen}
-        >
-          {props.modalProps.isFullscreen ? <FullscreenExit /> : <Fullscreen />}
-        </IconButton>
-
-        {!props.modalProps.isFullscreen && (
-          <IconButton
-            aria-label="Close"
-            className={classes.lightbox_btn}
-            edge="start"
-            onClick={props.modalProps.onClose}
-          >
-            <Close />
-          </IconButton>
-        )}
-      </div>
-    </div>
-  ) : null;
-};
-
 const ImageGrid = ({
   photos,
   responseDetails,
   direction,
-  // addImgToFavorites,
   imageToggleFavorites,
   setAppBarHide,
   columns,
@@ -158,7 +39,6 @@ const ImageGrid = ({
     photos,
     responseDetails,
     direction,
-    // addImgToFavorites,
     imageToggleFavorites,
     setAppBarHide,
     columns,
@@ -203,7 +83,6 @@ const ImageGrid = ({
           photo={props.photo}
           left={props.left}
           top={props.top}
-          // addImgToFavorites={addImgToFavorites}
           imageToggleFavorites={imageToggleFavorites}
           direction={props.direction}
           openLightbox={props.onClick}
@@ -235,7 +114,6 @@ const ImageGrid = ({
           photos={photos}
           direction={direction}
           renderImage={imageRenderer}
-          // addImgToFavorites={addImgToFavorites}
           onClick={openLightbox}
           // the above onClick is an optional react-photo-gallery prop
           // It receives the arguments -> event and an object containing the index,
@@ -246,12 +124,11 @@ const ImageGrid = ({
         {viewerIsOpen ? (
           <Modal onClose={closeLightbox}>
             <Carousel
-              // addImgToFavorites={addImgToFavorites}
               imageToggleFavorites={imageToggleFavorites}
               components={{
-                Header: CustomHeader,
+                Header: LightBoxHeader,
 
-                View: ViewRenderer
+                View: LightBoxViewRenderer
               }}
               currentIndex={currentImage}
               views={photos.map(x => ({
