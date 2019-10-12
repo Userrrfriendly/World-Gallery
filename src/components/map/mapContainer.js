@@ -3,15 +3,17 @@ import React from "react";
 import heartMarker from "../../assets/loveinterestDark.png";
 import photoMarker from "../../assets/photoDark_Blue.png";
 
-const infoWindowContents = data => {
+const infoWindowContents = (data, callback) => {
   return `
   <h1 style="font-size:1rem;text-align:center;"> ${
     data.title ? data.title : "untitled photo"
   } </h1>
-  <img title="${
+  <img id="image-info" title="${
     data.title ? data.title : "untitled photo"
-  }" style="margin: 0 auto;display: block;cursor:pointer;" 
-    src=${data.thumb} alt="${data.title}">
+  }" data-src=${data.src} data-photoid=${
+    data.photoId
+  } style="margin: 0 auto;display: block;cursor:pointer;" 
+    src=${data.thumb} alt="${data.title}" >
   <a 
     title="open photo in flickr"
     style="background-color: #3f51b5;
@@ -77,7 +79,9 @@ class Map extends React.Component {
       this.setState({ photoMarkers: [] });
 
       photos.forEach(photo => {
-        return this.createPhotoMarker(photo, this.props.displayPhotoMarkers);
+        if (!photo.isFavorite) {
+          return this.createPhotoMarker(photo, this.props.displayPhotoMarkers);
+        }
       });
     } else {
       console.log("PHOTOS DID NOT CHANGE - NO RERENDER FOR MARKERS");
@@ -212,6 +216,25 @@ class Map extends React.Component {
       maxWidth: 200
     });
 
+    const attachImgOnClick = () => {
+      const img = document.getElementById("image-info");
+      const id = img.getAttribute("data-photoid");
+      let photo = this.props.photos.find(img => img.photoId === id);
+      if (!photo) {
+        /**If photo is not found in filteredPhotos search for it in favorites */
+        photo = this.props.favorites.find(img => img.photoId === id);
+      }
+
+      const openLightBox = this.props.openLightbox.bind(this, null, {
+        index: 0,
+        photo
+      });
+
+      img.onclick = openLightBox;
+    };
+
+    window.largeInfowindow.addListener("domready", attachImgOnClick);
+
     // this.addSearchCircle(rome);
 
     window.google.maps.event.addListenerOnce(window.map, "idle", () => {
@@ -301,19 +324,16 @@ class Map extends React.Component {
 
     marker.addListener("click", function() {
       window.map.panTo(this.getPosition());
-      // window.largeInfowindow.setContent("test");
+
       window.largeInfowindow.setContent(infoWindowContents(pin));
 
       // window.map.setZoom(14);
       // window.map.openInfoWindow(marker, window.largeInfowindow);
-      window.largeInfowindow.open(window.map, marker);
       // toggleBounce();
+      window.largeInfowindow.open(window.map, marker);
     });
-    window.photoMarker = marker;
 
-    // marker.addListener('click', function() {
-    //   infowindow.open(map, marker);
-    // });
+    window.photoMarker = marker;
   };
 
   showAllPhotoMarkers = () => {

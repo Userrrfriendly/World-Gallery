@@ -1,4 +1,4 @@
-import { find as _find, findIndex as _findIndex } from "lodash";
+// import { findIndex as _findIndex } from "lodash";
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
 // export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 
@@ -50,19 +50,18 @@ const setSearchCenter = (action, state) => {
 
 const setPhotos = (action, state) => {
   /* currently setPhotos resets blocked users (initial request) */
-  const filteredPhotos = action.photos;
-  let mapPhotos = action.photos;
-  /** filter out any favorite photos so there are no duplicate markers  */
-  if (state.favorites.length > 0) {
-    mapPhotos = mapPhotos.filter(img => {
-      if (_find(state.favorites, el => el.photoId === img.photoId)) {
-        return false;
-      } else {
-        return true;
-      }
-    });
+  let filteredPhotos = action.photos;
 
-    console.log(mapPhotos);
+  /**
+   * set isFavorite:true to any img returned from the response that is already in favorites
+   * so there are no duplicate markers
+   **/
+  if (state.favorites.length > 0) {
+    filteredPhotos = filteredPhotos.map(img => {
+      return state.favorites.find(el => el.photoId === img.photoId)
+        ? { ...img, isFavorite: true }
+        : img;
+    });
   }
 
   return {
@@ -70,8 +69,7 @@ const setPhotos = (action, state) => {
     photos: action.photos,
     filteredPhotos,
     blockedUsers: [],
-    hiddenPhotos: [],
-    mapPhotos
+    hiddenPhotos: []
   };
 };
 
@@ -84,36 +82,31 @@ const updatePhotos = (action, state) => {
   const newHiddenPhotos = action.photos.filter(photo =>
     state.blockedUsers.includes(photo.owner)
   );
-  const filteredPhotos = state.filteredPhotos.concat(newPhotosFiltered);
+  let filteredPhotos = state.filteredPhotos.concat(newPhotosFiltered);
 
-  let mapPhotos = state.mapPhotos;
-  let newMapPhotos = [...action.photos];
   if (state.favorites.length > 0) {
-    newMapPhotos = newMapPhotos.filter(img => {
-      if (_find(state.favorites, el => el.photoId === img.photoId)) {
-        return false;
-      } else {
-        return true;
-      }
+    filteredPhotos = filteredPhotos.map(img => {
+      return state.favorites.find(el => el.photoId === img.photoId)
+        ? { ...img, isFavorite: true }
+        : img;
     });
   }
 
-  mapPhotos = mapPhotos.concat(newMapPhotos);
   const hiddenPhotos = state.hiddenPhotos.concat(newHiddenPhotos);
   const photos = state.photos.concat(action.photos);
 
-  return { ...state, photos, filteredPhotos, hiddenPhotos, mapPhotos };
+  return { ...state, photos, filteredPhotos, hiddenPhotos };
 };
 
 const blockUser = (action, state) => {
   const updatedBlockedUsers = state.blockedUsers.concat(action.userId);
-  // const filteredPhotos = state.filteredPhotos.concat(newPhotosFiltered);
   const filteredPhotos = state.filteredPhotos.filter(
     photo => !updatedBlockedUsers.includes(photo.owner)
   );
   const hiddenPhotos = state.photos.filter(photo =>
     updatedBlockedUsers.includes(photo.owner)
   );
+
   return {
     ...state,
     blockedUsers: updatedBlockedUsers,
@@ -124,33 +117,33 @@ const blockUser = (action, state) => {
 
 const addImgToFavorites = (action, state) => {
   const favorites = state.favorites.concat(action.image);
-  let mapPhotos = state.mapPhotos;
-  if (favorites.length > 0) {
-    mapPhotos = mapPhotos.filter(img => {
-      if (_find(favorites, el => el.photoId === img.photoId)) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-    console.log(mapPhotos);
-  }
-  return { ...state, favorites, mapPhotos };
+
+  const filteredPhotos = state.filteredPhotos.map(img => {
+    return img.photoId === action.image.photoId
+      ? { ...img, isFavorite: true }
+      : img;
+  });
+
+  return { ...state, favorites, filteredPhotos };
 };
 
 const removeImgFromFavorites = (action, state) => {
   const favorites = [...state.favorites];
-  const isInCurrentResults = _find(state.photos, action.image) ? true : false;
-  const mapPhotos = isInCurrentResults
-    ? state.mapPhotos.concat(action.image)
-    : state.mapPhotos;
 
-  const index = _findIndex(favorites, function(o) {
-    return o.photoId === action.image.photoId;
-  });
+  const filteredIndex = state.filteredPhotos.findIndex(
+    el => el.photoId === action.image.photoId
+  );
+  let filteredPhotos = [...state.filteredPhotos];
+  if (filteredIndex !== -1) {
+    filteredPhotos[filteredIndex].isFavorite = false;
+  }
+
+  const index = favorites.findIndex(
+    img => img.photoId === action.image.photoId
+  );
 
   if (index !== -1) favorites.splice(index, 1);
-  return { ...state, favorites, mapPhotos };
+  return { ...state, favorites, filteredPhotos };
 };
 
 const setMinUploadDate = (action, state) => {

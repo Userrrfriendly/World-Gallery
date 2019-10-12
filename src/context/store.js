@@ -6,8 +6,8 @@ import DispatchContext from "./dispatchContext";
 
 export default function Store(props) {
   const initialState = {
-    boundingBox: null,
-    radiusMarker: null,
+    boundingBox: null, // remove?
+    radiusMarker: null, // remove?
     //
     mapLoaded: false,
     searchMethod: "EXTENTS", // "CIRCLE" or "BOX"?
@@ -17,10 +17,9 @@ export default function Store(props) {
     searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 }, //paris, versailles,
     photos: null,
     filteredPhotos: null,
-    mapPhotos: [],
     hiddenPhotos: [],
-    blockedUsers: [],
     favorites: [],
+    blockedUsers: [],
     minUploadDate: false,
     maxUploadDate: false,
     minTakenDate: false,

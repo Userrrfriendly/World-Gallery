@@ -2,36 +2,18 @@ import React, { useState, useCallback } from "react";
 import Gallery from "react-photo-gallery";
 import ImageWrapper from "../imageWrapper/imageWrapper";
 import ImageMenu from "../imageWrapper/imageMenu";
-import LightBoxHeader from "../lightboxComponents/lightboxHeader";
-import LightBoxViewRenderer from "../lightboxComponents/lightboxViewRenderer";
-import Carousel, { Modal, ModalGateway } from "react-images";
-import { Typography } from "@material-ui/core";
 
-const navButtonStyles = base => ({
-  ...base,
-  background: "rgba(255, 255, 255, 0.2)",
-  "&:hover, &:active": {
-    boxShadow: "0px 0px 11px 0px rgba(0,0,0,0.75)",
-    background: "rgba(255, 255, 255, 0.3)"
-  },
-  "&:active": {
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.14)",
-    transform: "scale(0.96)"
-  }
-});
+import { Typography } from "@material-ui/core";
 
 const ImageGrid = ({
   photos,
   responseDetails,
   direction,
   imageToggleFavorites,
-  setAppBarHide,
   columns,
-  hiddenPhotos
+  hiddenPhotos,
+  openLightbox
 }) => {
-  const [currentImage, setCurrentImage] = useState(0);
-  const [viewerIsOpen, setViewerIsOpen] = useState(false);
-
   React.useEffect(() => {
     //debugging
     console.log("IMAGE GRID: some props Caused Rerender!!!!!");
@@ -40,26 +22,11 @@ const ImageGrid = ({
     responseDetails,
     direction,
     imageToggleFavorites,
-    setAppBarHide,
     columns,
     hiddenPhotos
   ]);
 
   console.log("IMAGEGRID UPDATED!");
-  const openLightbox = useCallback(
-    (event, { photo, index }) => {
-      setAppBarHide(true);
-      setCurrentImage(index);
-      setViewerIsOpen(true);
-    },
-    [setAppBarHide]
-  );
-
-  const closeLightbox = () => {
-    setCurrentImage(0);
-    setViewerIsOpen(false);
-    setAppBarHide(false);
-  };
 
   /** ImageMenu */
   const [anchorEl, setAnchorEl] = useState(null);
@@ -120,30 +87,7 @@ const ImageGrid = ({
           // Photos obj originally sent and the next and previous photos in the gallery if they exist
         />
       )}
-      <ModalGateway>
-        {viewerIsOpen ? (
-          <Modal onClose={closeLightbox}>
-            <Carousel
-              imageToggleFavorites={imageToggleFavorites}
-              components={{
-                Header: LightBoxHeader,
 
-                View: LightBoxViewRenderer
-              }}
-              currentIndex={currentImage}
-              views={photos.map(x => ({
-                ...x,
-                srcset: x.srcSet,
-                caption: x.title
-              }))}
-              styles={{
-                navigationPrev: navButtonStyles,
-                navigationNext: navButtonStyles
-              }}
-            />
-          </Modal>
-        ) : null}
-      </ModalGateway>
       <ImageMenu
         anchorEl={anchorEl}
         handleOpenMenuClick={handleOpenMenuClick}

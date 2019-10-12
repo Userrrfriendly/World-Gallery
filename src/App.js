@@ -33,13 +33,58 @@ import ControlPanel from "./components/controlPanel/controlPanel";
 import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
 import { mapReady } from "./helpers/helpers";
 
+import LightBoxHeader from "./components/lightboxComponents/lightboxHeader";
+import LightBoxViewRenderer from "./components/lightboxComponents/lightboxViewRenderer";
+import Carousel, { Modal, ModalGateway } from "react-images";
+
 const MapWrapper = lazy(() => import("./components/map/mapContainer"));
-// import { find as _find } from "lodash";
+
+const navButtonStyles = base => ({
+  ...base,
+  background: "rgba(255, 255, 255, 0.2)",
+  "&:hover, &:active": {
+    boxShadow: "0px 0px 11px 0px rgba(0,0,0,0.75)",
+    background: "rgba(255, 255, 255, 0.3)"
+  },
+  "&:active": {
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.14)",
+    transform: "scale(0.96)"
+  }
+});
 
 function App() {
   const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
+  /**LightBox */
+  /**explicitly hide appbar if the lightbox is open (prevents appbar overlay with image in lightbox) */
+  const [appBarHide, setAppBarHide] = useState(false);
+
+  const [currentImage, setCurrentImage] = useState(0);
+  const [viewerIsOpen, setViewerIsOpen] = useState(false);
+
+  const openLightboxSinglePhoto = (event, { photo, index }) => {
+    setAppBarHide(true);
+    setCurrentImage(0);
+    setViewerIsOpen({ photo });
+  };
+
+  const openLightbox = useCallback(
+    (event, { photo, index }) => {
+      setAppBarHide(true);
+      setCurrentImage(index);
+      setViewerIsOpen(true);
+    },
+    [setAppBarHide]
+  );
+
+  const closeLightbox = () => {
+    setCurrentImage(0);
+    setViewerIsOpen(false);
+    setAppBarHide(false);
+  };
+
+  /** End LightBox */
   const setMapLoaded = () => {
     dispatch({
       type: SET_MAP_LOADED,
@@ -84,8 +129,6 @@ function App() {
   const toggleGridDirection = () => {
     setGridDirection(gridDirection === "row" ? "column" : "row");
   };
-  /**explicitly hide appbar if the lightbox is open */
-  const [appBarHide, setAppBarHide] = useState(false);
 
   /** Triggers plot photo on map  */
   // const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
@@ -103,17 +146,6 @@ function App() {
   // }, [setDisplayFavorites, displayFavorites]);
 
   const toggleFavorites = () => setDisplayFavorites(!displayFavorites);
-
-  // const addImgToFavorites = useCallback(
-  //   img => {
-  //     console.log("adding to favorites");
-  //     dispatch({
-  //       type: ADD_IMG_TO_FAVORITES,
-  //       image: img
-  //     });
-  //   },
-  //   [dispatch]
-  // );
 
   const imageToggleFavorites = useCallback(
     (img, isFavorite) => {
@@ -278,11 +310,11 @@ function App() {
       });
   };
 
-  useEffect(() => {
-    //debugging only
-    console.log(store);
-    console.log(responseDetails); // IF RESPONSE DETAILS RETURNS ERROR THE APP CAN CRASH
-  }, [store, responseDetails]);
+  // useEffect(() => {
+  //   //debugging only
+  //   console.log(store);
+  //   console.log(responseDetails); // IF RESPONSE DETAILS RETURNS ERROR THE APP CAN CRASH
+  // }, [store, responseDetails]);
 
   useEffect(() => {
     //debugging only
@@ -429,7 +461,6 @@ function App() {
               handleMyLocationClick={handleMyLocationClick}
             ></ControlPanel>
           )}
-          {/* {mapVisible && ()} */}
           {!screenWidth900px && (
             <ControlPanelMobile
               setSearchRadius={setSearchRadius}
@@ -446,7 +477,7 @@ function App() {
           <Suspense fallback={<Skeleton variant="rect" />}>
             <MapWrapper
               setMapLoaded={setMapLoaded}
-              photos={store.mapPhotos}
+              photos={store.filteredPhotos}
               favorites={store.favorites}
               userLocation={store.userLocation}
               setSearchCenter={setSearchCenter}
@@ -475,22 +506,9 @@ function App() {
               disableCenter={disableCenter}
               // /**ScreenSize */
               screenWidth900px={screenWidth900px}
+              openLightbox={openLightboxSinglePhoto}
             />
           </Suspense>
-
-          {/* {!screenWidth900px && (
-            <ControlPanelMobile
-              setSearchRadius={setSearchRadius}
-              searchFlikr={searchFlikr}
-              loadingPhotos={loadingPhotos}
-              zoomToSearchArea={zoomToSearchArea}
-              centerSearchAreaOnMap={centerSearchAreaOnMap}
-              sortMethod={sortMethod}
-              handeSelectSortMethod={handeSelectSortMethod}
-              handleTextQueryChange={handleTextQueryChange}
-              searchText={searchText}
-            />
-          )} */}
         </section>
 
         <div ref={resultsRef}></div>
@@ -502,7 +520,8 @@ function App() {
             direction={gridDirection}
             imageToggleFavorites={imageToggleFavorites}
             columns={2}
-            setAppBarHide={setAppBarHide}
+            // setAppBarHide={setAppBarHide}
+            openLightbox={openLightbox}
           />
         )}
 
@@ -514,6 +533,40 @@ function App() {
             </>
           )}
       </Appbar>
+      <ModalGateway>
+        {viewerIsOpen && (
+          <Modal onClose={closeLightbox}>
+            <Carousel
+              imageToggleFavorites={imageToggleFavorites}
+              components={{
+                Header: LightBoxHeader,
+                View: LightBoxViewRenderer
+              }}
+              currentIndex={currentImage}
+              views={
+                // if viewerIsOpen has a .photo property then open a single photo, else render normal carousel
+                viewerIsOpen.photo
+                  ? [
+                      {
+                        ...viewerIsOpen.photo,
+                        srcset: viewerIsOpen.photo.srcSet,
+                        caption: viewerIsOpen.photo.title
+                      }
+                    ]
+                  : store.filteredPhotos.map(x => ({
+                      ...x,
+                      srcset: x.srcSet,
+                      caption: x.title
+                    }))
+              }
+              styles={{
+                navigationPrev: navButtonStyles,
+                navigationNext: navButtonStyles
+              }}
+            />
+          </Modal>
+        )}
+      </ModalGateway>
     </div>
   );
 }
