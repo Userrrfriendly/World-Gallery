@@ -17,7 +17,8 @@ import {
 import {
   KeyboardArrowUp,
   ViewStream as Rows,
-  ViewWeek as Columns
+  ViewWeek as Columns,
+  Favorite
 } from "@material-ui/icons/";
 import Logo from "../../assets/logo";
 import DrawerMenu from "../drawer/drawer";
@@ -41,6 +42,9 @@ const useStyles = makeStyles(theme => ({
     cursor: "pointer",
     display: "flex",
     alignItems: "center"
+  },
+  favorites: {
+    color: "#ff0000"
   }
 }));
 
@@ -161,16 +165,16 @@ export default function HideAppBar(props) {
                   </IconButton>
                 </Tooltip>
               )}
-              {/* //Favorites Page will be placed here when ready 
-               <Tooltip title="Toggle Map" aria-label="Toggle Map">
+
+              <Tooltip title="Open Favorites" aria-label="Open Favorites">
                 <IconButton
                   color="inherit"
-                  aria-label="toggle map"
-                  onClick={props.toggleMap}
+                  aria-label="Open Favorites"
+                  onClick={props.handleOpenFavorites}
                 >
-                  <Map />
+                  <Favorite className={classes.favorites} />
                 </IconButton>
-              </Tooltip> */}
+              </Tooltip>
             </div>
           </Toolbar>
         </AppBar>

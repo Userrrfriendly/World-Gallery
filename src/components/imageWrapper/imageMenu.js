@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Menu, MenuItem, Link } from "@material-ui/core/";
 import DispatchContext from "../../context/dispatchContext";
 import { BLOCK_USER } from "../../context/rootReducer";
@@ -8,7 +8,7 @@ const linkStyle = {
 };
 
 export default function ImageMenu(props) {
-  const dispatch = React.useContext(DispatchContext);
+  const dispatch = useContext(DispatchContext);
 
   const handleHideUser = () => {
     props.handleMenuClose();
@@ -27,9 +27,11 @@ export default function ImageMenu(props) {
         open={Boolean(props.anchorEl)}
         onClose={props.handleMenuClose}
       >
-        <MenuItem onClick={handleHideUser}>
-          Temporary hide photos from this user
-        </MenuItem>
+        {!props.openFavorites && (
+          <MenuItem onClick={handleHideUser}>
+            Temporary hide photos from this user
+          </MenuItem>
+        )}
         <MenuItem onClick={props.handleMenuClose}>
           <Link
             style={linkStyle}

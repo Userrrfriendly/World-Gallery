@@ -31,6 +31,7 @@ import LoadMoreButton from "./components/controls/loadMoreBtn";
 import LoadingBar from "./components/LoadingBar/loadingBar";
 import ControlPanel from "./components/controlPanel/controlPanel";
 import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
+import FavoritesDialog from "./components/favorites/FavoritesDialog";
 import { mapReady } from "./helpers/helpers";
 
 import LightBoxHeader from "./components/lightboxComponents/lightboxHeader";
@@ -38,7 +39,6 @@ import LightBoxViewRenderer from "./components/lightboxComponents/lightboxViewRe
 import Carousel, { Modal, ModalGateway } from "react-images";
 
 const MapWrapper = lazy(() => import("./components/map/mapContainer"));
-
 const navButtonStyles = base => ({
   ...base,
   background: "rgba(255, 255, 255, 0.2)",
@@ -52,9 +52,28 @@ const navButtonStyles = base => ({
   }
 });
 
+const imagePositionerStyles = base => ({
+  ...base,
+  zIndex: "5500"
+});
+const blanketStyles = base => ({
+  ...base,
+  zIndex: "5000"
+});
+
 function App() {
   const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+
+  /**Favorites Dialog */
+  const [openFavorites, setOpenFavorites] = React.useState(false);
+  const handleOpenFavorites = () => {
+    setOpenFavorites(true);
+  };
+
+  const handleCloseFavorites = () => {
+    setOpenFavorites(false);
+  };
 
   /**LightBox */
   /**explicitly hide appbar if the lightbox is open (prevents appbar overlay with image in lightbox) */
@@ -429,6 +448,7 @@ function App() {
         toggleFavorites={toggleFavorites}
         displayPhotoMarkers={displayPhotoMarkers}
         displayFavorites={displayFavorites}
+        handleOpenFavorites={handleOpenFavorites}
       >
         <section
           style={
@@ -520,6 +540,7 @@ function App() {
             direction={gridDirection}
             imageToggleFavorites={imageToggleFavorites}
             columns={2}
+            openFavorites={openFavorites}
             // setAppBarHide={setAppBarHide}
             openLightbox={openLightbox}
           />
@@ -535,7 +556,13 @@ function App() {
       </Appbar>
       <ModalGateway>
         {viewerIsOpen && (
-          <Modal onClose={closeLightbox}>
+          <Modal
+            onClose={closeLightbox}
+            styles={{
+              blanket: blanketStyles,
+              positioner: imagePositionerStyles
+            }}
+          >
             <Carousel
               imageToggleFavorites={imageToggleFavorites}
               components={{
@@ -544,7 +571,8 @@ function App() {
               }}
               currentIndex={currentImage}
               views={
-                // if viewerIsOpen has a .photo property then open a single photo, else render normal carousel
+                // if viewerIsOpen has a .photo property then open a single photo,
+                // else if favorites is open render favorites else render normal carousel
                 viewerIsOpen.photo
                   ? [
                       {
@@ -553,6 +581,12 @@ function App() {
                         caption: viewerIsOpen.photo.title
                       }
                     ]
+                  : openFavorites
+                  ? store.favorites.map(x => ({
+                      ...x,
+                      srcset: x.srcSet,
+                      caption: x.title
+                    }))
                   : store.filteredPhotos.map(x => ({
                       ...x,
                       srcset: x.srcSet,
@@ -567,6 +601,15 @@ function App() {
           </Modal>
         )}
       </ModalGateway>
+      {openFavorites && (
+        <FavoritesDialog
+          openFavorites={openFavorites}
+          handleCloseFavorites={handleCloseFavorites}
+          responseDetails={responseDetails}
+          imageToggleFavorites={imageToggleFavorites}
+          openLightbox={openLightbox}
+        />
+      )}
     </div>
   );
 }

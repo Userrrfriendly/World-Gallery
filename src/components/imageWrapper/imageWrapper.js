@@ -3,7 +3,6 @@ import { Fab, makeStyles, Zoom } from "@material-ui/core";
 import { Favorite, FavoriteBorder, MoreVert } from "@material-ui/icons";
 import { find as _find } from "lodash";
 import StateContext from "../../context/stateContext";
-// import { getPhotoGeoLocation } from "../../requests/flikr";
 
 const useStyles = makeStyles(theme => ({
   pin_to_map_btn: {
@@ -29,13 +28,6 @@ const useStyles = makeStyles(theme => ({
     margin: "2px",
     display: "block"
   }
-  // container: {
-  //   // position: "relative",
-  //   // width: "100%"
-  //   position: "absolute",
-  //   left: "left",
-  //   top: "top"
-  // }
 }));
 
 const ImageWrapper = ({
@@ -78,10 +70,6 @@ const ImageWrapper = ({
     }, 3000);
   };
 
-  //CONTAINER OVERRIDES FOR COLUMNT LAYOUT
-  // position: "absolute",
-  // left: left,
-  // top: top
   console.log(direction);
   if (direction === "column") {
     cont.position = "absolute";
@@ -96,9 +84,6 @@ const ImageWrapper = ({
         height: photo.height,
         width: photo.width,
         ...cont
-        // position: "absolute",
-        // left: left,
-        // top: top
       }}
       className={classes.container}
       onMouseEnter={handleOnMouseEnter.bind(this, photo)}
@@ -123,7 +108,7 @@ const ImageWrapper = ({
       <Zoom in={hover}>
         <Fab
           size="small"
-          aria-label="add"
+          aria-label="more"
           className={classes.options_btn}
           onClick={handleOpenMenuClick.bind(this, photo)}
         >
@@ -135,7 +120,7 @@ const ImageWrapper = ({
         <Fab
           size="small"
           color="secondary"
-          aria-label="add"
+          aria-label={isFavorite ? "remove from favorites" : "add to favorites"}
           className={classes.pin_to_map_btn}
           onClick={imageToggleFavorites.bind(this, photo, isFavorite)}
         >

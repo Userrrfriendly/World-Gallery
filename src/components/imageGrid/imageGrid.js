@@ -12,7 +12,8 @@ const ImageGrid = ({
   imageToggleFavorites,
   columns,
   hiddenPhotos,
-  openLightbox
+  openLightbox,
+  openFavorites
 }) => {
   React.useEffect(() => {
     //debugging
@@ -54,22 +55,40 @@ const ImageGrid = ({
           direction={props.direction}
           openLightbox={props.onClick}
           handleOpenMenuClick={handleOpenMenuClick}
+          openFavorites={openFavorites}
         />
       );
     },
-    [imageToggleFavorites]
+    [imageToggleFavorites, openFavorites]
   );
 
   return (
     <div>
-      <Typography variant="h3" component="h1" style={{ marginTop: "1.9rem" }}>
-        Results:
-      </Typography>
-      <Typography variant="subtitle1" component="h2" gutterBottom>
-        {photos.length === 0
-          ? `Sorry could not find any photos in that particular area`
-          : `Displaying ${photos.length} of total ${responseDetails.totalPhotos} photos found...`}
-      </Typography>
+      {openFavorites ? (
+        <>
+          <Typography variant="subtitle1" component="h2" gutterBottom>
+            {photos.length === 0
+              ? "Favorites is empty"
+              : `${photos.length} photos in favorites:`}
+          </Typography>
+        </>
+      ) : (
+        <>
+          <Typography
+            variant="h3"
+            component="h1"
+            style={{ marginTop: "1.9rem" }}
+          >
+            Results:
+          </Typography>
+          <Typography variant="subtitle1" component="h2" gutterBottom>
+            {photos.length === 0
+              ? `Sorry could not find any photos in that particular area`
+              : `Displaying ${photos.length} of total ${responseDetails.totalPhotos} photos found...`}
+          </Typography>
+        </>
+      )}
+
       {hiddenPhotos.length > 0 && (
         <Typography variant="subtitle2" component="p" gutterBottom>
           ({hiddenPhotos.length}) photos from blocked users are hidden.
@@ -93,6 +112,7 @@ const ImageGrid = ({
         handleOpenMenuClick={handleOpenMenuClick}
         handleMenuClose={handleMenuClose}
         photoData={photoData}
+        openFavorites={openFavorites}
       />
     </div>
   );
