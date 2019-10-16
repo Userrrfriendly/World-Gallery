@@ -1,17 +1,18 @@
 {
   "files": {
     "main.css": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css",
-    "main.js": "/Flickr-GeoExplorer/static/js/main.c9e6785e.chunk.js",
-    "main.js.map": "/Flickr-GeoExplorer/static/js/main.c9e6785e.chunk.js.map",
-    "runtime~main.js": "/Flickr-GeoExplorer/static/js/runtime~main.7be37dc2.js",
-    "runtime~main.js.map": "/Flickr-GeoExplorer/static/js/runtime~main.7be37dc2.js.map",
-    "static/js/2.1eec5916.chunk.js": "/Flickr-GeoExplorer/static/js/2.1eec5916.chunk.js",
-    "static/js/2.1eec5916.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.1eec5916.chunk.js.map",
-    "static/js/3.96c0facc.chunk.js": "/Flickr-GeoExplorer/static/js/3.96c0facc.chunk.js",
-    "static/js/3.96c0facc.chunk.js.map": "/Flickr-GeoExplorer/static/js/3.96c0facc.chunk.js.map",
+    "main.js": "/Flickr-GeoExplorer/static/js/main.be6b67a4.chunk.js",
+    "main.js.map": "/Flickr-GeoExplorer/static/js/main.be6b67a4.chunk.js.map",
+    "runtime~main.js": "/Flickr-GeoExplorer/static/js/runtime~main.cd108199.js",
+    "runtime~main.js.map": "/Flickr-GeoExplorer/static/js/runtime~main.cd108199.js.map",
+    "static/js/2.7823d2c9.chunk.js": "/Flickr-GeoExplorer/static/js/2.7823d2c9.chunk.js",
+    "static/js/2.7823d2c9.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.7823d2c9.chunk.js.map",
+    "static/js/3.4c8969a6.chunk.js": "/Flickr-GeoExplorer/static/js/3.4c8969a6.chunk.js",
+    "static/js/3.4c8969a6.chunk.js.map": "/Flickr-GeoExplorer/static/js/3.4c8969a6.chunk.js.map",
     "index.html": "/Flickr-GeoExplorer/index.html",
-    "precache-manifest.9786333d048526bf2ed344383f0d2518.js": "/Flickr-GeoExplorer/precache-manifest.9786333d048526bf2ed344383f0d2518.js",
+    "precache-manifest.e698d3acd5aecd8b9c80bd157a339c76.js": "/Flickr-GeoExplorer/precache-manifest.e698d3acd5aecd8b9c80bd157a339c76.js",
     "service-worker.js": "/Flickr-GeoExplorer/service-worker.js",
-    "static/css/main.34de6062.chunk.css.map": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css.map"
+    "static/css/main.34de6062.chunk.css.map": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css.map",
+    "static/media/pngLogo.png": "/Flickr-GeoExplorer/static/media/pngLogo.9f3169d5.png"
   }
 }
