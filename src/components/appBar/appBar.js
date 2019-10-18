@@ -20,9 +20,9 @@ import {
   ViewWeek as Columns,
   Favorite
 } from "@material-ui/icons/";
-import Logo from "../../assets/logo";
 import DrawerMenu from "../drawer/drawer";
 import { useScreenWidth as useScreenWidth900 } from "../../helpers/CustomHooks/useScreenWidth";
+import PngLogo from "../../assets/pngLogo.png";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -125,13 +125,15 @@ export default function HideAppBar(props) {
             )}
 
             <div className={classes.logo_container} onClick={scrollToTop}>
-              <Logo
-                style={{ width: "40px", marginRight: "0.75rem", fill: "white" }}
-                aria-label="Flickr"
+              <img
+                src={PngLogo}
+                aria-label="World Gallery Logo"
+                alt="World Gallery Logo"
+                style={{ marginRight: "0.5rem", height: "45px" }}
               />
               <Typography variant="h6">
-                <span style={{ color: "#dedee6" }}>Geo</span>
-                <span style={{ color: "#ffc1d5" }}>Explorer</span>
+                <span style={{ color: "#dedee6" }}>World</span>
+                <span style={{ color: "#ffc1d5" }}>Gallery</span>
               </Typography>
             </div>
             <div className={classes.grow} />

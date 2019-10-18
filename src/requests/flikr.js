@@ -33,7 +33,19 @@ export const getPhotosByTitle = searchParams => {
     url.append("max_taken_date", searchParams.maxTakenDate);
   }
   if (searchParams.searchMethod === "EXTENTS") {
-    const { south, west, north, east } = searchParams.bounds;
+    // const { south, west, north, east } = searchParams.bounds;
+    let { south, west, north, east } = searchParams.bounds;
+
+    south = south.toFixed(5);
+    west = west.toFixed(5);
+    north = north.toFixed(5);
+    east = east.toFixed(5);
+
+    // south = south.toFixed(5).toString();
+    // west = west.toFixed(5).toString();
+    // north = north.toFixed(5).toString();
+    // east = east.toFixed(5).toString();
+
     query = {
       bounds: searchParams.bounds,
       searchMethod: searchParams.searchMethod,
@@ -49,6 +61,9 @@ export const getPhotosByTitle = searchParams => {
       // east
     };
     url.append("bbox", `${west},${south},${east},${north}`);
+    // var temp = west + "," + south + "," + east + "," + north;
+    // console.log(temp);
+    // url.append("bbox", temp);
   }
   if (searchParams.searchMethod === "CIRCLE") {
     url.append("lat", searchParams.lat);
@@ -87,7 +102,9 @@ export const getPhotosByTitle = searchParams => {
   let arrayOfPhotos = fetch("https://api.flickr.com/services/rest/?" + url)
     .then(res => {
       console.log(url);
+      console.log(res);
       return res.json().then(json => {
+        console.log("*****FLICKR RESPONSE:****");
         console.log(json);
         // const test = {
         //   ...json.photos,

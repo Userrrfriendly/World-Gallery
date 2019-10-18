@@ -38,6 +38,8 @@ import LightBoxHeader from "./components/lightboxComponents/lightboxHeader";
 import LightBoxViewRenderer from "./components/lightboxComponents/lightboxViewRenderer";
 import Carousel, { Modal, ModalGateway } from "react-images";
 
+import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
+
 const MapWrapper = lazy(() => import("./components/map/mapContainer"));
 const navButtonStyles = base => ({
   ...base,
@@ -610,6 +612,7 @@ function App() {
           openLightbox={openLightbox}
         />
       )}
+      {/* <CarouselShowCase /> */}
     </div>
   );
 }
