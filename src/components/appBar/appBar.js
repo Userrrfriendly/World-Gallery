@@ -7,7 +7,6 @@ import {
   useScrollTrigger,
   Box,
   Slide,
-  useMediaQuery,
   Zoom,
   Fab,
   IconButton,
@@ -21,7 +20,7 @@ import {
   Favorite
 } from "@material-ui/icons/";
 import DrawerMenu from "../drawer/drawer";
-import { useScreenWidth as useScreenWidth900 } from "../../helpers/CustomHooks/useScreenWidth";
+import { useMinScreenWidth } from "../../helpers/CustomHooks/useMinScreenWidth";
 import PngLogo from "../../assets/pngLogo.png";
 
 const useStyles = makeStyles(theme => ({
@@ -90,7 +89,6 @@ function ScrollTop(props) {
 }
 
 export default function HideAppBar(props) {
-  const matches = useMediaQuery("(min-width:1200px)");
   const classes = useStyles();
 
   const scrollToTop = event => {
@@ -107,8 +105,8 @@ export default function HideAppBar(props) {
       <CssBaseline />
       <HideOnScroll appBarHide={props.appBarHide} {...props}>
         <AppBar>
-          <Toolbar disableGutters={useScreenWidth900() ? false : true}>
-            {!useScreenWidth900() && (
+          <Toolbar disableGutters={useMinScreenWidth(900) ? false : true}>
+            {!useMinScreenWidth(900) && (
               <DrawerMenu
                 handeSelectSortMethod={props.handeSelectSortMethod}
                 sortMethod={props.sortMethod}
@@ -183,7 +181,11 @@ export default function HideAppBar(props) {
       </HideOnScroll>
       <Toolbar id="back-to-top-anchor" />
       <Box
-        style={matches ? { margin: "5px 25px 2px" } : { margin: "5px 0 2px" }}
+        style={
+          useMinScreenWidth(1200)
+            ? { margin: "5px 25px 2px" }
+            : { margin: "5px 0 2px" }
+        }
       >
         {props.children}
       </Box>

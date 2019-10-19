@@ -41,9 +41,9 @@ const CarouselShowCase = props => {
       {/* <Button onClick={() => setOpen(true)}>Open carousel</Button> */}
 
       <AutoRotatingCarousel
-        // mobile={true}
+        mobile={true}
         autoplay={false}
-        label="Get started"
+        label="Back"
         open={open}
         onClose={() => setOpen(false)}
         onStart={() => setOpen(false)}

@@ -6,7 +6,6 @@ import React, {
   Suspense,
   lazy
 } from "react";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import * as FlikrApi from "./requests/flikr";
 import Skeleton from "@material-ui/lab/Skeleton";
 import StateContext from "./context/stateContext";
@@ -37,8 +36,9 @@ import { mapReady } from "./helpers/helpers";
 import LightBoxHeader from "./components/lightboxComponents/lightboxHeader";
 import LightBoxViewRenderer from "./components/lightboxComponents/lightboxViewRenderer";
 import Carousel, { Modal, ModalGateway } from "react-images";
+import { useMinScreenWidth } from "./helpers/CustomHooks/useMinScreenWidth";
 
-import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
+// import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
 
 const MapWrapper = lazy(() => import("./components/map/mapContainer"));
 const navButtonStyles = base => ({
@@ -112,8 +112,6 @@ function App() {
       mapLoaded: true
     });
   };
-
-  const screenWidth900px = useMediaQuery("(min-width:900px)");
 
   const resultsRef = React.useRef(null);
 
@@ -454,7 +452,7 @@ function App() {
       >
         <section
           style={
-            screenWidth900px
+            useMinScreenWidth(900)
               ? { display: "flex", height: "calc(100vh - 7px - 64px)" } //7px margins, 64appbar
               : {
                   display: "flex",
@@ -463,7 +461,7 @@ function App() {
                 }
           }
         >
-          {screenWidth900px && (
+          {useMinScreenWidth(900) && (
             <ControlPanel
               setSearchRadius={setSearchRadius}
               searchFlikr={searchFlikr}
@@ -483,7 +481,7 @@ function App() {
               handleMyLocationClick={handleMyLocationClick}
             ></ControlPanel>
           )}
-          {!screenWidth900px && (
+          {!useMinScreenWidth(900) && (
             <ControlPanelMobile
               setSearchRadius={setSearchRadius}
               searchFlikr={searchFlikr}
@@ -527,7 +525,7 @@ function App() {
               triggerCenter={triggerCenter}
               disableCenter={disableCenter}
               // /**ScreenSize */
-              screenWidth900px={screenWidth900px}
+              screenWidth900px={useMinScreenWidth(900)}
               openLightbox={openLightboxSinglePhoto}
             />
           </Suspense>

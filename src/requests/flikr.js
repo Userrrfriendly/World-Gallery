@@ -102,7 +102,6 @@ export const getPhotosByTitle = searchParams => {
   let arrayOfPhotos = fetch("https://api.flickr.com/services/rest/?" + url)
     .then(res => {
       console.log(url);
-      console.log(res);
       return res.json().then(json => {
         console.log("*****FLICKR RESPONSE:****");
         console.log(json);
