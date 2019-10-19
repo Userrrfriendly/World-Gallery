@@ -1,24 +1,21 @@
 {
   "files": {
     "main.css": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css",
-    "main.js": "/Flickr-GeoExplorer/static/js/main.52131a7c.chunk.js",
-    "main.js.map": "/Flickr-GeoExplorer/static/js/main.52131a7c.chunk.js.map",
-    "runtime~main.js": "/Flickr-GeoExplorer/static/js/runtime~main.e7ef40ac.js",
-    "runtime~main.js.map": "/Flickr-GeoExplorer/static/js/runtime~main.e7ef40ac.js.map",
-    "static/js/2.1994d1fa.chunk.js": "/Flickr-GeoExplorer/static/js/2.1994d1fa.chunk.js",
-    "static/js/2.1994d1fa.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.1994d1fa.chunk.js.map",
-    "static/js/3.4d4e9954.chunk.js": "/Flickr-GeoExplorer/static/js/3.4d4e9954.chunk.js",
-    "static/js/3.4d4e9954.chunk.js.map": "/Flickr-GeoExplorer/static/js/3.4d4e9954.chunk.js.map",
+    "main.js": "/Flickr-GeoExplorer/static/js/main.582d414b.chunk.js",
+    "main.js.map": "/Flickr-GeoExplorer/static/js/main.582d414b.chunk.js.map",
+    "runtime~main.js": "/Flickr-GeoExplorer/static/js/runtime~main.180c9cf0.js",
+    "runtime~main.js.map": "/Flickr-GeoExplorer/static/js/runtime~main.180c9cf0.js.map",
+    "static/js/2.e16391d7.chunk.js": "/Flickr-GeoExplorer/static/js/2.e16391d7.chunk.js",
+    "static/js/2.e16391d7.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.e16391d7.chunk.js.map",
+    "static/js/3.63bb5e11.chunk.js": "/Flickr-GeoExplorer/static/js/3.63bb5e11.chunk.js",
+    "static/js/3.63bb5e11.chunk.js.map": "/Flickr-GeoExplorer/static/js/3.63bb5e11.chunk.js.map",
     "index.html": "/Flickr-GeoExplorer/index.html",
-    "precache-manifest.8f99fce77a52a048095c20b68afa6af9.js": "/Flickr-GeoExplorer/precache-manifest.8f99fce77a52a048095c20b68afa6af9.js",
+    "precache-manifest.e36c3a3b5754594fb650dcf0c8d5cbff.js": "/Flickr-GeoExplorer/precache-manifest.e36c3a3b5754594fb650dcf0c8d5cbff.js",
     "service-worker.js": "/Flickr-GeoExplorer/service-worker.js",
     "static/css/main.34de6062.chunk.css.map": "/Flickr-GeoExplorer/static/css/main.34de6062.chunk.css.map",
-    "static/media/1stonehedge111.jpg": "/Flickr-GeoExplorer/static/media/1stonehedge111.0ddfe91a.jpg",
-    "static/media/autocomplete.mp4": "/Flickr-GeoExplorer/static/media/autocomplete.2d439346.mp4",
-    "static/media/parthenon.jpg": "/Flickr-GeoExplorer/static/media/parthenon.496847c2.jpg",
-    "static/media/pngLogo.png": "/Flickr-GeoExplorer/static/media/pngLogo.9f3169d5.png",
-    "static/media/rng.jpg": "/Flickr-GeoExplorer/static/media/rng.15d92cc8.jpg",
-    "static/media/stonehenge11.mp4": "/Flickr-GeoExplorer/static/media/stonehenge11.5999c1c9.mp4",
-    "static/media/stonehenge111.mp4": "/Flickr-GeoExplorer/static/media/stonehenge111.2bbce163.mp4"
+    "static/media/SLIDE1.png": "/Flickr-GeoExplorer/static/media/SLIDE1.49a541dd.png",
+    "static/media/SLIDE2.png": "/Flickr-GeoExplorer/static/media/SLIDE2.869e96b8.png",
+    "static/media/SLIDE3.png": "/Flickr-GeoExplorer/static/media/SLIDE3.87f4dc6d.png",
+    "static/media/pngLogo.png": "/Flickr-GeoExplorer/static/media/pngLogo.9f3169d5.png"
   }
 }
