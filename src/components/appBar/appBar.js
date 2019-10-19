@@ -11,7 +11,8 @@ import {
   Fab,
   IconButton,
   Tooltip,
-  makeStyles
+  makeStyles,
+  useMediaQuery
 } from "@material-ui/core/";
 import {
   KeyboardArrowUp,
@@ -90,6 +91,7 @@ function ScrollTop(props) {
 
 export default function HideAppBar(props) {
   const classes = useStyles();
+  const smSceen = useMediaQuery("(max-width:450px)");
 
   const scrollToTop = event => {
     const anchor = (event.target.ownerDocument || document).querySelector(
@@ -136,7 +138,7 @@ export default function HideAppBar(props) {
             </div>
             <div className={classes.grow} />
             <div className={classes.icons_container}>
-              {props.photos > 0 && (
+              {props.photos > 0 && !smSceen && (
                 <Tooltip
                   title={
                     props.gridDirection === "column"

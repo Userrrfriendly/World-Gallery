@@ -10,7 +10,6 @@ const ImageGrid = ({
   responseDetails,
   direction,
   imageToggleFavorites,
-  columns,
   hiddenPhotos,
   openLightbox,
   openFavorites
@@ -18,14 +17,7 @@ const ImageGrid = ({
   React.useEffect(() => {
     //debugging
     console.log("IMAGE GRID: some props Caused Rerender!!!!!");
-  }, [
-    photos,
-    responseDetails,
-    direction,
-    imageToggleFavorites,
-    columns,
-    hiddenPhotos
-  ]);
+  }, [photos, responseDetails, direction, imageToggleFavorites, hiddenPhotos]);
 
   console.log("IMAGEGRID UPDATED!");
 

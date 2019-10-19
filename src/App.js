@@ -25,6 +25,7 @@ import {
 
 import Appbar from "./components/appBar/appBar";
 import ImageGrid from "./components/imageGrid/imageGrid";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import LoadMoreButton from "./components/controls/loadMoreBtn";
 import LoadingBar from "./components/LoadingBar/loadingBar";
@@ -67,6 +68,7 @@ function App() {
   const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
+  const smSceen = useMediaQuery("(max-width:450px)");
   /**Favorites Dialog */
   const [openFavorites, setOpenFavorites] = React.useState(false);
   const handleOpenFavorites = () => {
@@ -537,9 +539,8 @@ function App() {
             photos={store.filteredPhotos}
             hiddenPhotos={store.hiddenPhotos}
             responseDetails={responseDetails}
-            direction={gridDirection}
+            direction={smSceen ? "column" : gridDirection}
             imageToggleFavorites={imageToggleFavorites}
-            columns={2}
             openFavorites={openFavorites}
             // setAppBarHide={setAppBarHide}
             openLightbox={openLightbox}

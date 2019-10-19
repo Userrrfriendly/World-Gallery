@@ -6,7 +6,8 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Tooltip
+  Tooltip,
+  useMediaQuery
 } from "@material-ui/core/";
 import {
   ViewStream as Rows,
@@ -37,6 +38,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function FavoritesDialog(props) {
   const classes = useStyles();
   const store = useContext(StateContext);
+  const smSceen = useMediaQuery("(max-width:450px)");
 
   const [gridDirection, setGridDirection] = useState("row");
   const toggleGridDirection = () => {
@@ -56,15 +58,15 @@ export default function FavoritesDialog(props) {
             <Typography variant="h5" component="h1" className={classes.title}>
               Favorites
             </Typography>
-            {store.favorites.length > 0 && (
+            {store.favorites.length > 0 && !smSceen && (
               <Tooltip
                 title={
-                  props.gridDirection === "column"
+                  gridDirection === "column"
                     ? "Display images as Rows"
                     : "Display images as Columns"
                 }
                 aria-label={
-                  props.gridDirection === "column"
+                  gridDirection === "column"
                     ? "Display images as Rows"
                     : "Display images as Columns"
                 }
@@ -74,7 +76,7 @@ export default function FavoritesDialog(props) {
                   color="inherit"
                   onClick={toggleGridDirection}
                 >
-                  {props.gridDirection === "column" ? (
+                  {gridDirection === "column" ? (
                     <>
                       <Rows className={classes.control_icon} />
                     </>
@@ -102,9 +104,8 @@ export default function FavoritesDialog(props) {
             photos={store.favorites}
             hiddenPhotos={store.hiddenPhotos}
             responseDetails={props.responseDetails}
-            direction={gridDirection}
+            direction={smSceen ? "column" : gridDirection}
             imageToggleFavorites={props.imageToggleFavorites}
-            columns={2}
             openLightbox={props.openLightbox}
             openFavorites={props.openFavorites}
           />
