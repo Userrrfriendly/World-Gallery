@@ -12,7 +12,6 @@ import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
 import {
   SET_BOUNDING_BOX,
-  // SET_RADIUS_MARKER,
   SET_USER_LOCATION,
   SET_SEARCH_CENTER,
   SET_SEARCH_RADIUS,
@@ -39,7 +38,7 @@ import LightBoxViewRenderer from "./components/lightboxComponents/lightboxViewRe
 import Carousel, { Modal, ModalGateway } from "react-images";
 import { useMinScreenWidth } from "./helpers/CustomHooks/useMinScreenWidth";
 
-// import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
+import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
 
 const MapWrapper = lazy(() => import("./components/map/mapContainer"));
 const navButtonStyles = base => ({
@@ -69,6 +68,10 @@ function App() {
   const dispatch = useContext(DispatchContext);
 
   const smSceen = useMediaQuery("(max-width:450px)");
+
+  /** Top user benefits (Auto Rotating Carousel) */
+  const [carouselOpen, setCarouselOpen] = useState(true);
+  const closeCarousel = () => setCarouselOpen(false);
   /**Favorites Dialog */
   const [openFavorites, setOpenFavorites] = React.useState(false);
   const handleOpenFavorites = () => {
@@ -611,7 +614,9 @@ function App() {
           openLightbox={openLightbox}
         />
       )}
-      {/* <CarouselShowCase /> */}
+      {carouselOpen && (
+        <CarouselShowCase open={carouselOpen} closeCarousel={closeCarousel} />
+      )}
     </div>
   );
 }
