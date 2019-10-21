@@ -12,10 +12,7 @@ import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
 import QueryContext from "./context/QueryContext/queryContext";
 import {
-  SET_BOUNDING_BOX,
   SET_USER_LOCATION,
-  SET_SEARCH_CENTER,
-  SET_SEARCH_RADIUS,
   SET_PHOTOS,
   UPDATE_PHOTOS,
   ADD_IMG_TO_FAVORITES,
@@ -42,6 +39,7 @@ import { useMinScreenWidth } from "./helpers/CustomHooks/useMinScreenWidth";
 import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
 
 const MapWrapper = lazy(() => import("./components/map/mapContainer"));
+
 const navButtonStyles = base => ({
   ...base,
   background: "rgba(255, 255, 255, 0.2)",
@@ -75,7 +73,8 @@ function App() {
   /** Top user benefits (Auto Rotating Carousel) */
   const [carouselOpen, setCarouselOpen] = useState(true);
   const closeCarousel = () => setCarouselOpen(false);
-  /**Favorites Dialog */
+
+  /** Favorites Dialog */
   const [openFavorites, setOpenFavorites] = React.useState(false);
   const handleOpenFavorites = () => {
     setOpenFavorites(true);
@@ -125,29 +124,13 @@ function App() {
   const resultsRef = React.useRef(null);
 
   const [loadingPhotos, setLoadingPhotos] = useState(false);
-  const [triggerZoom, setTriggerZoom] = useState(false);
-  const [triggerCenter, setTriggerCenter] = useState(false);
 
-  const zoomToSearchArea = () => setTriggerZoom(true);
-  const disableZoom = useCallback(() => setTriggerZoom(false), [
-    setTriggerZoom
-  ]);
-  const centerSearchAreaOnMap = () => setTriggerCenter(true);
-  const disableCenter = useCallback(() => setTriggerCenter(false), [
-    setTriggerCenter
-  ]);
-
-  const [mapVisible, setMapVisible] = useState(true); //REFACTOR FOR MAP TO COLLAPSE (height:0) OR DELETE METHOD
   const [responseDetails, setResponseDetails] = useState(null);
 
   const [gridDirection, setGridDirection] = useState("row");
   const toggleGridDirection = () => {
     setGridDirection(gridDirection === "row" ? "column" : "row");
   };
-
-  /** Triggers plot photo on map  */
-  // const [triggerPhotoMarker, setTriggerPhotoMarker] = useState(false);
-  // const disableTriggerPhotoMarker = () => setTriggerPhotoMarker(false);
 
   /** Markers trigger */
   const [displayPhotoMarkers, setDisplayPhotoMarkers] = useState(true);
@@ -156,10 +139,6 @@ function App() {
   }, [setDisplayPhotoMarkers, displayPhotoMarkers]);
 
   const [displayFavorites, setDisplayFavorites] = useState(true);
-  // const toggleFavorites = useCallback(() => {
-  //   setDisplayFavorites(!displayFavorites);
-  // }, [setDisplayFavorites, displayFavorites]);
-
   const toggleFavorites = () => setDisplayFavorites(!displayFavorites);
 
   const imageToggleFavorites = useCallback(
@@ -179,31 +158,6 @@ function App() {
     },
     [dispatch]
   );
-
-  /* triggerPlotRadiusMarkerOnMap allows calling methods from anywhere inside mapContainer */
-  const [
-    triggerPlotRadiusMarkerOnMap,
-    setTtriggerPlotRadiusMarkerOnMap
-  ] = useState(false);
-
-  const disableRadiusTrigger = useCallback(
-    () => setTtriggerPlotRadiusMarkerOnMap(false),
-    [setTtriggerPlotRadiusMarkerOnMap]
-  );
-  /**Bounds */
-  // const [triggerBoundingBox, setTriggerBoundingBox] = useState(false);
-  // const pinBoundingBoxOnMap = () => setTriggerBoundingBox(true);
-  // const disableBoundingBoxTrigger = () => setTriggerBoundingBox(false);
-  const [triggerMapExtents, setTriggerMapExtents] = useState(false);
-  const disableMapExtentsTrigger = useCallback(
-    () => setTriggerMapExtents(false),
-    [setTriggerMapExtents]
-  );
-
-  const toggleMap = () => {
-    const prevState = mapVisible;
-    setMapVisible(!prevState);
-  };
 
   const searchFlikr = () => {
     console.log("fetching...");
@@ -294,11 +248,6 @@ function App() {
   //   console.log(responseDetails); // IF RESPONSE DETAILS RETURNS ERROR THE APP CAN CRASH
   // }, [store, responseDetails]);
 
-  useEffect(() => {
-    //debugging only
-    console.log(store.filteredPhotos);
-  }, [store.filteredPhotos]);
-
   useEffect(
     () => {
       /*fetch user location when app mounts*/
@@ -354,37 +303,9 @@ function App() {
     }
   };
 
-  const setBounds = useCallback(
-    bounds => {
-      dispatch({
-        type: SET_BOUNDING_BOX,
-        boundingBox: bounds
-      });
-    },
-    [dispatch]
-  );
-
-  const setSearchCenter = useCallback(
-    center => {
-      dispatch({
-        type: SET_SEARCH_CENTER,
-        searchCenter: center
-      });
-    },
-    [dispatch]
-  );
-
-  const setSearchRadius = radius => {
-    dispatch({
-      type: SET_SEARCH_RADIUS,
-      searchRadius: radius
-    });
-  };
-
   return (
     <div className="App">
       <Appbar
-        toggleMap={toggleMap}
         appBarHide={appBarHide}
         photos={responseDetails ? responseDetails.totalPages : 0}
         toggleGridDirection={toggleGridDirection}
@@ -410,11 +331,8 @@ function App() {
         >
           {useMinScreenWidth(900) && (
             <ControlPanel
-              setSearchRadius={setSearchRadius}
               searchFlikr={searchFlikr}
               loadingPhotos={loadingPhotos}
-              zoomToSearchArea={zoomToSearchArea}
-              centerSearchAreaOnMap={centerSearchAreaOnMap}
               zoomToLocation={zoomToLocation}
               togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
               toggleFavorites={toggleFavorites}
@@ -425,11 +343,8 @@ function App() {
           )}
           {!useMinScreenWidth(900) && (
             <ControlPanelMobile
-              setSearchRadius={setSearchRadius}
               searchFlikr={searchFlikr}
               loadingPhotos={loadingPhotos}
-              zoomToSearchArea={zoomToSearchArea}
-              centerSearchAreaOnMap={centerSearchAreaOnMap}
             />
           )}
           <Suspense fallback={<Skeleton variant="rect" />}>
@@ -438,31 +353,8 @@ function App() {
               photos={store.filteredPhotos}
               favorites={store.favorites}
               userLocation={store.userLocation}
-              setSearchCenter={setSearchCenter}
-              searchRadius={store.searchRadius}
-              // /** */
               displayPhotoMarkers={displayPhotoMarkers}
               displayFavorites={displayFavorites}
-              setBounds={setBounds}
-              // /**triggerGetMapExtents */
-              triggerMapExtents={triggerMapExtents}
-              disableMapExtentsTrigger={disableMapExtentsTrigger}
-              // /* photoMarker*/
-              // triggerPhotoMarker={triggerPhotoMarker}
-              // disableTriggerPhotoMarker={disableTriggerPhotoMarker}
-              // /* radius marker */
-              triggerPlotRadiusMarkerOnMap={triggerPlotRadiusMarkerOnMap}
-              disableRadiusTrigger={disableRadiusTrigger}
-              // /* boundingBox Trigger */
-              // // triggerBoundingBox={triggerBoundingBox}
-              // // disableBoundingBoxTrigger={disableBoundingBoxTrigger}
-              // /* triggeer zoom to search area */
-              triggerZoom={triggerZoom}
-              disableZoom={disableZoom}
-              // /* trigger center search area on map */
-              triggerCenter={triggerCenter}
-              disableCenter={disableCenter}
-              // /**ScreenSize */
               screenWidth900px={useMinScreenWidth(900)}
               openLightbox={openLightboxSinglePhoto}
             />
@@ -478,7 +370,6 @@ function App() {
             direction={smSceen ? "column" : gridDirection}
             imageToggleFavorites={imageToggleFavorites}
             openFavorites={openFavorites}
-            // setAppBarHide={setAppBarHide}
             openLightbox={openLightbox}
           />
         )}

@@ -42,16 +42,6 @@ export const queryReducer = (state, action) => {
     case SET_MAX_RESULTS_PER_PAGE:
       console.log(action.type);
       return setResultsPerPage(action, state);
-    // case SET_USER_LOCATION:
-    //   console.log(action.type);
-    //   return setUserLocation(action, state);
-    // case SET_SEARCH_RADIUS:
-    //   console.log(action.type);
-    //   return setSearchRadius(action, state);
-    // case SET_SEARCH_CENTER:
-    //   console.log(action.type);
-    //   return setSearchCenter(action, state);
-
     case SET_MIN_UPLOAD_DATE:
       console.log(action.type);
       return setMinUploadDate(action, state);

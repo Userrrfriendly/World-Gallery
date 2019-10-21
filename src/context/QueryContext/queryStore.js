@@ -13,10 +13,9 @@ export default function Store(props) {
     minTakenDate: false,
     maxTakenDate: false,
     sortMethod: "date-posted-desc",
-    searchText: "",
-    //
-    searchRadius: 3,
-    searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 } //paris, versailles,
+    searchText: ""
+    // searchRadius: 3,
+    // searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 } //paris, versailles,
   };
 
   const [state, dispatch] = useReducer(queryReducer, initialState);

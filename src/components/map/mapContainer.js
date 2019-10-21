@@ -109,37 +109,6 @@ class Map extends React.Component {
         : this.hideAllFavorites();
     }
 
-    // if (prevProps.userLocation !== this.props.userLocation) {
-    //   /**  even though the component has mounted and is currently in re-render(update) phase
-    //    * window.map can be undefined (especially on first load where google.maps api is not cached and is not fully initialized)
-    //    * so there is a slim chance that window.map.panTo will run before google.maps is fully loaded thus trowing an error
-    //    * mapReady() checks if google.maps is loaded before trying to zoom  to the users location
-    //    * each time the check results to false it retries after 10ms, when the waitingTrheshold (3seconds) runs out it gives up
-    //    * (at this point google maps probably failed for some other reason, like network error, or auth problems...)
-    //    */
-    //   let waitingThreshold = 3000; //max number of milliseconds to wait for google.maps to initialize
-    //   const mapReady = () => {
-    //     if (waitingThreshold <= 0) {
-    //       stopTimer();
-    //     }
-    //     if (window.map) {
-    //       window.map.panTo(this.props.userLocation);
-    //       // this.addSearchCircle(this.props.userLocation);
-    //       window.map.setZoom(16);
-    //       stopTimer();
-    //     } else {
-    //       waitingThreshold -= 10;
-    //     }
-    //   };
-    //   const timer = setInterval(mapReady, 10);
-    //   const stopTimer = () => clearInterval(timer);
-    // }
-
-    // if (this.props.triggerMapExtents) {
-    //   window.
-    //   this.props.disableMapExtentsTrigger();
-    // }
-
     if (this.props.triggerPhotoMarker) {
       this.createPhotoMarker(
         this.props.triggerPhotoMarker,
@@ -147,21 +116,6 @@ class Map extends React.Component {
       );
       this.props.disableTriggerPhotoMarker();
     }
-
-    if (this.props.triggerCenter) {
-      this.searchCircle.setCenter(window.map.getCenter().toJSON());
-      this.props.disableCenter();
-    }
-
-    if (this.props.triggerZoom) {
-      this.zoomToBounds();
-      this.props.disableZoom();
-    }
-
-    // if (this.props.triggerBoundingBox) {
-    //   this.addPolygon();
-    //   this.props.disableBoundingBoxTrigger();
-    // }
   }
 
   handleGoogleMapsError = () => {
@@ -195,10 +149,6 @@ class Map extends React.Component {
 
   initMap = () => {
     console.log("Google Maps API Loaded...");
-    // const rome = {
-    //   lat: 41.890384586382844,
-    //   lng: 12.492241690388028
-    // }; //Rome, colosseo
     const europe = { lat: 47.55241106676634, lng: 11.389968539500511 };
 
     window.map = new window.google.maps.Map(
@@ -235,8 +185,6 @@ class Map extends React.Component {
 
     window.largeInfowindow.addListener("domready", attachImgOnClick);
 
-    // this.addSearchCircle(rome);
-
     /** ANTIMERIDIAN */
     var antimeridianCoords = [{ lat: 90, lng: 180 }, { lat: -90, lng: 180 }];
     var antimeridianPath = new window.google.maps.Polyline({
@@ -271,60 +219,6 @@ class Map extends React.Component {
     });
   };
 
-  /*** ADDING POLYGON + add marker*/
-  addPolygon = () => {
-    const centerXY = window.map.center.toJSON();
-    /** fixed size roughly 2x2 km box  **/
-    // const km = 0.009;
-    // const boundsStatic = {
-    //   north: centerXY.lat + km,
-    //   south: centerXY.lat - km,
-    //   east: centerXY.lng + km,
-    //   west: centerXY.lng - km
-    // };
-
-    /** dyniamic based on zoom level roughly 25% of map width/height  **/
-    if (this.state.boundingBox) {
-      this.removePolygon();
-      this.props.setBounds(null);
-      // this.setState({ polygon: null });
-    } else {
-      const zoomBounds = window.map.getBounds().toJSON();
-      const northSouth = (zoomBounds.north - zoomBounds.south) / 5;
-      const eastWest = (zoomBounds.east - zoomBounds.west) / 5;
-      const boundsDynamic = {
-        north: centerXY.lat + northSouth,
-        south: centerXY.lat - northSouth,
-        east: centerXY.lng + eastWest,
-        west: centerXY.lng - eastWest
-      };
-      //if there is a polygon /or a marker on the screen remove it
-      this.removePolygon();
-      this.removeMarker();
-      // Define a rectangle and set its editable property to true.
-      this.rectangle = new window.google.maps.Rectangle({
-        bounds: boundsDynamic,
-        editable: true,
-        draggable: true
-      });
-      this.rectangle.setMap(window.map);
-      this.props.getRadiusMarkerCoordinates(null);
-      this.props.setBounds(boundsDynamic);
-      this.rectangle.addListener("bounds_changed", () =>
-        this.props.setBounds(this.rectangle.bounds.toJSON())
-      );
-      this.setState({ boundingBox: this.rectangle });
-      window.polygon = this.rectangle;
-    }
-  };
-
-  removePolygon = () => {
-    if (this.state.boundingBox) {
-      this.state.boundingBox.setMap(null);
-      this.setState({ boundingBox: null });
-    }
-  };
-
   createPhotoMarker = (pin, show) => {
     let marker = new window.google.maps.Marker({
       position: pin.geolocation,
@@ -337,11 +231,11 @@ class Map extends React.Component {
       color: "blue"
     });
 
-    window.SETIMG = () => window.LASTMARKER.setIcon(heartMarker);
-    window.RESET = () => {
-      this.state.photoMarkers.forEach(pin => pin.setMap(null));
-      this.setState({ photoMarkers: [] });
-    };
+    // window.SETIMG = () => window.LASTMARKER.setIcon(heartMarker);
+    // window.RESET = () => {
+    //   this.state.photoMarkers.forEach(pin => pin.setMap(null));
+    //   this.setState({ photoMarkers: [] });
+    // };
 
     this.setState(prevState => {
       const pins = prevState.photoMarkers;
@@ -415,62 +309,6 @@ class Map extends React.Component {
       window.largeInfowindow.setContent(infoWindowContents(img));
       window.largeInfowindow.open(window.map, marker);
     });
-  };
-
-  addSearchCircle = center => {
-    this.searchCircle = new window.google.maps.Circle({
-      strokeColor: "#0e2a99",
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: "#64b1e8",
-      fillOpacity: 0.35,
-      map: window.map,
-      center: center ? center : { lat: 48.8, lng: 2.29 },
-      radius: this.props.searchRadius * 1000, //radius in store is in KM radius in maps is meters
-      draggable: true
-    });
-    window.SEARCHRADIUS = this.searchCircle; //DEBUGGING ONLY
-
-    /** a circle bound to the center of searchCircle,
-     * its only purpose is to graphically represent searchCircle's center */
-    this.centerSearchCircle = new window.google.maps.Circle({
-      strokeColor: "#0e0047",
-      strokeOpacity: 0.8,
-      strokeWeight: 3,
-      fillColor: "#0e0047",
-      fillOpacity: 0.35,
-      map: window.map,
-      center: this.searchCircle.center.toJSON(),
-      radius: 10
-    });
-
-    // window.testCENTER = this.centerSearchRadius;
-
-    this.searchCircle.addListener("drag", () => {
-      this.centerSearchCircle.setCenter(this.searchCircle.center.toJSON());
-      // console.log(this.searchRadius.center.toJSON());
-    });
-
-    this.searchCircle.addListener("dragend", () => {
-      this.props.setSearchCenter(this.searchCircle.center.toJSON());
-    });
-    this.searchCircle.addListener("center_changed", () => {
-      this.props.setSearchCenter(this.searchCircle.center.toJSON());
-      this.centerSearchCircle.setCenter(this.searchCircle.center.toJSON());
-    });
-  };
-
-  zoomToBounds = () => {
-    const km = 0.009; //roughtly one km in degrees of lat/lng
-    const center = this.searchCircle.getCenter().toJSON();
-    const bounds = {
-      north: center.lat + km * this.props.searchRadius,
-      south: center.lat - km * this.props.searchRadius,
-      east: center.lng + km * this.props.searchRadius,
-      west: center.lng - km * this.props.searchRadius
-    };
-    console.log(bounds);
-    window.map.fitBounds(bounds);
   };
 
   render() {

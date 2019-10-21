@@ -5,16 +5,9 @@ import {
   Box,
   Typography,
   Button,
-  Divider,
-  Tooltip
+  Divider
 } from "@material-ui/core";
-import {
-  ImageSearchRounded,
-  CenterFocusStrong,
-  ZoomOutMap,
-  MyLocationTwoTone
-} from "@material-ui/icons";
-import RadiusSlider from "./RadiusSlider";
+import { ImageSearchRounded, MyLocationTwoTone } from "@material-ui/icons";
 import SelectSortingMethod from "./selectSortingMethod";
 import TextQuery from "./textQuery";
 import CustomSwitch from "./switches/customSwitch";
@@ -53,9 +46,6 @@ const useStyles = makeStyles(theme => ({
   search_photos_box: {
     justifyContent: "center"
   },
-  secondary_btn: {
-    margin: "1rem"
-  },
   map_options_container: {
     display: "flex",
     flexFlow: "column",
@@ -70,8 +60,7 @@ const ControlPanel = props => {
   const classes = useStyles();
 
   const infoTextBox = `Zoom to the location that you want to search for photos and hit the search button.`;
-  const infoTextCircle = `Drag the blue circle on the map to select the place where you want
-to search for photos, when done press the button below to make the request.`;
+
   return (
     <Paper className={classes.panel}>
       <div className={classes.wrapper}>
@@ -92,47 +81,6 @@ to search for photos, when done press the button below to make the request.`;
                 Search Photos
               </Button>
               {props.loadingPhotos && <LoadingBar />}
-            </Box>
-          </>
-        )}
-        {/* SEARCH BY RADIUS */}
-        {queryStore.searchMethod === "CIRCLE" && (
-          <>
-            <Box className={classes.panel_item}>
-              <Typography>{infoTextCircle}</Typography>
-            </Box>
-            <RadiusSlider setSearchRadius={props.setSearchRadius} />
-            <Box
-              className={classes.panel_item + " " + classes.search_photos_box}
-            >
-              <Tooltip
-                title="Move Search-Area to the Center of map"
-                aria-label="Move Search-Area to the Center of map"
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="medium"
-                  className={classes.secondary_btn}
-                  onClick={props.centerSearchAreaOnMap}
-                >
-                  <CenterFocusStrong />
-                </Button>
-              </Tooltip>
-              <Tooltip
-                title="Zoom to Search-Area extents"
-                aria-label="Zoom to Search-Area extents"
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="medium"
-                  className={classes.secondary_btn}
-                  onClick={props.zoomToSearchArea}
-                >
-                  <ZoomOutMap />
-                </Button>
-              </Tooltip>
             </Box>
           </>
         )}
