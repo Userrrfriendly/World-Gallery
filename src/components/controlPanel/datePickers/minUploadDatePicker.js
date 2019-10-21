@@ -4,13 +4,13 @@ import DateFnsUtils from "@date-io/date-fns";
 import { format } from "date-fns";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import Checkbox from "@material-ui/core/Checkbox";
-import StateContext from "../../../context/stateContext";
-import DispatchContext from "../../../context/dispatchContext";
-import { SET_MIN_UPLOAD_DATE } from "../../../context/rootReducer";
+import QueryContext from "../../../context/QueryContext/queryContext";
+import DispatchQueryContext from "../../../context/QueryContext/dispatchQueryContext";
+import { SET_MIN_UPLOAD_DATE } from "../../../context/QueryContext/queryReducer";
 
 export default function MinUploadDatePicker(props) {
-  const store = useContext(StateContext);
-  const dispatch = useContext(DispatchContext);
+  const store = useContext(QueryContext);
+  const dispatch = useContext(DispatchQueryContext);
   /** placeholderDate is used:
    * 1) As initial date at the initialization of the component
    * 2) As a placeholder when the user unchecks the checkbox

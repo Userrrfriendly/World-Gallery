@@ -1,7 +1,6 @@
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
 // export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 
-export const SET_MAX_RESULTS_PER_PAGE = "SET_MAX_RESULTS_PER_PAGE";
 export const SET_USER_LOCATION = "SET_USER_LOCATION";
 export const SET_SEARCH_RADIUS = "SET_SEARCH_RADIUS";
 export const SET_SEARCH_CENTER = "SET_SEARCH_CENTER";
@@ -10,10 +9,6 @@ export const UPDATE_PHOTOS = "UPDATE_PHOTOS";
 export const BLOCK_USER = "BLOCK_USER";
 export const ADD_IMG_TO_FAVORITES = "ADD_IMG_TO_FAVORITES";
 export const REMOVE_IMG_FROM_FAVORITES = "REMOVE_IMG_FROM_FAVORITES";
-export const SET_MIN_UPLOAD_DATE = "SET_MIN_UPLOAD_DATE";
-export const SET_MAX_UPLOAD_DATE = "SET_MAX_UPLOAD_DATE";
-export const SET_MIN_TAKEN_DATE = "SET_MIN_TAKEN_DATE";
-export const SET_MAX_TAKEN_DATE = "SET_MAX_TAKEN_DATE";
 export const SET_MAP_LOADED = "SET_MAP_LOADED";
 
 const setBoundingBox = (action, state) => {
@@ -23,13 +18,6 @@ const setBoundingBox = (action, state) => {
 // const setRadiusMarker = (action, state) => {
 //   return { ...state, radiusMarker: action.radiusMarker };
 // };
-
-const setResultsPerPage = (action, state) => {
-  return {
-    ...state,
-    resultsPerPage: action.resultsPerPage
-  };
-};
 
 const setUserLocation = (action, state) => {
   return {
@@ -145,22 +133,6 @@ const removeImgFromFavorites = (action, state) => {
   return { ...state, favorites, filteredPhotos };
 };
 
-const setMinUploadDate = (action, state) => {
-  return { ...state, minUploadDate: action.minUploadDate };
-};
-
-const setMaxUploadDate = (action, state) => {
-  return { ...state, maxUploadDate: action.maxUploadDate };
-};
-
-const setMinTakenDate = (action, state) => {
-  return { ...state, minTakenDate: action.minTakenDate };
-};
-
-const setMaxTakenDate = (action, state) => {
-  return { ...state, maxTakenDate: action.maxTakenDate };
-};
-
 const setMapLoaded = (action, state) => {
   return { ...state, mapLoaded: action.mapLoaded };
 };
@@ -175,9 +147,6 @@ export const rootReducer = (state, action) => {
     //   return setRadiusMarker(action, state);
     //new ones
 
-    case SET_MAX_RESULTS_PER_PAGE:
-      console.log(action.type);
-      return setResultsPerPage(action, state);
     case SET_USER_LOCATION:
       console.log(action.type);
       return setUserLocation(action, state);
@@ -202,18 +171,7 @@ export const rootReducer = (state, action) => {
     case REMOVE_IMG_FROM_FAVORITES:
       console.log(action.type);
       return removeImgFromFavorites(action, state);
-    case SET_MIN_UPLOAD_DATE:
-      console.log(action.type);
-      return setMinUploadDate(action, state);
-    case SET_MAX_UPLOAD_DATE:
-      console.log(action.type);
-      return setMaxUploadDate(action, state);
-    case SET_MIN_TAKEN_DATE:
-      console.log(action.type);
-      return setMinTakenDate(action, state);
-    case SET_MAX_TAKEN_DATE:
-      console.log(action.type);
-      return setMaxTakenDate(action, state);
+
     case SET_MAP_LOADED:
       console.log(action.type);
       return setMapLoaded(action, state);

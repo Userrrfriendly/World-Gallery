@@ -4,13 +4,13 @@ import DateFnsUtils from "@date-io/date-fns";
 import { format } from "date-fns";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import Checkbox from "@material-ui/core/Checkbox";
-import DispatchContext from "../../../context/dispatchContext";
-import StateContext from "../../../context/stateContext";
-import { SET_MAX_UPLOAD_DATE } from "../../../context/rootReducer";
+import QueryContext from "../../../context/QueryContext/queryContext";
+import DispatchQueryContext from "../../../context/QueryContext/dispatchQueryContext";
+import { SET_MAX_UPLOAD_DATE } from "../../../context/QueryContext/queryReducer";
 
 export default function MaxUploadDatePicker(props) {
-  const dispatch = useContext(DispatchContext);
-  const store = useContext(StateContext);
+  const dispatch = useContext(DispatchQueryContext);
+  const store = useContext(QueryContext);
 
   const [placeholderDate, setPlaceholderDate] = useState(new Date());
 

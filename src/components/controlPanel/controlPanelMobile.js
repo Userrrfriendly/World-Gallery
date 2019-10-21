@@ -13,7 +13,7 @@ import {
   ZoomOutMap
 } from "@material-ui/icons";
 import RadiusSlider from "./RadiusSlider";
-import StateContext from "../../context/stateContext";
+import QueryContext from "../../context/QueryContext/queryContext";
 import LocationSearch from "./geoCodingBar/geoCodingBar";
 
 const useStyles = makeStyles(theme => ({
@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 
 const ControlPanelMobile = props => {
   const classes = useStyles();
-  const store = useContext(StateContext);
+  const store = useContext(QueryContext);
 
   const infoTextBox = `Zoom to the location that you want to search for photos and hit the search button.`;
   // infoTextCircle is waiting for search by radius implementation

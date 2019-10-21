@@ -5,11 +5,14 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Store from "./context/store";
+import QueryStore from "./context/QueryContext/queryStore";
 
 ReactDOM.render(
   <Store>
-    <CssBaseline />
-    <App />
+    <QueryStore>
+      <CssBaseline />
+      <App />
+    </QueryStore>
   </Store>,
   document.getElementById("root")
 );

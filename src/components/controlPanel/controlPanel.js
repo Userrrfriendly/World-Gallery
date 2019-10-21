@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, memo } from "react";
 import {
   Paper,
   makeStyles,
@@ -25,6 +25,7 @@ import MaxUploadDatePicker from "./datePickers/maxUploadDatePicker";
 import MaxTakenDatePicker from "./datePickers/maxTakenDatePicker";
 import MinTakenDatePicker from "./datePickers/minTakenDatePicker";
 import StateContext from "../../context/stateContext";
+import QueryContext from "../../context/QueryContext/queryContext";
 import LoadingBar from "../LoadingBar/loadingBar";
 
 const useStyles = makeStyles(theme => ({
@@ -64,6 +65,7 @@ const useStyles = makeStyles(theme => ({
 
 const ControlPanel = props => {
   const store = useContext(StateContext);
+  const queryStore = useContext(QueryContext);
 
   const classes = useStyles();
 
@@ -73,7 +75,7 @@ to search for photos, when done press the button below to make the request.`;
   return (
     <Paper className={classes.panel}>
       <div className={classes.wrapper}>
-        {store.searchMethod === "EXTENTS" && (
+        {queryStore.searchMethod === "EXTENTS" && (
           <>
             <Box className={classes.panel_item}>
               <Typography>{infoTextBox}</Typography>
@@ -94,7 +96,7 @@ to search for photos, when done press the button below to make the request.`;
           </>
         )}
         {/* SEARCH BY RADIUS */}
-        {store.searchMethod === "CIRCLE" && (
+        {queryStore.searchMethod === "CIRCLE" && (
           <>
             <Box className={classes.panel_item}>
               <Typography>{infoTextCircle}</Typography>
@@ -192,4 +194,4 @@ to search for photos, when done press the button below to make the request.`;
   );
 };
 
-export default ControlPanel;
+export default memo(ControlPanel);

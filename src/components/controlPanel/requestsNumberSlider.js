@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { makeStyles, Input, Typography, Slider } from "@material-ui/core/";
-import StateContext from "../../context/stateContext";
-import DispatchContext from "../../context/dispatchContext";
-import { SET_MAX_RESULTS_PER_PAGE } from "../../context/rootReducer";
+import QueryContext from "../../context/QueryContext/queryContext";
+import DispatchQueryContext from "../../context/QueryContext/dispatchQueryContext";
+import { SET_MAX_RESULTS_PER_PAGE } from "../../context/QueryContext/queryReducer";
 
 const useStyles = makeStyles({
   root: {
@@ -20,8 +20,8 @@ const useStyles = makeStyles({
 
 export default function RequestNumberSlider(props) {
   const classes = useStyles();
-  const store = useContext(StateContext);
-  const dispatch = useContext(DispatchContext);
+  const store = useContext(QueryContext);
+  const dispatch = useContext(DispatchQueryContext);
 
   const handleSliderChange = (event, newValue) => {
     dispatch({

@@ -10,8 +10,6 @@ export default function Store(props) {
     radiusMarker: null, // remove?
     //
     mapLoaded: false,
-    searchMethod: "EXTENTS", // "CIRCLE" or "BOX"?
-    resultsPerPage: 30,
     userLocation: null,
     searchRadius: 3,
     searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 }, //paris, versailles,
@@ -19,11 +17,7 @@ export default function Store(props) {
     filteredPhotos: null,
     hiddenPhotos: [],
     favorites: [],
-    blockedUsers: [],
-    minUploadDate: false,
-    maxUploadDate: false,
-    minTakenDate: false,
-    maxTakenDate: false
+    blockedUsers: []
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

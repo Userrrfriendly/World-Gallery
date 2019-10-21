@@ -10,6 +10,7 @@ import * as FlikrApi from "./requests/flikr";
 import Skeleton from "@material-ui/lab/Skeleton";
 import StateContext from "./context/stateContext";
 import DispatchContext from "./context/dispatchContext";
+import QueryContext from "./context/QueryContext/queryContext";
 import {
   SET_BOUNDING_BOX,
   SET_USER_LOCATION,
@@ -66,6 +67,8 @@ const blanketStyles = base => ({
 function App() {
   const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+
+  const queryStore = useContext(QueryContext);
 
   const smSceen = useMediaQuery("(max-width:450px)");
 
@@ -234,31 +237,31 @@ function App() {
     //     search: "Search String goes here"
     //   };
     // }
-    switch (store.searchMethod) {
-      case "CIRCLE":
-        searchParams = {
-          lat: store.searchCenter.lat,
-          lng: store.searchCenter.lng,
-          radius: store.searchRadius,
-          searchMethod: store.searchMethod,
-          resultsPerPage: store.resultsPerPage,
-          minUploadDate: store.minUploadDate,
-          maxUploadDate: store.maxUploadDate,
-          minTakenDate: store.minTakenDate,
-          maxTakenDate: store.maxTakenDate,
-          sortMethod,
-          searchText
-        };
-        break;
+    switch (queryStore.searchMethod) {
+      // case "CIRCLE":
+      //   searchParams = {
+      //     lat: store.searchCenter.lat,
+      //     lng: store.searchCenter.lng,
+      //     radius: store.searchRadius,
+      //     searchMethod: store.searchMethod,
+      //     resultsPerPage: store.resultsPerPage,
+      //     minUploadDate: store.minUploadDate,
+      //     maxUploadDate: store.maxUploadDate,
+      //     minTakenDate: store.minTakenDate,
+      //     maxTakenDate: store.maxTakenDate,
+      //     sortMethod,
+      //     searchText
+      //   };
+      //   break;
       case "EXTENTS":
         const bounds = window.map ? window.map.getBounds().toJSON() : "error";
         searchParams = {
-          searchMethod: store.searchMethod,
-          minUploadDate: store.minUploadDate,
-          maxUploadDate: store.maxUploadDate,
-          minTakenDate: store.minTakenDate,
-          maxTakenDate: store.maxTakenDate,
-          resultsPerPage: store.resultsPerPage,
+          searchMethod: queryStore.searchMethod,
+          minUploadDate: queryStore.minUploadDate,
+          maxUploadDate: queryStore.maxUploadDate,
+          minTakenDate: queryStore.minTakenDate,
+          maxTakenDate: queryStore.maxTakenDate,
+          resultsPerPage: queryStore.resultsPerPage,
           bounds,
           sortMethod,
           searchText
