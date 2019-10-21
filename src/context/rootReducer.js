@@ -1,4 +1,3 @@
-// import { findIndex as _findIndex } from "lodash";
 export const SET_BOUNDING_BOX = "SET_BOUNDING_BOX";
 // export const SET_RADIUS_MARKER = "SET_RADIUS_MARKER";
 

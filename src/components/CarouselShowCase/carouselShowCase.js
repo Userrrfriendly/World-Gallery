@@ -18,10 +18,14 @@ const useStyles = makeStyles(theme => ({
   slide_text_mobile: {
     paddingTop: "8px"
   },
+  subtitle: {
+    color: "#00024b"
+  },
   slide_title: {
     whiteSpace: "initial",
     lineHeight: "23px",
-    fontSize: "22px"
+    fontSize: "22px",
+    color: "#00024b"
   },
   image: {
     maxWidth: "100%"
@@ -39,8 +43,8 @@ const CarouselShowCase = props => {
     >
       <AutoRotatingCarousel
         mobile={smScreen}
-        autoplay={true}
-        interval={3500}
+        autoplay={false}
+        // interval={4000}
         label="Get Started"
         open={props.open}
         onClose={props.closeCarousel}
@@ -60,7 +64,8 @@ const CarouselShowCase = props => {
           classes={{
             textMobile: classes.slide_text_mobile,
             text: classes.slide_text,
-            title: classes.slide_title
+            title: classes.slide_title,
+            subtitle: classes.subtitle
           }}
           style={{ backgroundColor: green[700] }}
           title="Query Flickr's photos with one click"
@@ -79,7 +84,8 @@ const CarouselShowCase = props => {
           classes={{
             textMobile: classes.slide_text_mobile,
             text: classes.slide_text,
-            title: classes.slide_title
+            title: classes.slide_title,
+            subtitle: classes.subtitle
           }}
           style={{ backgroundColor: green[700] }}
           title="Results are pinned on the spot they where taken*"
@@ -99,7 +105,8 @@ const CarouselShowCase = props => {
           classes={{
             textMobile: classes.slide_text_mobile,
             text: classes.slide_text,
-            title: classes.slide_title
+            title: classes.slide_title,
+            subtitle: classes.subtitle
           }}
           style={{ backgroundColor: green[700] }}
           title="Geolocation search for easy localization"

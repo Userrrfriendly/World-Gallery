@@ -60,6 +60,7 @@ export default function MinUploadDatePicker(props) {
           format="dd/MM/yyyy"
           value={selectedDate}
           onChange={handleDateChange}
+          // clearable={true}
         />
       </MuiPickersUtilsProvider>
       <Checkbox

@@ -1,7 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Fab, makeStyles, Zoom } from "@material-ui/core";
 import { Favorite, FavoriteBorder, MoreVert } from "@material-ui/icons";
-import { find as _find } from "lodash";
 import StateContext from "../../context/stateContext";
 
 const useStyles = makeStyles(theme => ({
@@ -37,7 +36,6 @@ const ImageWrapper = ({
   direction,
   top,
   left,
-  selected,
   imageToggleFavorites,
   openLightbox,
   handleOpenMenuClick
@@ -45,9 +43,12 @@ const ImageWrapper = ({
   const classes = useStyles();
   const state = useContext(StateContext);
   const [hover, setHover] = useState(false);
-  const isFavorite = _find(state.favorites, el => el.photoId === photo.photoId)
-    ? true
-    : false;
+
+  const isFavorite = React.useMemo(
+    () =>
+      state.favorites.find(el => el.photoId === photo.photoId) ? true : false,
+    [state.favorites, photo.photoId]
+  );
 
   const cont = {
     backgroundColor: "#eee",
@@ -76,6 +77,29 @@ const ImageWrapper = ({
     cont.left = left;
     cont.top = top;
   }
+
+  useEffect(() => {
+    console.log("Image Wrapper updated");
+  }, [
+    index,
+    photo,
+    margin,
+    direction,
+    top,
+    left,
+    // selected,
+    imageToggleFavorites,
+    openLightbox,
+    handleOpenMenuClick
+  ]);
+
+  // useEffect(() => {
+  //   console.log("Image Wrapper updated Because state changed");
+  // }, [state]);
+
+  useEffect(() => {
+    console.log("Image Wrapper updated Because REASONS");
+  });
 
   return (
     <div

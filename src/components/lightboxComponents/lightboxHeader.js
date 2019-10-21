@@ -8,7 +8,6 @@ import {
   Favorite,
   FavoriteBorder
 } from "@material-ui/icons";
-import { find as _find } from "lodash";
 
 const useStyles = makeStyles(theme => ({
   header_container: {
@@ -41,12 +40,14 @@ const LightBoxHeader = props => {
   /*most props like carouselProps, interactionIsIdle etc are passed by default props react-photo-gallery*/
   const classes = useStyles();
   const store = useContext(StateContext);
-  const isFavorite = _find(
-    store.favorites,
-    el => el.photoId === props.currentView.photoId
-  )
-    ? true
-    : false;
+
+  const isFavorite = React.useMemo(
+    () =>
+      store.favorites.find(el => el.photoId === props.currentView.photoId)
+        ? true
+        : false,
+    [store.favorites, props.currentView.photoId]
+  );
 
   return props.isModal ? (
     <div

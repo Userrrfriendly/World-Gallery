@@ -237,6 +237,33 @@ class Map extends React.Component {
 
     // this.addSearchCircle(rome);
 
+    /** ANTIMERIDIAN */
+    var antimeridianCoords = [{ lat: 90, lng: 180 }, { lat: -90, lng: 180 }];
+    var antimeridianPath = new window.google.maps.Polyline({
+      path: antimeridianCoords,
+      geodesic: true,
+      strokeColor: "#FF0000",
+      strokeOpacity: 0.9,
+      strokeWeight: 12
+    });
+
+    antimeridianPath.setMap(window.map);
+
+    window.antiMeridianInfo = new window.google.maps.InfoWindow({
+      maxWidth: 200
+    });
+    window.antiMeridianInfo
+      .setContent(`The red line that you just clicked is the the 180th meridian 
+      (sometimes called antimeridian).
+      Please make sure that the antimeridian is outside the screen when you make a request for photos.
+      (pan the map to the left or right untill the red line is no longer in view)`);
+
+    antimeridianPath.addListener("click", e => {
+      window.antiMeridianInfo.setPosition(e.latLng);
+      window.antiMeridianInfo.open(window.map);
+    });
+    /** END ANTIMERIDIAN */
+
     window.google.maps.event.addListenerOnce(window.map, "idle", () => {
       document.getElementsByTagName("iframe")[0].title = "Google Maps";
       /* https://stackoverflow.com/questions/49012240/google-maps-js-iframe-title 
