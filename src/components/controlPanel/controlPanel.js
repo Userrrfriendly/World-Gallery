@@ -143,16 +143,8 @@ to search for photos, when done press the button below to make the request.`;
           requestOptions={
             <>
               <RequstNumberSlider />
-              <SelectSortingMethod
-                handeSelectSortMethod={props.handeSelectSortMethod}
-                sortMethod={props.sortMethod}
-              />
-              <TextQuery
-                handleTextQueryChange={props.handleTextQueryChange}
-                clearTextQuery={props.clearTextQuery}
-                searchText={props.searchText}
-                searchFlikr={props.searchFlikr}
-              />
+              <SelectSortingMethod />
+              <TextQuery searchFlikr={props.searchFlikr} />
               <Divider className={classes.divider} />
               <MinUploadDatePicker />
               <MaxUploadDatePicker />

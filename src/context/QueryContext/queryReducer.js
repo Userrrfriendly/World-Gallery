@@ -3,6 +3,8 @@ export const SET_MAX_UPLOAD_DATE = "SET_MAX_UPLOAD_DATE";
 export const SET_MIN_TAKEN_DATE = "SET_MIN_TAKEN_DATE";
 export const SET_MAX_TAKEN_DATE = "SET_MAX_TAKEN_DATE";
 export const SET_MAX_RESULTS_PER_PAGE = "SET_MAX_RESULTS_PER_PAGE";
+export const SET_SEARCH_METHOD_SORTING = "SET_SEARCH_METHOD_SORTING";
+export const SET_SEARCH_TEXT = "SET_SEARCH_TEXT";
 
 const setMinUploadDate = (action, state) => {
   return { ...state, minUploadDate: action.minUploadDate };
@@ -25,6 +27,14 @@ const setResultsPerPage = (action, state) => {
     ...state,
     resultsPerPage: action.resultsPerPage
   };
+};
+
+const setSearchMethodSorting = (action, state) => {
+  return { ...state, sortMethod: action.payload };
+};
+
+const setSearchText = (action, state) => {
+  return { ...state, searchText: action.payload };
 };
 
 export const queryReducer = (state, action) => {
@@ -54,6 +64,12 @@ export const queryReducer = (state, action) => {
     case SET_MAX_TAKEN_DATE:
       console.log(action.type);
       return setMaxTakenDate(action, state);
+    case SET_SEARCH_METHOD_SORTING:
+      console.log(action.type);
+      return setSearchMethodSorting(action, state);
+    case SET_SEARCH_TEXT:
+      console.log(action.type);
+      return setSearchText(action, state);
 
     default:
       return state;

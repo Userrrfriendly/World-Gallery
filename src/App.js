@@ -121,20 +121,8 @@ function App() {
     });
   };
 
+  /** If request is successfull will window will zoom to resultsRef */
   const resultsRef = React.useRef(null);
-
-  /**sorting filters for the results */
-  const [sortMethod, setSortMethod] = useState("date-posted-desc");
-  const handeSelectSortMethod = event => {
-    setSortMethod(event.target.value);
-  };
-
-  /** option text for search */
-  const [searchText, setSearchText] = useState("");
-  const handleTextQueryChange = (e, clearText) => {
-    setSearchText(e.target.value);
-  };
-  const clearTextQuery = () => setSearchText("");
 
   const [loadingPhotos, setLoadingPhotos] = useState(false);
   const [triggerZoom, setTriggerZoom] = useState(false);
@@ -212,13 +200,6 @@ function App() {
     [setTriggerMapExtents]
   );
 
-  // const getMapExtents = () => {
-  //   dispatch({
-  //     type: SET_BOUNDING_BOX,
-  //     bounds: window.map.getBounds().toJSON()
-  //   });
-  // };
-
   const toggleMap = () => {
     const prevState = mapVisible;
     setMapVisible(!prevState);
@@ -227,32 +208,7 @@ function App() {
   const searchFlikr = () => {
     console.log("fetching...");
     let searchParams;
-    // if (store.boundingBox) {
-    //   searchParams = { ...store.boundingBox, type: "boundingBox" };
-    // } else if (store.radiusMarker) {
-    //   searchParams = { ...store.radiusMarker, type: "radiusMarker" };
-    // } else {
-    //   searchParams = {
-    //     ...store.radiusMarker,
-    //     search: "Search String goes here"
-    //   };
-    // }
     switch (queryStore.searchMethod) {
-      // case "CIRCLE":
-      //   searchParams = {
-      //     lat: store.searchCenter.lat,
-      //     lng: store.searchCenter.lng,
-      //     radius: store.searchRadius,
-      //     searchMethod: store.searchMethod,
-      //     resultsPerPage: store.resultsPerPage,
-      //     minUploadDate: store.minUploadDate,
-      //     maxUploadDate: store.maxUploadDate,
-      //     minTakenDate: store.minTakenDate,
-      //     maxTakenDate: store.maxTakenDate,
-      //     sortMethod,
-      //     searchText
-      //   };
-      //   break;
       case "EXTENTS":
         const bounds = window.map ? window.map.getBounds().toJSON() : "error";
         searchParams = {
@@ -262,9 +218,9 @@ function App() {
           minTakenDate: queryStore.minTakenDate,
           maxTakenDate: queryStore.maxTakenDate,
           resultsPerPage: queryStore.resultsPerPage,
-          bounds,
-          sortMethod,
-          searchText
+          sortMethod: queryStore.sortMethod,
+          searchText: queryStore.searchText,
+          bounds
         };
         break;
       default:
@@ -304,12 +260,7 @@ function App() {
 
   const fetchNextPage = () => {
     console.log("fetching next page...");
-    // let searchParams;
-    // if (responseDetails.query.type === "boundingBox") {
-    //   searchParams = { ...responseDetails.query };
-    // } else if (store.radiusMarker) {
-    //   searchParams = { ...responseDetails.query };
-    // }
+
     const searchParams = {
       ...responseDetails,
       resultsPerPage: responseDetails.perPage
@@ -413,13 +364,6 @@ function App() {
     [dispatch]
   );
 
-  // const getRadiusMarkerCoordinates = marker => {
-  //   dispatch({
-  //     type: SET_RADIUS_MARKER,
-  //     radiusMarker: marker
-  //   });
-  // };
-
   const setSearchCenter = useCallback(
     center => {
       dispatch({
@@ -445,11 +389,6 @@ function App() {
         photos={responseDetails ? responseDetails.totalPages : 0}
         toggleGridDirection={toggleGridDirection}
         gridDirection={gridDirection}
-        handeSelectSortMethod={handeSelectSortMethod}
-        sortMethod={sortMethod}
-        handleTextQueryChange={handleTextQueryChange}
-        clearTextQuery={clearTextQuery}
-        searchText={searchText}
         searchFlikr={searchFlikr}
         handleMyLocationClick={handleMyLocationClick}
         togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
@@ -476,11 +415,6 @@ function App() {
               loadingPhotos={loadingPhotos}
               zoomToSearchArea={zoomToSearchArea}
               centerSearchAreaOnMap={centerSearchAreaOnMap}
-              sortMethod={sortMethod}
-              handeSelectSortMethod={handeSelectSortMethod}
-              handleTextQueryChange={handleTextQueryChange}
-              clearTextQuery={clearTextQuery}
-              searchText={searchText}
               zoomToLocation={zoomToLocation}
               togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
               toggleFavorites={toggleFavorites}
@@ -496,10 +430,6 @@ function App() {
               loadingPhotos={loadingPhotos}
               zoomToSearchArea={zoomToSearchArea}
               centerSearchAreaOnMap={centerSearchAreaOnMap}
-              sortMethod={sortMethod}
-              handeSelectSortMethod={handeSelectSortMethod}
-              handleTextQueryChange={handleTextQueryChange}
-              searchText={searchText}
             />
           )}
           <Suspense fallback={<Skeleton variant="rect" />}>

@@ -84,19 +84,11 @@ export default function DrawerMenu(props) {
             </ListItem>
 
             <ListItem>
-              <SelectSortingMethod
-                handeSelectSortMethod={props.handeSelectSortMethod}
-                sortMethod={props.sortMethod}
-              />
+              <SelectSortingMethod />
             </ListItem>
 
             <ListItem>
-              <TextQuery
-                handleTextQueryChange={props.handleTextQueryChange}
-                clearTextQuery={props.clearTextQuery}
-                searchText={props.searchText}
-                searchFlikr={props.searchFlikr}
-              />
+              <TextQuery searchFlikr={props.searchFlikr} />
             </ListItem>
 
             <Divider className={classes.divider} />

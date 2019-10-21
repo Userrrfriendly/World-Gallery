@@ -110,11 +110,6 @@ export default function HideAppBar(props) {
           <Toolbar disableGutters={useMinScreenWidth(900) ? false : true}>
             {!useMinScreenWidth(900) && (
               <DrawerMenu
-                handeSelectSortMethod={props.handeSelectSortMethod}
-                sortMethod={props.sortMethod}
-                handleTextQueryChange={props.handleTextQueryChange}
-                clearTextQuery={props.clearTextQuery}
-                searchText={props.searchText}
                 searchFlikr={props.searchFlikr}
                 handleMyLocationClick={props.handleMyLocationClick}
                 togglePhotoMarkerDisplay={props.togglePhotoMarkerDisplay}
