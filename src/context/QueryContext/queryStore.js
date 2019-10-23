@@ -6,7 +6,9 @@ import DispatchQueryContext from "./dispatchQueryContext";
 
 export default function Store(props) {
   const initialState = {
-    searchMethod: "EXTENTS", // "CIRCLE" or "BOX"?
+    /** currently no other searchMethod is implemented,
+     * "CIRCLE" or "BOX" could be used in the future */
+    searchMethod: "EXTENTS",
     resultsPerPage: 30,
     minUploadDate: false,
     maxUploadDate: false,
@@ -14,8 +16,6 @@ export default function Store(props) {
     maxTakenDate: false,
     sortMethod: "date-posted-desc",
     searchText: ""
-    // searchRadius: 3,
-    // searchCenter: { lat: 48.80582620218145, lng: 2.1164958494489383 } //paris, versailles,
   };
 
   const [state, dispatch] = useReducer(queryReducer, initialState);

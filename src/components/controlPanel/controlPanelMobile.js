@@ -3,6 +3,7 @@ import { Paper, makeStyles, Button, Tooltip } from "@material-ui/core";
 import { ImageSearchRounded } from "@material-ui/icons";
 import QueryContext from "../../context/QueryContext/queryContext";
 import LocationSearch from "./geoCodingBar/geoCodingBar";
+import LoadingBar from "../LoadingBar/loadingBar";
 
 const useStyles = makeStyles(theme => ({
   panel: {
@@ -47,6 +48,7 @@ const ControlPanelMobile = props => {
                 Search Photos
               </Button>
             </Tooltip>
+            {props.loadingPhotos && <LoadingBar />}
           </>
         )}
       </div>

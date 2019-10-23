@@ -52,8 +52,6 @@ const mapStyle = {
 
 class Map extends React.Component {
   state = {
-    boundingBox: null,
-    selectionMarker: null,
     photoMarkers: [],
     favorites: []
   };
@@ -61,7 +59,7 @@ class Map extends React.Component {
   componentDidMount() {
     window.initMap = this.initMap;
     this.handleGoogleMapsError();
-    this.createGoogleApiScript(this.state.userLocation);
+    this.createGoogleApiScript();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -130,7 +128,7 @@ class Map extends React.Component {
     };
   };
 
-  createGoogleApiScript = userLocation => {
+  createGoogleApiScript = () => {
     let body = window.document.querySelector("body");
     let script = window.document.createElement("script");
     script.src =
@@ -167,6 +165,7 @@ class Map extends React.Component {
     });
 
     const attachImgOnClick = () => {
+      //fires when user clicks on the thumbnail of an expanded marker
       const img = document.getElementById("image-info");
       const id = img.getAttribute("data-photoid");
       let photo = this.props.photos.find(img => img.photoId === id);

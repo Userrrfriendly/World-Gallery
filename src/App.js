@@ -333,7 +333,6 @@ function App() {
             <ControlPanel
               searchFlikr={searchFlikr}
               loadingPhotos={loadingPhotos}
-              zoomToLocation={zoomToLocation}
               togglePhotoMarkerDisplay={togglePhotoMarkerDisplay}
               toggleFavorites={toggleFavorites}
               displayPhotoMarkers={displayPhotoMarkers}
@@ -352,7 +351,6 @@ function App() {
               setMapLoaded={setMapLoaded}
               photos={store.filteredPhotos}
               favorites={store.favorites}
-              userLocation={store.userLocation}
               displayPhotoMarkers={displayPhotoMarkers}
               displayFavorites={displayFavorites}
               screenWidth900px={useMinScreenWidth(900)}
