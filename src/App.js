@@ -17,7 +17,8 @@ import {
   UPDATE_PHOTOS,
   ADD_IMG_TO_FAVORITES,
   REMOVE_IMG_FROM_FAVORITES,
-  SET_MAP_LOADED
+  SET_MAP_LOADED,
+  MAKE_TOAST
 } from "./context/rootReducer";
 
 import Appbar from "./components/appBar/appBar";
@@ -35,6 +36,7 @@ import LightBoxHeader from "./components/lightboxComponents/lightboxHeader";
 import LightBoxViewRenderer from "./components/lightboxComponents/lightboxViewRenderer";
 import Carousel, { Modal, ModalGateway } from "react-images";
 import { useMinScreenWidth } from "./helpers/CustomHooks/useMinScreenWidth";
+import Toast from "./components/toast/toast";
 
 import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
 
@@ -186,25 +188,56 @@ function App() {
     FlikrApi.getPhotosByTitle(searchParams)
       .then(data => {
         setLoadingPhotos(false);
-        setResponseDetails({
-          ...data
-        });
-        dispatch({
-          type: SET_PHOTOS,
-          photos: data.photos
-        });
-
-        /* if scrollIntoView is called syncronously there is a chance that the images are not loaded yet
-         * thus the body is still the same height and the element simply cannot be scrolled to. instead:
-         *  When the response is loaded wait 100ms for the body to resize (while image gallery loads),
-         * then scroll to the results (an empty div right above the results was used in order to avoid forwardingRefs)         *
-         */
-        window.setTimeout(() => {
-          resultsRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
+        // console.log(data);
+        if (data.stat === "ok") {
+          setResponseDetails({
+            ...data
           });
-        }, 100);
+          dispatch({
+            type: SET_PHOTOS,
+            photos: data.photos
+          });
+
+          /* if scrollIntoView is called syncronously there is a chance that the images are not loaded yet
+           * thus the body is still the same height and the element simply cannot be scrolled to. instead:
+           *  When the response is loaded wait 100ms for the body to resize (while image gallery loads),
+           * then scroll to the results (an empty div right above the results was used in order to avoid forwardingRefs)         *
+           */
+          window.setTimeout(() => {
+            resultsRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "center"
+            });
+          }, 100);
+        } else {
+          switch (data.code) {
+            /**Check the error code and respond with an appropriete notification */
+            case 4:
+              /**message:Not a valid bounding box --> Antimeridian Error */
+              dispatch({
+                type: MAKE_TOAST,
+                message: `Your location search intersects with antimeridian!
+                Make sure that the red vertical line is out of map extents`,
+                variant: "error"
+              });
+              break;
+            case 9999:
+              /**message: Failed to fetch --> Probably No Internet */
+              dispatch({
+                type: MAKE_TOAST,
+                message: `Failed to fetch, please check your internet connection`,
+                variant: "error"
+              });
+              break;
+            default:
+              /**Default returns flickr's API errors */
+              dispatch({
+                type: MAKE_TOAST,
+                message: data.message,
+                variant: "error"
+              });
+          }
+        }
       })
       .catch(error => {
         console.log(error);
@@ -439,6 +472,7 @@ function App() {
       {carouselOpen && (
         <CarouselShowCase open={carouselOpen} closeCarousel={closeCarousel} />
       )}
+      <Toast />
     </div>
   );
 }

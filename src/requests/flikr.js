@@ -105,101 +105,89 @@ export const getPhotosByTitle = searchParams => {
       return res.json().then(json => {
         console.log("*****FLICKR RESPONSE:****");
         console.log(json);
-        // const test = {
-        //   ...json.photos,
-        //   photo: json.photos.photo.map(img => {
-        //     return {
-        //       ...img,
-        //       width_c: parseInt(img.width_c),
-        //       width_h: parseInt(img.width_h),
-        //       width_l: parseInt(img.width_l),
-        //       width_m: parseInt(img.width_m),
-        //       height_c: parseInt(img.height_c),
-        //       height_h: parseInt(img.height_h),
-        //       height_l: parseInt(img.height_l),
-        //       height_m: parseInt(img.height_m),
-        //       src: img.url_m, //flickr doesn't guarantee all sizes but medium will always be there
-        //       height: parseInt(img.height_m),
-        //       width: parseInt(img.width_m),
-        //       title: img.title,
-        //       alt: img.title,
-        //       key: img.id,
-        //       srcSet: [
-        //         `${img.url_m} ${img.width_m}w`,
-        //         `${img.url_c} ${img.width_c}w`,
-        //         `${img.url_l} ${img.width_l}w`,
-        //         `${img.url_h} ${img.width_h}w`
-        //       ],
-        //       sizes:
-        //         "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
-        //     };
-        //   })
-        // };
-        // console.log(test);
-        return {
-          ...query,
-          currentPage: json.photos.page,
-          totalPages: json.photos.pages,
-          totalPhotos: json.photos.total,
-          perPage: json.photos.perpage,
-          photos: json.photos.photo.map(img => {
-            return {
-              // ...img,
-              dateupload: img.dateupload,
-              datetaken: img.datetaken,
-              ownername: img.ownername,
-              geolocation: {
-                lat: parseFloat(img.latitude),
-                lng: parseFloat(img.longitude)
-              },
-              photoId: img.id,
-              width_t: img.width_t ? parseInt(img.width_t) : "",
-              width_c: img.width_c ? parseInt(img.width_c) : "",
-              width_h: img.width_h ? parseInt(img.width_h) : "",
-              width_l: img.width_l ? parseInt(img.width_l) : "",
-              width_m: img.width_m ? parseInt(img.width_m) : "",
-              width_o: img.width_o ? parseInt(img.width_o) : "",
-              height_c: img.height_c ? parseInt(img.height_c) : "",
-              height_h: img.height_h ? parseInt(img.height_h) : "",
-              height_l: img.height_l ? parseInt(img.height_l) : "",
-              height_m: img.height_m ? parseInt(img.height_m) : "",
-              height_o: img.height_o ? parseInt(img.height_o) : "",
-              /* since you cant predict in what size will the photo be availiable:
-              if medium size is availiable use it if not get the original size
-              as fallback give the image 100px width and height */
-              height: img.height_m
-                ? parseInt(img.height_m)
-                : img.height_o
-                ? parseInt(img.height_o)
-                : 100,
-              width: img.width_m
-                ? parseInt(img.width_m)
-                : img.width_o
-                ? parseInt(img.width_o)
-                : 100,
-              src: img.url_l ? img.url_l : img.url_m ? img.url_m : img.url_o,
-              title: img.title,
-              alt: img.title,
-              key: img.id,
-              owner: img.owner,
-              thumb: img.url_t,
-              srcSet: [
-                img.url_m ? `${img.url_m} ${img.width_m}w` : "",
-                img.url_c ? `${img.url_c} ${img.width_c}w` : "",
-                img.url_l ? `${img.url_l} ${img.width_l}w` : "",
-                img.url_h ? `${img.url_h} ${img.width_h}w` : "",
-                img.url_o ? `${img.url_o} ${img.width_o}w` : ""
-              ],
-              sizes:
-                "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
-            };
-          })
-        };
+
+        if (json.stat === "ok") {
+          return {
+            ...query,
+            stat: json.stat,
+            currentPage: json.photos.page,
+            totalPages: json.photos.pages,
+            totalPhotos: json.photos.total,
+            perPage: json.photos.perpage,
+            photos: json.photos.photo.map(img => {
+              return {
+                // ...img,
+                dateupload: img.dateupload,
+                datetaken: img.datetaken,
+                ownername: img.ownername,
+                geolocation: {
+                  lat: parseFloat(img.latitude),
+                  lng: parseFloat(img.longitude)
+                },
+                photoId: img.id,
+                width_t: img.width_t ? parseInt(img.width_t) : "",
+                width_c: img.width_c ? parseInt(img.width_c) : "",
+                width_h: img.width_h ? parseInt(img.width_h) : "",
+                width_l: img.width_l ? parseInt(img.width_l) : "",
+                width_m: img.width_m ? parseInt(img.width_m) : "",
+                width_o: img.width_o ? parseInt(img.width_o) : "",
+                height_c: img.height_c ? parseInt(img.height_c) : "",
+                height_h: img.height_h ? parseInt(img.height_h) : "",
+                height_l: img.height_l ? parseInt(img.height_l) : "",
+                height_m: img.height_m ? parseInt(img.height_m) : "",
+                height_o: img.height_o ? parseInt(img.height_o) : "",
+                /* since you cant predict in what size will the photo be availiable:
+        if medium size is availiable use it if not get the original size
+        as fallback give the image 100px width and height */
+                height: img.height_m
+                  ? parseInt(img.height_m)
+                  : img.height_o
+                  ? parseInt(img.height_o)
+                  : 100,
+                width: img.width_m
+                  ? parseInt(img.width_m)
+                  : img.width_o
+                  ? parseInt(img.width_o)
+                  : 100,
+                src: img.url_l ? img.url_l : img.url_m ? img.url_m : img.url_o,
+                title: img.title,
+                alt: img.title,
+                key: img.id,
+                owner: img.owner,
+                thumb: img.url_t,
+                srcSet: [
+                  img.url_m ? `${img.url_m} ${img.width_m}w` : "",
+                  img.url_c ? `${img.url_c} ${img.width_c}w` : "",
+                  img.url_l ? `${img.url_l} ${img.width_l}w` : "",
+                  img.url_h ? `${img.url_h} ${img.width_h}w` : "",
+                  img.url_o ? `${img.url_o} ${img.width_o}w` : ""
+                ],
+                sizes:
+                  "(min-width: 480px) 50vw, (min-width: 1024px) 33.3vw, 100vw"
+              };
+            })
+          };
+        } else if (json.stat === "fail") {
+          // console.log("error!");
+          // console.log("code: " + json.code + " message: " + json.message);
+          // stat: "fail", code: 4, message: "Not a valid bounding box" (Antimeridian error)
+          return json;
+        }
       });
     })
     .catch(err => {
-      console.log(err);
-      return ["error"];
+      // console.log(err);
+      // console.log(err.message);
+      // set code as 9999 or 8888 to avoid any conflict with flickrs api responses
+      if (err.message === "Failed to fetch") {
+        return { ...err, stat: "fail", message: err.message, code: 9999 };
+      }
+      return {
+        ...err,
+        stat: "fail",
+        message: "Failed to fetch from Flickr...",
+        code: 8888
+      };
     });
 
   return arrayOfPhotos;

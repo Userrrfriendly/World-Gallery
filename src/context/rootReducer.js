@@ -5,6 +5,7 @@ export const BLOCK_USER = "BLOCK_USER";
 export const ADD_IMG_TO_FAVORITES = "ADD_IMG_TO_FAVORITES";
 export const REMOVE_IMG_FROM_FAVORITES = "REMOVE_IMG_FROM_FAVORITES";
 export const SET_MAP_LOADED = "SET_MAP_LOADED";
+export const MAKE_TOAST = "MAKE_TOAST";
 
 const setUserLocation = (action, state) => {
   return {
@@ -115,6 +116,14 @@ const setMapLoaded = (action, state) => {
   return { ...state, mapLoaded: action.mapLoaded };
 };
 
+const triggerToast = (action, state) => {
+  const toast = {
+    message: action.message,
+    variant: action.variant
+  };
+  return { ...state, toast };
+};
+
 export const rootReducer = (state, action) => {
   switch (action.type) {
     case SET_USER_LOCATION:
@@ -139,6 +148,9 @@ export const rootReducer = (state, action) => {
     case SET_MAP_LOADED:
       console.log(action.type);
       return setMapLoaded(action, state);
+    case MAKE_TOAST:
+      console.log(action);
+      return triggerToast(action, state);
     default:
       return state;
   }

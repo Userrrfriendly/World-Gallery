@@ -13,7 +13,8 @@ export default function Store(props) {
     filteredPhotos: null,
     hiddenPhotos: [],
     favorites: [],
-    blockedUsers: []
+    blockedUsers: [],
+    toast: { message: null, variant: null }
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);
