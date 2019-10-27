@@ -1,6 +1,10 @@
 ## World Gallery
-
 Explore the world through Flickr's photos with one click
+
+### Live Page: [ https://userrrfriendly.github.io/World-Gallery/ ](https://userrrfriendly.github.io/World-Gallery/)
+### Preview:
+<center> <img src="desktopdemo.gif" alt="demo"/></center>
+
 
 ### World Gallery is a Web App that lets you query [Flickr](https://www.flickr.com/) public photos by the location that they were taken.
 
@@ -10,4 +14,5 @@ Photos that match the criteria will be pinned at the map to the exact location t
 
 \*On average a photo taken with a camera with a GPS or a smartphone will have an error of 5-15 meters. No spatial accuracy can be guaranteed for photos where geolocation was set explicitly.
 
-### [Live Demo of the app ](https://userrrfriendly.github.io/Flickr-GeoExplorer/)
+
+
