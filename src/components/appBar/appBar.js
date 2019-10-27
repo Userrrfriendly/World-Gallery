@@ -92,7 +92,6 @@ function ScrollTop(props) {
 export default function HideAppBar(props) {
   const classes = useStyles();
   const smSceen = useMediaQuery("(max-width:450px)");
-
   const scrollToTop = event => {
     const anchor = (event.target.ownerDocument || document).querySelector(
       "#back-to-top-anchor"

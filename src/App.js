@@ -39,6 +39,7 @@ import { useMinScreenWidth } from "./helpers/CustomHooks/useMinScreenWidth";
 import Toast from "./components/toast/toast";
 
 import CarouselShowCase from "./components/CarouselShowCase/carouselShowCase";
+import { useHistory, withRouter, Redirect } from "react-router-dom";
 
 const MapWrapper = lazy(() => import("./components/map/mapContainer"));
 
@@ -64,7 +65,7 @@ const blanketStyles = base => ({
   zIndex: "5000"
 });
 
-function App() {
+function App(props) {
   const store = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
@@ -72,13 +73,17 @@ function App() {
 
   const smSceen = useMediaQuery("(max-width:450px)");
 
+  /**Routing */
+  let history = useHistory();
+
   /** Top user benefits (Auto Rotating Carousel) */
   const [carouselOpen, setCarouselOpen] = useState(true);
   const closeCarousel = () => setCarouselOpen(false);
 
   /** Favorites Dialog */
-  const [openFavorites, setOpenFavorites] = React.useState(false);
+  const [openFavorites, setOpenFavorites] = useState(false);
   const handleOpenFavorites = () => {
+    history.push("/favorites/");
     setOpenFavorites(true);
   };
 
@@ -88,30 +93,47 @@ function App() {
 
   /**LightBox */
   /**explicitly hide appbar if the lightbox is open (prevents appbar overlay with image in lightbox) */
-  const [appBarHide, setAppBarHide] = useState(false);
 
   const [currentImage, setCurrentImage] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
   const openLightboxSinglePhoto = (event, { photo, index }) => {
-    setAppBarHide(true);
     setCurrentImage(0);
     setViewerIsOpen({ photo });
+    history.push("/img-carousel/");
   };
 
   const openLightbox = useCallback(
     (event, { photo, index }) => {
-      setAppBarHide(true);
       setCurrentImage(index);
       setViewerIsOpen(true);
+      // console.log(props.match.url);
+      // console.log(props.match.path);
+      // console.log(props.location);
+      // console.log(props.location.pathname);
+      console.log("history CHANGED RERENDERING APP");
+
+      let path = "/";
+      switch (props.location.pathname) {
+        case "/":
+          path = "/img-carousel/";
+          break;
+        case "/favorites/":
+          path = "/favorites/img-carousel/";
+          break;
+        default:
+          return;
+      }
+      history.push(path);
     },
-    [setAppBarHide]
+    [history, props.location.pathname]
   );
 
   const closeLightbox = () => {
     setCurrentImage(0);
     setViewerIsOpen(false);
-    setAppBarHide(false);
+    history.goBack();
+    // alert("history go back!");
   };
 
   /** End LightBox */
@@ -122,7 +144,7 @@ function App() {
     });
   };
 
-  /** If request is successfull will window will zoom to resultsRef */
+  /** If request is successfull window will zoom to resultsRef */
   const resultsRef = React.useRef(null);
 
   const [loadingPhotos, setLoadingPhotos] = useState(false);
@@ -164,25 +186,25 @@ function App() {
   const searchFlikr = () => {
     console.log("fetching...");
     let searchParams;
-    switch (queryStore.searchMethod) {
-      case "EXTENTS":
-        const bounds = window.map ? window.map.getBounds().toJSON() : "error";
-        searchParams = {
-          searchMethod: queryStore.searchMethod,
-          minUploadDate: queryStore.minUploadDate,
-          maxUploadDate: queryStore.maxUploadDate,
-          minTakenDate: queryStore.minTakenDate,
-          maxTakenDate: queryStore.maxTakenDate,
-          resultsPerPage: queryStore.resultsPerPage,
-          sortMethod: queryStore.sortMethod,
-          searchText: queryStore.searchText,
-          bounds
-        };
-        break;
-      default:
-        console.log("invalid searchMethod");
-        return;
-    }
+    // switch (queryStore.searchMethod) {
+    // case "EXTENTS":
+    const bounds = window.map ? window.map.getBounds().toJSON() : "error";
+    searchParams = {
+      searchMethod: queryStore.searchMethod,
+      minUploadDate: queryStore.minUploadDate,
+      maxUploadDate: queryStore.maxUploadDate,
+      minTakenDate: queryStore.minTakenDate,
+      maxTakenDate: queryStore.maxTakenDate,
+      resultsPerPage: queryStore.resultsPerPage,
+      sortMethod: queryStore.sortMethod,
+      searchText: queryStore.searchText,
+      bounds
+    };
+    //     break;
+    //   default:
+    //     console.log("invalid searchMethod");
+    //     return;
+    // }
 
     setLoadingPhotos(true);
     FlikrApi.getPhotosByTitle(searchParams)
@@ -222,7 +244,7 @@ function App() {
               });
               break;
             case 9999:
-              /**message: Failed to fetch --> Probably No Internet */
+              /**message: Failed to fetch --> No Internet connection */
               dispatch({
                 type: MAKE_TOAST,
                 message: `Failed to fetch, please check your internet connection`,
@@ -230,7 +252,7 @@ function App() {
               });
               break;
             default:
-              /**Default returns flickr's API errors */
+              /**Default returns any other flickr's API errors messages  */
               dispatch({
                 type: MAKE_TOAST,
                 message: data.message,
@@ -240,8 +262,12 @@ function App() {
         }
       })
       .catch(error => {
-        console.log(error);
         setLoadingPhotos(false);
+        dispatch({
+          type: MAKE_TOAST,
+          message: error.message,
+          variant: "error"
+        });
       });
   };
 
@@ -255,7 +281,7 @@ function App() {
     if (responseDetails.currentPage < responseDetails.totalPages) {
       searchParams.page = responseDetails.currentPage + 1;
     }
-    console.log(searchParams);
+    // console.log(searchParams);
     setLoadingPhotos(true);
 
     FlikrApi.getPhotosByTitle(searchParams)
@@ -339,7 +365,6 @@ function App() {
   return (
     <div className="App">
       <Appbar
-        appBarHide={appBarHide}
         photos={responseDetails ? responseDetails.totalPages : 0}
         toggleGridDirection={toggleGridDirection}
         gridDirection={gridDirection}
@@ -350,6 +375,7 @@ function App() {
         displayPhotoMarkers={displayPhotoMarkers}
         displayFavorites={displayFavorites}
         handleOpenFavorites={handleOpenFavorites}
+        {...props}
       >
         <section
           style={
@@ -414,67 +440,75 @@ function App() {
           )}
       </Appbar>
       <ModalGateway>
-        {viewerIsOpen && (
-          <Modal
-            onClose={closeLightbox}
-            styles={{
-              blanket: blanketStyles,
-              positioner: imagePositionerStyles
-            }}
-          >
-            <Carousel
-              imageToggleFavorites={imageToggleFavorites}
-              components={{
-                Header: LightBoxHeader,
-                View: LightBoxViewRenderer
-              }}
-              currentIndex={currentImage}
-              views={
-                // if viewerIsOpen has a .photo property then open a single photo,
-                // else if favorites is open render favorites else render normal carousel
-                viewerIsOpen.photo
-                  ? [
-                      {
-                        ...viewerIsOpen.photo,
-                        srcset: viewerIsOpen.photo.srcSet,
-                        caption: viewerIsOpen.photo.title
-                      }
-                    ]
-                  : openFavorites
-                  ? store.favorites.map(x => ({
-                      ...x,
-                      srcset: x.srcSet,
-                      caption: x.title
-                    }))
-                  : store.filteredPhotos.map(x => ({
-                      ...x,
-                      srcset: x.srcSet,
-                      caption: x.title
-                    }))
-              }
+        {viewerIsOpen &&
+          (history.location.pathname === "/img-carousel/" ||
+            history.location.pathname === "/favorites/img-carousel/") && (
+            <Modal
+              onClose={closeLightbox}
               styles={{
-                navigationPrev: navButtonStyles,
-                navigationNext: navButtonStyles
+                blanket: blanketStyles,
+                positioner: imagePositionerStyles
               }}
-            />
-          </Modal>
-        )}
+            >
+              <Carousel
+                imageToggleFavorites={imageToggleFavorites}
+                components={{
+                  Header: LightBoxHeader,
+                  View: LightBoxViewRenderer
+                }}
+                currentIndex={currentImage}
+                views={
+                  // if viewerIsOpen has a .photo property then open a single photo,
+                  // else if favorites is open render favorites else render normal carousel
+                  viewerIsOpen.photo
+                    ? [
+                        {
+                          ...viewerIsOpen.photo,
+                          srcset: viewerIsOpen.photo.srcSet,
+                          caption: viewerIsOpen.photo.title
+                        }
+                      ]
+                    : openFavorites
+                    ? store.favorites.map(x => ({
+                        ...x,
+                        srcset: x.srcSet,
+                        caption: x.title
+                      }))
+                    : store.filteredPhotos.map(x => ({
+                        ...x,
+                        srcset: x.srcSet,
+                        caption: x.title
+                      }))
+                }
+                styles={{
+                  navigationPrev: navButtonStyles,
+                  navigationNext: navButtonStyles
+                }}
+              />
+            </Modal>
+          )}
       </ModalGateway>
-      {openFavorites && (
-        <FavoritesDialog
-          openFavorites={openFavorites}
-          handleCloseFavorites={handleCloseFavorites}
-          responseDetails={responseDetails}
-          imageToggleFavorites={imageToggleFavorites}
-          openLightbox={openLightbox}
-        />
-      )}
+      {openFavorites &&
+        (history.location.pathname === "/favorites/" ||
+          history.location.pathname === "/favorites/img-carousel/") && (
+          <FavoritesDialog
+            openFavorites={openFavorites}
+            handleCloseFavorites={handleCloseFavorites}
+            responseDetails={responseDetails}
+            imageToggleFavorites={imageToggleFavorites}
+            openLightbox={openLightbox}
+          />
+        )}
       {carouselOpen && (
         <CarouselShowCase open={carouselOpen} closeCarousel={closeCarousel} />
       )}
       <Toast />
+      {history.location.pathname.startsWith("/img-carousel/") &&
+        !viewerIsOpen && <Redirect to="/" />}
+      {history.location.pathname.startsWith("/favorites/") &&
+        !openFavorites && <Redirect to="/" />}
     </div>
   );
 }
 
-export default App;
+export default withRouter(App);

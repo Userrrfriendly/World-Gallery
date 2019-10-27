@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Dialog,
@@ -15,7 +15,7 @@ import {
   Close as CloseIcon
 } from "@material-ui/icons/";
 import Slide from "@material-ui/core/Slide";
-
+import { withRouter, Redirect } from "react-router-dom";
 import StateContext from "../../context/stateContext";
 import ImageGrid from "../imageGrid/imageGrid";
 
@@ -35,7 +35,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FavoritesDialog(props) {
+function FavoritesDialog(props) {
   const classes = useStyles();
   const store = useContext(StateContext);
   const smSceen = useMediaQuery("(max-width:450px)");
@@ -45,12 +45,26 @@ export default function FavoritesDialog(props) {
     setGridDirection(gridDirection === "row" ? "column" : "row");
   };
 
+  useEffect(() => {
+    window.onpopstate = () => {
+      if (props.history.location.pathname === "/" && props.openFavorites) {
+        props.handleCloseFavorites();
+      }
+    };
+  });
+
+  const handleClose = () => {
+    props.history.goBack();
+  };
+
   return (
     <div>
+      {!props.openFavorites && <Redirect to="/" />}
       <Dialog
         fullScreen
         open={props.openFavorites}
-        onClose={props.handleCloseFavorites}
+        // onClose={props.handleCloseFavorites}
+        onClose={handleClose}
         TransitionComponent={Transition}
       >
         <AppBar className={classes.appBar}>
@@ -91,7 +105,8 @@ export default function FavoritesDialog(props) {
             <IconButton
               edge="start"
               color="inherit"
-              onClick={props.handleCloseFavorites}
+              // onClick={props.handleCloseFavorites}
+              onClick={handleClose}
               aria-label="close"
             >
               <CloseIcon />
@@ -114,3 +129,5 @@ export default function FavoritesDialog(props) {
     </div>
   );
 }
+
+export default withRouter(FavoritesDialog);

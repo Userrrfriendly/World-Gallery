@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   IconButton,
@@ -28,6 +28,7 @@ import MaxUploadDatePicker from "../controlPanel/datePickers/maxUploadDatePicker
 import MinTakenDatePicker from "../controlPanel/datePickers/minTakenDatePicker";
 import MaxTakenDatePicker from "../controlPanel/datePickers/maxTakenDatePicker";
 import CustomSwitch from "../controlPanel/switches/customSwitch";
+import { withRouter } from "react-router-dom";
 
 const useStyles = makeStyles({
   list: {
@@ -42,7 +43,7 @@ const useStyles = makeStyles({
   }
 });
 
-export default function DrawerMenu(props) {
+function DrawerMenu(props) {
   const classes = useStyles();
 
   const [openQueryOption, setOpenQueryOptions] = useState(false);
@@ -50,14 +51,22 @@ export default function DrawerMenu(props) {
   const [openMapOptions, setOpenMapOptions] = useState(false);
   const handleMapOptionsClick = () => setOpenMapOptions(!openMapOptions);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const toggleDrawer = () => {
-    const prevState = !drawerOpen;
-    setDrawerOpen(prevState);
+
+  const openDrawer = () => {
+    props.history.push("/menu/");
+    setDrawerOpen(true);
   };
 
   const closeDrawer = () => {
     setDrawerOpen(false);
+    props.history.goBack();
   };
+
+  useEffect(() => {
+    window.onpopstate = () => {
+      setDrawerOpen(false);
+    };
+  });
 
   const DrawerItems = () => (
     <div className={classes.list} role="presentation">
@@ -159,7 +168,7 @@ export default function DrawerMenu(props) {
   return (
     <div>
       <IconButton
-        onClick={toggleDrawer}
+        onClick={openDrawer}
         aria-label="Open Menu"
         size="medium"
         className={classes.hamburger}
@@ -173,3 +182,5 @@ export default function DrawerMenu(props) {
     </div>
   );
 }
+
+export default withRouter(DrawerMenu);
