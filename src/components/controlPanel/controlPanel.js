@@ -18,7 +18,6 @@ import MaxUploadDatePicker from "./datePickers/maxUploadDatePicker";
 import MaxTakenDatePicker from "./datePickers/maxTakenDatePicker";
 import MinTakenDatePicker from "./datePickers/minTakenDatePicker";
 import StateContext from "../../context/stateContext";
-import QueryContext from "../../context/QueryContext/queryContext";
 import LoadingBar from "../LoadingBar/loadingBar";
 
 const useStyles = makeStyles(theme => ({
@@ -55,7 +54,6 @@ const useStyles = makeStyles(theme => ({
 
 const ControlPanel = props => {
   const store = useContext(StateContext);
-  const queryStore = useContext(QueryContext);
 
   const classes = useStyles();
 
@@ -64,26 +62,22 @@ const ControlPanel = props => {
   return (
     <Paper className={classes.panel}>
       <div className={classes.wrapper}>
-        {queryStore.searchMethod === "EXTENTS" && (
-          <>
-            <Box className={classes.panel_item}>
-              <Typography>{infoTextBox}</Typography>
-            </Box>
-            <Box className={classes.panel_item + classes.search_photos_box}>
-              <Button
-                disabled={!store.mapLoaded}
-                variant="contained"
-                style={{ backgroundColor: "#179207", width: "100%" }}
-                size={"large"}
-                onClick={props.searchFlikr}
-              >
-                <ImageSearchRounded className={classes.control_icon} />
-                Search Photos
-              </Button>
-              {props.loadingPhotos && <LoadingBar />}
-            </Box>
-          </>
-        )}
+        <Box className={classes.panel_item}>
+          <Typography>{infoTextBox}</Typography>
+        </Box>
+        <Box className={classes.panel_item + classes.search_photos_box}>
+          <Button
+            disabled={!store.mapLoaded}
+            variant="contained"
+            style={{ backgroundColor: "#179207", width: "100%" }}
+            size={"large"}
+            onClick={props.searchFlikr}
+          >
+            <ImageSearchRounded className={classes.control_icon} />
+            Search Photos
+          </Button>
+          {props.loadingPhotos && <LoadingBar />}
+        </Box>
 
         <Divider className={classes.divider} />
 

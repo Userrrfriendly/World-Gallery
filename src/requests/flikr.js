@@ -1,8 +1,3 @@
-/** *Flickrs API has got a bug -> even if you set radius units to km the geo-search is performed in miles
- * Since the UI is in km before each api call the radius is transformed from km to miles
- */
-const kmToMiles = km => km / 1.609;
-
 export const getPhotosByTitle = searchParams => {
   /* This will ask flicker to fetch all photos (that have geolocation)
     that contain the markers location title in any way (tag, image name, album name etc)
@@ -32,59 +27,24 @@ export const getPhotosByTitle = searchParams => {
   if (searchParams.maxTakenDate) {
     url.append("max_taken_date", searchParams.maxTakenDate);
   }
-  if (searchParams.searchMethod === "EXTENTS") {
-    // const { south, west, north, east } = searchParams.bounds;
-    let { south, west, north, east } = searchParams.bounds;
 
-    south = south.toFixed(5);
-    west = west.toFixed(5);
-    north = north.toFixed(5);
-    east = east.toFixed(5);
+  let { south, west, north, east } = searchParams.bounds;
 
-    // south = south.toFixed(5).toString();
-    // west = west.toFixed(5).toString();
-    // north = north.toFixed(5).toString();
-    // east = east.toFixed(5).toString();
+  south = south.toFixed(5);
+  west = west.toFixed(5);
+  north = north.toFixed(5);
+  east = east.toFixed(5);
 
-    query = {
-      bounds: searchParams.bounds,
-      searchMethod: searchParams.searchMethod,
-      maxTakenDate: searchParams.maxTakenDate,
-      maxUploadDate: searchParams.maxUploadDate,
-      minTakenDate: searchParams.minTakenDate,
-      minUploadDate: searchParams.minUploadDate,
-      searchText: searchParams.searchText,
-      sortMethod: searchParams.sortMethod
-      // south,
-      // west,
-      // north,
-      // east
-    };
-    url.append("bbox", `${west},${south},${east},${north}`);
-    // var temp = west + "," + south + "," + east + "," + north;
-    // console.log(temp);
-    // url.append("bbox", temp);
-  }
-  if (searchParams.searchMethod === "CIRCLE") {
-    url.append("lat", searchParams.lat);
-    url.append("lon", searchParams.lng);
-    url.append("radius", kmToMiles(searchParams.radius)); //1 to 32 km
-    url.append("radius_units", "km");
-    query = {
-      // searchMethod: "CIRCLE",
-      // bounds: searchParams.bounds,
-      lat: searchParams.lat,
-      lng: searchParams.lng,
-      radius: searchParams.radius,
-      searchMethod: searchParams.searchMethod,
-      maxTakenDate: searchParams.maxTakenDate,
-      maxUploadDate: searchParams.maxUploadDate,
-      minTakenDate: searchParams.minTakenDate,
-      minUploadDate: searchParams.minUploadDate,
-      searchText: searchParams.searchText,
-      sortMethod: searchParams.sortMethod
-    };
-  }
+  query = {
+    bounds: searchParams.bounds,
+    maxTakenDate: searchParams.maxTakenDate,
+    maxUploadDate: searchParams.maxUploadDate,
+    minTakenDate: searchParams.minTakenDate,
+    minUploadDate: searchParams.minUploadDate,
+    searchText: searchParams.searchText,
+    sortMethod: searchParams.sortMethod
+  };
+  url.append("bbox", `${west},${south},${east},${north}`);
 
   url.append("has_geo", "1");
   url.append(
@@ -116,7 +76,6 @@ export const getPhotosByTitle = searchParams => {
             perPage: json.photos.perpage,
             photos: json.photos.photo.map(img => {
               return {
-                // ...img,
                 dateupload: img.dateupload,
                 datetaken: img.datetaken,
                 ownername: img.ownername,
@@ -168,16 +127,14 @@ export const getPhotosByTitle = searchParams => {
             })
           };
         } else if (json.stat === "fail") {
-          // console.log("error!");
-          // console.log("code: " + json.code + " message: " + json.message);
-          // stat: "fail", code: 4, message: "Not a valid bounding box" (Antimeridian error)
+          /** Errors will displayed in a toast from searchFlikr() in App.js
+           * sample error from flickr api stat: "fail", code: 4, message: "Not a valid bounding box" (Antimeridian error)
+           */
           return json;
         }
       });
     })
     .catch(err => {
-      // console.log(err);
-      // console.log(err.message);
       // set code as 9999 or 8888 to avoid any conflict with flickrs api responses
       if (err.message === "Failed to fetch") {
         return { ...err, stat: "fail", message: err.message, code: 9999 };

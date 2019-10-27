@@ -51,12 +51,7 @@ const useStyles = makeStyles(theme => ({
 function HideOnScroll(props) {
   const trigger = useScrollTrigger();
   return (
-    <Slide
-      appear={false}
-      direction="down"
-      /* if appBarHide is true hide the appbar otherwise leave useScrollTrigger to deal with it */
-      in={props.appBarHide ? false : !trigger}
-    >
+    <Slide appear={false} direction="down" in={!trigger}>
       {props.children}
     </Slide>
   );
@@ -104,7 +99,7 @@ export default function HideAppBar(props) {
   return (
     <React.Fragment>
       <CssBaseline />
-      <HideOnScroll appBarHide={props.appBarHide} {...props}>
+      <HideOnScroll {...props}>
         <AppBar>
           <Toolbar disableGutters={useMinScreenWidth(900) ? false : true}>
             {!useMinScreenWidth(900) && (

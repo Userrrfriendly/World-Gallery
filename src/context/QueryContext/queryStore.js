@@ -6,9 +6,6 @@ import DispatchQueryContext from "./dispatchQueryContext";
 
 export default function Store(props) {
   const initialState = {
-    /** currently no other searchMethod is implemented,
-     * "CIRCLE" or "BOX" could be used in the future */
-    searchMethod: "EXTENTS",
     resultsPerPage: 30,
     minUploadDate: false,
     maxUploadDate: false,

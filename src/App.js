@@ -107,11 +107,6 @@ function App(props) {
     (event, { photo, index }) => {
       setCurrentImage(index);
       setViewerIsOpen(true);
-      // console.log(props.match.url);
-      // console.log(props.match.path);
-      // console.log(props.location);
-      // console.log(props.location.pathname);
-      console.log("history CHANGED RERENDERING APP");
 
       let path = "/";
       switch (props.location.pathname) {
@@ -133,7 +128,6 @@ function App(props) {
     setCurrentImage(0);
     setViewerIsOpen(false);
     history.goBack();
-    // alert("history go back!");
   };
 
   /** End LightBox */
@@ -186,11 +180,9 @@ function App(props) {
   const searchFlikr = () => {
     console.log("fetching...");
     let searchParams;
-    // switch (queryStore.searchMethod) {
-    // case "EXTENTS":
+
     const bounds = window.map ? window.map.getBounds().toJSON() : "error";
     searchParams = {
-      searchMethod: queryStore.searchMethod,
       minUploadDate: queryStore.minUploadDate,
       maxUploadDate: queryStore.maxUploadDate,
       minTakenDate: queryStore.minTakenDate,
@@ -200,17 +192,11 @@ function App(props) {
       searchText: queryStore.searchText,
       bounds
     };
-    //     break;
-    //   default:
-    //     console.log("invalid searchMethod");
-    //     return;
-    // }
 
     setLoadingPhotos(true);
     FlikrApi.getPhotosByTitle(searchParams)
       .then(data => {
         setLoadingPhotos(false);
-        // console.log(data);
         if (data.stat === "ok") {
           setResponseDetails({
             ...data
@@ -300,12 +286,6 @@ function App(props) {
         setLoadingPhotos(false);
       });
   };
-
-  // useEffect(() => {
-  //   //debugging only
-  //   console.log(store);
-  //   console.log(responseDetails); // IF RESPONSE DETAILS RETURNS ERROR THE APP CAN CRASH
-  // }, [store, responseDetails]);
 
   useEffect(
     () => {
