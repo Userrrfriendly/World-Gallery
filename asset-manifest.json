@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/Flickr-GeoExplorer/static/css/main.2941c849.chunk.css",
-    "main.js": "/Flickr-GeoExplorer/static/js/main.58e216a7.chunk.js",
-    "main.js.map": "/Flickr-GeoExplorer/static/js/main.58e216a7.chunk.js.map",
-    "runtime~main.js": "/Flickr-GeoExplorer/static/js/runtime~main.61f0ab34.js",
-    "runtime~main.js.map": "/Flickr-GeoExplorer/static/js/runtime~main.61f0ab34.js.map",
-    "static/js/2.bf36aec6.chunk.js": "/Flickr-GeoExplorer/static/js/2.bf36aec6.chunk.js",
-    "static/js/2.bf36aec6.chunk.js.map": "/Flickr-GeoExplorer/static/js/2.bf36aec6.chunk.js.map",
-    "static/js/3.a83452d9.chunk.js": "/Flickr-GeoExplorer/static/js/3.a83452d9.chunk.js",
-    "static/js/3.a83452d9.chunk.js.map": "/Flickr-GeoExplorer/static/js/3.a83452d9.chunk.js.map",
-    "index.html": "/Flickr-GeoExplorer/index.html",
-    "precache-manifest.0966629d4917dcb4cc821c3eb7a17582.js": "/Flickr-GeoExplorer/precache-manifest.0966629d4917dcb4cc821c3eb7a17582.js",
-    "service-worker.js": "/Flickr-GeoExplorer/service-worker.js",
-    "static/css/main.2941c849.chunk.css.map": "/Flickr-GeoExplorer/static/css/main.2941c849.chunk.css.map",
-    "static/media/SLIDE1.png": "/Flickr-GeoExplorer/static/media/SLIDE1.49a541dd.png",
-    "static/media/SLIDE2.png": "/Flickr-GeoExplorer/static/media/SLIDE2.869e96b8.png",
-    "static/media/SLIDE3.png": "/Flickr-GeoExplorer/static/media/SLIDE3.87f4dc6d.png",
-    "static/media/pngLogo.png": "/Flickr-GeoExplorer/static/media/pngLogo.9f3169d5.png"
+    "main.css": "/World-Gallery/static/css/main.2941c849.chunk.css",
+    "main.js": "/World-Gallery/static/js/main.7aac7af4.chunk.js",
+    "main.js.map": "/World-Gallery/static/js/main.7aac7af4.chunk.js.map",
+    "runtime~main.js": "/World-Gallery/static/js/runtime~main.14453dc7.js",
+    "runtime~main.js.map": "/World-Gallery/static/js/runtime~main.14453dc7.js.map",
+    "static/js/2.bf36aec6.chunk.js": "/World-Gallery/static/js/2.bf36aec6.chunk.js",
+    "static/js/2.bf36aec6.chunk.js.map": "/World-Gallery/static/js/2.bf36aec6.chunk.js.map",
+    "static/js/3.a83452d9.chunk.js": "/World-Gallery/static/js/3.a83452d9.chunk.js",
+    "static/js/3.a83452d9.chunk.js.map": "/World-Gallery/static/js/3.a83452d9.chunk.js.map",
+    "index.html": "/World-Gallery/index.html",
+    "precache-manifest.c08c58f31395b2830709bc4c82ec6977.js": "/World-Gallery/precache-manifest.c08c58f31395b2830709bc4c82ec6977.js",
+    "service-worker.js": "/World-Gallery/service-worker.js",
+    "static/css/main.2941c849.chunk.css.map": "/World-Gallery/static/css/main.2941c849.chunk.css.map",
+    "static/media/SLIDE1.png": "/World-Gallery/static/media/SLIDE1.49a541dd.png",
+    "static/media/SLIDE2.png": "/World-Gallery/static/media/SLIDE2.869e96b8.png",
+    "static/media/SLIDE3.png": "/World-Gallery/static/media/SLIDE3.87f4dc6d.png",
+    "static/media/pngLogo.png": "/World-Gallery/static/media/pngLogo.9f3169d5.png"
   }
 }
