@@ -1,6 +1,14 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "name": "World Gallery - Explore Flickr's geotagged photos",
+  "short_name": "World Gallery",
+  "description": "A web-app that lets you query Flickr's geotagged photos by the location they were taken",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "theme_color": "#000",
+  "background_color": "#fff",
+  "lang": "en",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +16,24 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logo-48x48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "logo-128x128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "logo-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "logo-512x512.png",
       "type": "image/png",
       "sizes": "512x512"
-    }	    
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+    }
+  ]
 }
