@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a4851513c71d533123a4255966c120c6",
+    "revision": "c55802728507a2116263ee1a5b32a8ca",
     "url": "/World-Gallery/index.html"
   },
   {
@@ -12,16 +12,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/World-Gallery/static/js/2.bf36aec6.chunk.js"
   },
   {
-    "revision": "3c17dfc78e27566cb7e6",
-    "url": "/World-Gallery/static/js/3.a83452d9.chunk.js"
+    "revision": "90760d53c9ec0a7bae2e",
+    "url": "/World-Gallery/static/js/3.72323d13.chunk.js"
   },
   {
     "revision": "a721cfb782e5462431e0",
     "url": "/World-Gallery/static/js/main.379e7d5b.chunk.js"
   },
   {
-    "revision": "172317a29975b6142a9d",
-    "url": "/World-Gallery/static/js/runtime~main.14453dc7.js"
+    "revision": "ef6a4c790c0d8f9f1e4b",
+    "url": "/World-Gallery/static/js/runtime~main.674749a4.js"
   },
   {
     "revision": "49a541dd6d7555deeb2e750eb2f31f70",
