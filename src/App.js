@@ -87,6 +87,13 @@ function App(props) {
     setOpenFavorites(true);
   };
 
+  useEffect(() => {
+    // if user exits favorites by pressing the back Button set openFavorites to false
+    if (history.location.pathname === "/") {
+      handleCloseFavorites();
+    }
+  }, [history.location.pathname]);
+
   const handleCloseFavorites = () => {
     setOpenFavorites(false);
   };
@@ -487,6 +494,13 @@ function App(props) {
         !viewerIsOpen && <Redirect to="/" />}
       {history.location.pathname.startsWith("/favorites/") &&
         !openFavorites && <Redirect to="/" />}
+      {![
+        "/",
+        "/menu/",
+        "/img-carousel/",
+        "/favorites/",
+        "/favorites/img-carousel/"
+      ].includes(history.location.pathname) && <Redirect to="/" />}
     </div>
   );
 }

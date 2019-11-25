@@ -6,7 +6,7 @@ export const getPhotosByTitle = searchParams => {
   */
 
   console.log(searchParams);
-  //will be appended to response
+  //query is appended to response object
   let query;
 
   let url = new URLSearchParams();

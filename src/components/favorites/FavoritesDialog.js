@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Dialog,
@@ -45,15 +45,8 @@ function FavoritesDialog(props) {
     setGridDirection(gridDirection === "row" ? "column" : "row");
   };
 
-  useEffect(() => {
-    window.onpopstate = () => {
-      if (props.history.location.pathname === "/" && props.openFavorites) {
-        props.handleCloseFavorites();
-      }
-    };
-  });
-
   const handleClose = () => {
+    props.handleCloseFavorites();
     props.history.goBack();
   };
 
@@ -63,7 +56,6 @@ function FavoritesDialog(props) {
       <Dialog
         fullScreen
         open={props.openFavorites}
-        // onClose={props.handleCloseFavorites}
         onClose={handleClose}
         TransitionComponent={Transition}
       >
@@ -105,7 +97,6 @@ function FavoritesDialog(props) {
             <IconButton
               edge="start"
               color="inherit"
-              // onClick={props.handleCloseFavorites}
               onClick={handleClose}
               aria-label="close"
             >

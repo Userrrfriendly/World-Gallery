@@ -28,7 +28,7 @@ import MaxUploadDatePicker from "../controlPanel/datePickers/maxUploadDatePicker
 import MinTakenDatePicker from "../controlPanel/datePickers/minTakenDatePicker";
 import MaxTakenDatePicker from "../controlPanel/datePickers/maxTakenDatePicker";
 import CustomSwitch from "../controlPanel/switches/customSwitch";
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({
   list: {
@@ -167,6 +167,9 @@ function DrawerMenu(props) {
 
   return (
     <div>
+      {props.location.pathname.startsWith("/menu/") && !drawerOpen && (
+        <Redirect to="/" />
+      )}
       <IconButton
         onClick={openDrawer}
         aria-label="Open Menu"
