@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "72b3761490c5c2c154717a412b3e16b7",
+    "revision": "ad433527ef5010649051f26d64cc5f72",
     "url": "/World-Gallery/index.html"
   },
   {
-    "revision": "5603495cfe38c0358308",
+    "revision": "075a833ca771b98e8fbf",
     "url": "/World-Gallery/static/css/main.2941c849.chunk.css"
   },
   {
@@ -12,16 +12,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/World-Gallery/static/js/2.bf36aec6.chunk.js"
   },
   {
-    "revision": "f0eb7971f1ab58048390",
-    "url": "/World-Gallery/static/js/3.0aa62cea.chunk.js"
+    "revision": "b27e26cd154c41b26726",
+    "url": "/World-Gallery/static/js/3.e1e43c0c.chunk.js"
   },
   {
-    "revision": "5603495cfe38c0358308",
-    "url": "/World-Gallery/static/js/main.a004a582.chunk.js"
+    "revision": "075a833ca771b98e8fbf",
+    "url": "/World-Gallery/static/js/main.43d5f6f0.chunk.js"
   },
   {
-    "revision": "b89811e362ed4fefbc84",
-    "url": "/World-Gallery/static/js/runtime~main.be337c91.js"
+    "revision": "0e3fc5a7a858227c8bf2",
+    "url": "/World-Gallery/static/js/runtime~main.4003aebc.js"
   },
   {
     "revision": "49a541dd6d7555deeb2e750eb2f31f70",
