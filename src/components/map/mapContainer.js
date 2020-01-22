@@ -32,7 +32,7 @@ const infoWindowContents = (data, callback) => {
   `;
 };
 
-/*When the Map component mounts the following happen:
+/*When the Map component mounts the following happens:
  * the google maps callback is 'tied' to the window obj (componentDidMount())
  * a script with the google maps api is created and inserted at the bottom of the body (createGoogleApiScript)
  * the callback func fires (initMap) and initializes google maps
@@ -135,12 +135,12 @@ class Map extends React.Component {
       "https://maps.googleapis.com/maps/api/js?key=AIzaSyCzs3fKNRPknPJs8LaW9rsCvBxeY2QCJhg&v=3&libraries=places&callback=initMap";
     script.async = true;
     script.defer = true;
-    script.onerror = function() {
-      document.write("Error Loading Google Maps...");
+    script.onerror = () => {
+      // alert("error loading google maps!");
+      this.props.mapsErrorToast();
     };
     body.insertBefore(script, body.lastElementChild);
     script.addEventListener("load", () => {
-      // console.log(window.google);
       this.props.setMapLoaded();
     });
   };
@@ -185,7 +185,10 @@ class Map extends React.Component {
     window.largeInfowindow.addListener("domready", attachImgOnClick);
 
     /** ANTIMERIDIAN */
-    var antimeridianCoords = [{ lat: 90, lng: 180 }, { lat: -90, lng: 180 }];
+    var antimeridianCoords = [
+      { lat: 90, lng: 180 },
+      { lat: -90, lng: 180 }
+    ];
     var antimeridianPath = new window.google.maps.Polyline({
       path: antimeridianCoords,
       geodesic: true,

@@ -264,6 +264,14 @@ function App(props) {
       });
   };
 
+  const mapsErrorToast = () => {
+    dispatch({
+      type: MAKE_TOAST,
+      message: "Failed to load Google Maps",
+      variant: "error"
+    });
+  };
+
   const fetchNextPage = () => {
     console.log("fetching next page...");
 
@@ -401,6 +409,7 @@ function App(props) {
               displayFavorites={displayFavorites}
               screenWidth900px={useMinScreenWidth(900)}
               openLightbox={openLightboxSinglePhoto}
+              mapsErrorToast={mapsErrorToast}
             />
           </Suspense>
         </section>
