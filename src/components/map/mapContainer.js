@@ -36,7 +36,7 @@ const infoWindowContents = (data, callback) => {
  * the google maps callback is 'tied' to the window obj (componentDidMount())
  * a script with the google maps api is created and inserted at the bottom of the body (createGoogleApiScript)
  * the callback func fires (initMap) and initializes google maps
- * then initMap creates the default markers (addDefaultMarkers) and the default infowindow
+ * then initMap creates the default markers  and the default infowindow
  *** At this point the App is ready for user interaction
  */
 
@@ -94,14 +94,14 @@ class Map extends React.Component {
     }
 
     if (prevProps.displayPhotoMarkers !== this.props.displayPhotoMarkers) {
-      console.log("SHOW/HIDE PHOTOMARKERS");
+      // console.log("SHOW/HIDE PHOTOMARKERS");
       this.props.displayPhotoMarkers
         ? this.showAllPhotoMarkers()
         : this.hideAllPhotoMarkers();
     }
 
     if (prevProps.displayFavorites !== this.props.displayFavorites) {
-      console.log("SHOW/HIDE PHOTOMARKERS");
+      // console.log("SHOW/HIDE PHOTOMARKERS");
       this.props.displayFavorites
         ? this.showAllFavorites()
         : this.hideAllFavorites();
@@ -136,7 +136,6 @@ class Map extends React.Component {
     script.async = true;
     script.defer = true;
     script.onerror = () => {
-      // alert("error loading google maps!");
       this.props.mapsErrorToast();
     };
     body.insertBefore(script, body.lastElementChild);
@@ -217,7 +216,8 @@ class Map extends React.Component {
     window.google.maps.event.addListenerOnce(window.map, "idle", () => {
       document.getElementsByTagName("iframe")[0].title = "Google Maps";
       /* https://stackoverflow.com/questions/49012240/google-maps-js-iframe-title 
-            used to pass the (false possitive) accessibility audits */
+      used to pass the (false possitive) accessibility audits */
+      this.props.idb(); //populates favorites (and adds markers on the map) from indexedDb
     });
   };
 

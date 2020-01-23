@@ -1,3 +1,5 @@
+import { addToFavorites, deleteFromFavorites } from "../helpers/db";
+
 export const SET_USER_LOCATION = "SET_USER_LOCATION";
 export const SET_PHOTOS = "SET_PHOTOS";
 export const UPDATE_PHOTOS = "UPDATE_PHOTOS";
@@ -84,11 +86,15 @@ const blockUser = (action, state) => {
 const addImgToFavorites = (action, state) => {
   const favorites = state.favorites.concat(action.image);
 
-  const filteredPhotos = state.filteredPhotos.map(img => {
-    return img.photoId === action.image.photoId
-      ? { ...img, isFavorite: true }
-      : img;
-  });
+  const filteredPhotos = state.filteredPhotos
+    ? state.filteredPhotos.map(img => {
+        return img.photoId === action.image.photoId
+          ? { ...img, isFavorite: true }
+          : img;
+      })
+    : null;
+
+  addToFavorites(action.image); //Add image to favorites in IndexedDB
 
   return { ...state, favorites, filteredPhotos };
 };
@@ -96,10 +102,11 @@ const addImgToFavorites = (action, state) => {
 const removeImgFromFavorites = (action, state) => {
   const favorites = [...state.favorites];
 
-  const filteredIndex = state.filteredPhotos.findIndex(
-    el => el.photoId === action.image.photoId
-  );
-  let filteredPhotos = [...state.filteredPhotos];
+  const filteredIndex = state.filteredPhotos
+    ? state.filteredPhotos.findIndex(el => el.photoId === action.image.photoId)
+    : -1;
+
+  let filteredPhotos = state.filteredPhotos ? [...state.filteredPhotos] : null;
   if (filteredIndex !== -1) {
     filteredPhotos[filteredIndex].isFavorite = false;
   }
@@ -109,6 +116,9 @@ const removeImgFromFavorites = (action, state) => {
   );
 
   if (index !== -1) favorites.splice(index, 1);
+
+  deleteFromFavorites(action.image); //Delete from indexedDB
+
   return { ...state, favorites, filteredPhotos };
 };
 

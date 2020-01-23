@@ -31,6 +31,7 @@ import ControlPanel from "./components/controlPanel/controlPanel";
 import ControlPanelMobile from "./components/controlPanel/controlPanelMobile";
 import FavoritesDialog from "./components/favorites/FavoritesDialog";
 import { mapReady } from "./helpers/helpers";
+import { populateStoreFromDb } from "./helpers/db";
 
 import LightBoxHeader from "./components/lightboxComponents/lightboxHeader";
 import LightBoxViewRenderer from "./components/lightboxComponents/lightboxViewRenderer";
@@ -302,6 +303,18 @@ function App(props) {
       });
   };
 
+  //IDB is the callback that will be used when map is ready to populate the store.favorites from indexedDB
+  const IDB = () => {
+    const cb = item => {
+      dispatch({
+        type: ADD_IMG_TO_FAVORITES,
+        image: item
+      });
+    };
+
+    populateStoreFromDb(cb);
+  };
+
   useEffect(
     () => {
       /*fetch user location when app mounts*/
@@ -410,6 +423,7 @@ function App(props) {
               screenWidth900px={useMinScreenWidth(900)}
               openLightbox={openLightboxSinglePhoto}
               mapsErrorToast={mapsErrorToast}
+              idb={IDB}
             />
           </Suspense>
         </section>
