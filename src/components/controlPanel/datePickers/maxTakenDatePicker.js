@@ -47,7 +47,7 @@ export default function MaxTakenDatePicker(props) {
           style={{ marginLeft: "0.5rem" }}
           disabled={!checked}
           margin="normal"
-          id="date-picker-dialog"
+          // id="date-picker-dialog"
           label="max taken date"
           format="dd/MM/yyyy"
           value={selectedDate}

@@ -44,12 +44,30 @@ const setPhotos = (action, state) => {
 const updatePhotos = (action, state) => {
   /** updatePhotos will expand the previous query of photos (previous results + new results) */
   /**One for each sounds better... if true go to newFiltered if false go to newHidden */
-  const newPhotosFiltered = action.photos.filter(
-    photo => !state.blockedUsers.includes(photo.owner)
-  );
+
+  const statePhotosIDs = [];
+
+  for (const key in state.photos) {
+    statePhotosIDs.push(state.photos[key].photoId);
+  }
+
+  const newPhotosFiltered = action.photos.filter(photo => {
+    if (statePhotosIDs.includes(photo.photoId)) {
+      alert("duplicate photo found! photoID: " + photo.photoId);
+    }
+    /** Since flickrs response from updatePhotos can bring duplicate results
+     * Check for each photo if it already exists in the state
+     */
+    return (
+      !state.blockedUsers.includes(photo.owner) &&
+      !statePhotosIDs.includes(photo.photoId)
+    );
+  });
+
   const newHiddenPhotos = action.photos.filter(photo =>
     state.blockedUsers.includes(photo.owner)
   );
+
   let filteredPhotos = state.filteredPhotos.concat(newPhotosFiltered);
 
   if (state.favorites.length > 0) {

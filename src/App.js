@@ -274,7 +274,7 @@ function App(props) {
   };
 
   const fetchNextPage = () => {
-    console.log("fetching next page...");
+    // console.log("fetching next page...");
 
     const searchParams = {
       ...responseDetails,

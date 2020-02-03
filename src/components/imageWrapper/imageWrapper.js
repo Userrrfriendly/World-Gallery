@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Fab, makeStyles, Zoom } from "@material-ui/core";
 import { Favorite, FavoriteBorder, MoreVert } from "@material-ui/icons";
 import StateContext from "../../context/stateContext";
@@ -71,35 +71,11 @@ const ImageWrapper = ({
     }, 3000);
   };
 
-  console.log(direction);
   if (direction === "column") {
     cont.position = "absolute";
     cont.left = left;
     cont.top = top;
   }
-
-  useEffect(() => {
-    console.log("Image Wrapper updated");
-  }, [
-    index,
-    photo,
-    margin,
-    direction,
-    top,
-    left,
-    // selected,
-    imageToggleFavorites,
-    openLightbox,
-    handleOpenMenuClick
-  ]);
-
-  // useEffect(() => {
-  //   console.log("Image Wrapper updated Because state changed");
-  // }, [state]);
-
-  useEffect(() => {
-    console.log("Image Wrapper updated Because REASONS");
-  });
 
   return (
     <div

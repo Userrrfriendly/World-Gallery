@@ -63,7 +63,7 @@ class Map extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.props);
+    // console.log(this.props);
     /**SET RADIUS IF IT CHANGED */
     if (prevProps.searchRadius !== this.props.searchRadius) {
       this.searchCircle.setRadius(this.props.searchRadius * 1000);

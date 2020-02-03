@@ -31,18 +31,19 @@ export const addToFavorites = args => {
 };
 
 export const deleteFromFavorites = args => {
-  return (
-    db.favorites
-      .where("photoId")
-      .equals(args.photoId)
-      .delete()
-      // .then(entry => console.log("deleted" + JSON.stringify(entry)))
-      .catch(function(e) {
-        alert("Error: " + (e.stack || e));
-      })
-  );
+  return db.favorites
+    .where("photoId")
+    .equals(args.photoId)
+    .delete()
+    .catch(function(e) {
+      alert("Error: " + (e.stack || e));
+    });
 };
 
+/**
+ * the store needs to be updated with a dispatch action
+ * the function that holds the dispatch is stored (callback) is IDB() in App.js
+ */
 export const populateStoreFromDb = callBack => {
   db.transaction("rw", db.favorites, async () => {
     await db.favorites.each(item => callBack(item));
