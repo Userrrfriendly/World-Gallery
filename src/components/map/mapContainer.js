@@ -167,7 +167,8 @@ class Map extends React.Component {
       //fires when user clicks on the thumbnail of an expanded marker
       const img = document.getElementById("image-info");
       const id = img.getAttribute("data-photoid");
-      let photo = this.props.photos.find(img => img.photoId === id);
+      let photo =
+        this.props.photos && this.props.photos.find(img => img.photoId === id);
       if (!photo) {
         /**If photo is not found in filteredPhotos search for it in favorites */
         photo = this.props.favorites.find(img => img.photoId === id);

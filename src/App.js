@@ -226,33 +226,7 @@ function App(props) {
             });
           }, 100);
         } else {
-          switch (data.code) {
-            /**Check the error code and respond with an appropriete notification */
-            case 4:
-              /**message:Not a valid bounding box --> Antimeridian Error */
-              dispatch({
-                type: MAKE_TOAST,
-                message: `Your location search intersects with antimeridian!
-                Make sure that the red vertical line is out of map extents`,
-                variant: "error"
-              });
-              break;
-            case 9999:
-              /**message: Failed to fetch --> No Internet connection */
-              dispatch({
-                type: MAKE_TOAST,
-                message: `Failed to fetch, please check your internet connection`,
-                variant: "error"
-              });
-              break;
-            default:
-              /**Default returns any other flickr's API errors messages  */
-              dispatch({
-                type: MAKE_TOAST,
-                message: data.message,
-                variant: "error"
-              });
-          }
+          flickrResValidation(data);
         }
       })
       .catch(error => {
@@ -273,9 +247,38 @@ function App(props) {
     });
   };
 
+  const flickrResValidation = data => {
+    switch (data.code) {
+      /**Check the error code and respond with an appropriete notification */
+      case 4:
+        /**message:Not a valid bounding box --> Antimeridian Error */
+        dispatch({
+          type: MAKE_TOAST,
+          message: `Your location search intersects with antimeridian!
+          Make sure that the red vertical line is out of map extents`,
+          variant: "error"
+        });
+        break;
+      case 9999:
+        /**message: Failed to fetch --> No Internet connection */
+        dispatch({
+          type: MAKE_TOAST,
+          message: `Failed to fetch, please check your internet connection`,
+          variant: "error"
+        });
+        break;
+      default:
+        /**Default returns any other flickr's API errors messages  */
+        dispatch({
+          type: MAKE_TOAST,
+          message: data.message,
+          variant: "error"
+        });
+    }
+  };
+
   const fetchNextPage = () => {
     // console.log("fetching next page...");
-
     const searchParams = {
       ...responseDetails,
       resultsPerPage: responseDetails.perPage
@@ -283,20 +286,22 @@ function App(props) {
     if (responseDetails.currentPage < responseDetails.totalPages) {
       searchParams.page = responseDetails.currentPage + 1;
     }
-    // console.log(searchParams);
     setLoadingPhotos(true);
 
     FlikrApi.getPhotosByTitle(searchParams)
       .then(data => {
         setLoadingPhotos(false);
-
-        setResponseDetails({
-          ...data
-        });
-        dispatch({
-          type: UPDATE_PHOTOS,
-          photos: data.photos
-        });
+        if (data.stat === "ok") {
+          setResponseDetails({
+            ...data
+          });
+          dispatch({
+            type: UPDATE_PHOTOS,
+            photos: data.photos
+          });
+        } else {
+          flickrResValidation(data);
+        }
       })
       .catch(error => {
         setLoadingPhotos(false);
